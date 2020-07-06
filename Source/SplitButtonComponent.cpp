@@ -10,8 +10,6 @@
 
 #include "SplitButtonComponent.h"
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 
 namespace JUCEAppBasics
 {

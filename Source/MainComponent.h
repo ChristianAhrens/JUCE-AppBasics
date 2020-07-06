@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include <JuceHeader.h>
 
 #include "SplitButtonComponent.h"
 #include "CustomLookAndFeel.h"
