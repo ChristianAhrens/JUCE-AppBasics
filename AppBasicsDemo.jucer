@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="t0S85N" name="AppBasicsDemo" projectType="guiapp" jucerVersion="6.0.0"
+              version="0.1.0" companyName="Christian Ahrens" companyEmail="christianahrens@me.com"
+              companyCopyright="2020">
+  <MAINGROUP id="wsXNhp" name="AppBasicsDemo">
+    <GROUP id="{3482B756-6423-A110-A5E5-7E6AADE98E41}" name="Resources">
+      <GROUP id="{E6327702-ADFE-25DB-51B3-D943A20FA2E6}" name="Images">
+        <FILE id="ZTmzXD" name="close_fullscreen-24px.svg" compile="0" resource="1"
+              file="Resources/Images/close_fullscreen-24px.svg"/>
+        <FILE id="xXKbTx" name="equalizer-24px.svg" compile="0" resource="1"
+              file="Resources/Images/equalizer-24px.svg"/>
+        <FILE id="MnDll2" name="graphic_eq-24px.svg" compile="0" resource="1"
+              file="Resources/Images/graphic_eq-24px.svg"/>
+        <FILE id="ZqfE8t" name="grid_on-24px.svg" compile="0" resource="1"
+              file="Resources/Images/grid_on-24px.svg"/>
+        <FILE id="p7RmCF" name="mediation-24px.svg" compile="0" resource="1"
+              file="Resources/Images/mediation-24px.svg"/>
+        <FILE id="CO96rM" name="pause-24px.svg" compile="0" resource="1" file="Resources/Images/pause-24px.svg"/>
+        <FILE id="r7kfqq" name="radio_button_checked-24px.svg" compile="0"
+              resource="1" file="Resources/Images/radio_button_checked-24px.svg"/>
+        <FILE id="TiXvWk" name="radio_button_unchecked-24px.svg" compile="0"
+              resource="1" file="Resources/Images/radio_button_unchecked-24px.svg"/>
+        <FILE id="qZEIhV" name="settings-24px.svg" compile="0" resource="1"
+              file="Resources/Images/settings-24px.svg"/>
+        <FILE id="q5jvrF" name="show_chart-24px.svg" compile="0" resource="1"
+              file="Resources/Images/show_chart-24px.svg"/>
+        <FILE id="UjwnVc" name="track_changes-24px.svg" compile="0" resource="1"
+              file="Resources/Images/track_changes-24px.svg"/>
+        <FILE id="SyQmGq" name="waves-24px.svg" compile="0" resource="1" file="Resources/Images/waves-24px.svg"/>
+      </GROUP>
+    </GROUP>
+    <GROUP id="{45B42ABC-4AC3-D8D9-5073-D1AEE8199147}" name="Sources">
+      <FILE id="bJSgjR" name="CustomLookAndFeel.cpp" compile="1" resource="0"
+            file="Source/CustomLookAndFeel.cpp"/>
+      <FILE id="sJfTMU" name="CustomLookAndFeel.h" compile="0" resource="0"
+            file="Source/CustomLookAndFeel.h"/>
+      <FILE id="zswaEW" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="WTxEOG" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="pgmcMh" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="CvTFDy" name="SplitButtonComponent.cpp" compile="1" resource="0"
+            file="Source/SplitButtonComponent.cpp"/>
+      <FILE id="xLmsEO" name="SplitButtonComponent.h" compile="0" resource="0"
+            file="Source/SplitButtonComponent.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="y9CNR0" bigIcon="y9CNR0"
+               microphonePermissionNeeded="1" hardenedRuntime="1" iosDevelopmentTeamID="SB7Q3PP4FQ"
+               customPList="&lt;plist&gt;&#10;  &lt;dict&gt;&#10;    &lt;key&gt;LSApplicationCategoryType&lt;/key&gt;&#10;    &lt;string&gt;public.app-category.utilities&lt;/string&gt;&#10;  &lt;/dict&gt;&#10;&lt;/plist&gt;"
+               appSandbox="1" appSandboxOptions="com.apple.security.device.microphone"
+               hardenedRuntimeOptions="com.apple.security.device.audio-input">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release" customXcodeFlags="INSTALL_PATH = &quot;/Applications&quot;"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <XCODE_IPHONE targetFolder="Builds/iOS" smallIcon="y9CNR0" bigIcon="y9CNR0"
+                  microphonePermissionNeeded="1" iosDevelopmentTeamID="SB7Q3PP4FQ">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_IPHONE>
+    <VS2019 targetFolder="Builds/VisualStudio2019" smallIcon="y9CNR0" bigIcon="y9CNR0">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../../../JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2019>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <OSX buildEnabled="1"/>
+    <WINDOWS/>
+  </LIVE_SETTINGS>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+</JUCERPROJECT>
