@@ -28,12 +28,12 @@ enum KnownDevices
     iPhone4,
     iPhone4S,
     iPhone5,
-    iPhone5c,
-    iPhone5s,
+    iPhone5C,
+    iPhone5S,
     iPhone6,
     iPhone6Plus,
-    iPhone6s,
-    iPhone6sPlus,
+    iPhone6S,
+    iPhone6SPlus,
     iPhoneSE,
     iPhoneSE2,
     iPhone7,
@@ -47,8 +47,11 @@ enum KnownDevices
     iPhone11,
     iPhone11Pro,
     iPhone11ProMax,
+    iPhoneSim_i386,
+    iPhoneSim_x86_64,
     GenericiPad,
     iPad,
+    iPad3G,
     iPad2,
     iPad3,
     iPad4,
@@ -62,18 +65,41 @@ enum KnownDevices
     iPadPro2,
     iPadPro3,
     iPadPro4,
+    iPadPro970,
+    iPadPro1050,
+    iPadPro1120,
+    iPadPro1290,
+    iPad1027,
+    iPadPro1101,
+    iPadPro1293,
+    iPadPro1102,
+    iPadPro1294,
     iPadmini,
     iPadmini2,
     iPadmini3,
     iPadmini4,
     iPadmini5,
+    iPad2017,
+    iPod1,
+    iPod2,
+    iPod3,
+    iPod4,
+    iPod5,
+    iPod6,
+    iPod7,
+    GenericiPod,
+    AppleWatch,
+    AppleWatch1,
+    AppleWatch2,
+    AppleWatch3,
+    AppleWatch4,
+    AppleWatch5,
+    GenericAppleWatch,
 
 };
 
-static KnownDevices getDeviceType()
+static JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPhone(const juce::String& deviceDescription)
 {
-    auto deviceDescription = SystemStats::getDeviceDescription();
-
     if (deviceDescription == "iPhone")
         return KnownDevices::iPhone;
     if (deviceDescription == "iPhone 3G")
@@ -87,17 +113,17 @@ static KnownDevices getDeviceType()
     if (deviceDescription == "iPhone 5")
         return KnownDevices::iPhone5;
     if (deviceDescription == "iPhone 5c")
-        return KnownDevices::iPhone5c;
+        return KnownDevices::iPhone5C;
     if (deviceDescription == "iPhone 5s")
-        return KnownDevices::iPhone5s;
+        return KnownDevices::iPhone5S;
     if (deviceDescription == "iPhone 6")
         return KnownDevices::iPhone6;
     if (deviceDescription == "iPhone 6 Plus")
         return KnownDevices::iPhone6Plus;
     if (deviceDescription == "iPhone 6s")
-        return KnownDevices::iPhone6s;
+        return KnownDevices::iPhone6S;
     if (deviceDescription == "iPhone 6s Plus")
-        return KnownDevices::iPhone6sPlus;
+        return KnownDevices::iPhone6SPlus;
     if (deviceDescription == "iPhone SE")
         return KnownDevices::iPhoneSE;
     if (deviceDescription == "iPhone SE (2nd generation)")
@@ -126,8 +152,86 @@ static KnownDevices getDeviceType()
         return KnownDevices::iPhone11Pro;
     if (deviceDescription == "iPhone 11 Pro Max")
         return KnownDevices::iPhone11ProMax;
+    if (deviceDescription == "iPhone1,1") // iPhone
+        return KnownDevices::iPhone;
+    if (deviceDescription == "iPhone1,2") // iPhone 3G
+        return KnownDevices::iPhone3G;
+    if (deviceDescription == "iPhone2,1") // iPhone 3GS
+        return KnownDevices::iPhone3GS;
+    if (deviceDescription == "iPhone3,1") // iPhone 4
+        return KnownDevices::iPhone4;
+    if (deviceDescription == "iPhone3,2") // iPhone 4 GSM Rev A
+        return KnownDevices::iPhone4;
+    if (deviceDescription == "iPhone3,3") // iPhone 4 CDMA
+        return KnownDevices::iPhone4;
+    if (deviceDescription == "iPhone4,1") // iPhone 4S
+        return KnownDevices::iPhone4S;
+    if (deviceDescription == "iPhone5,1") // iPhone 5 (GSM)
+        return KnownDevices::iPhone5;
+    if (deviceDescription == "iPhone5,2") // iPhone 5 (GSM+CDMA)
+        return KnownDevices::iPhone5;
+    if (deviceDescription == "iPhone5,3") // iPhone 5C (GSM)
+        return KnownDevices::iPhone5C;
+    if (deviceDescription == "iPhone5,4") // iPhone 5C (Global)
+        return KnownDevices::iPhone5C;
+    if (deviceDescription == "iPhone6,1") // iPhone 5S (GSM)
+        return KnownDevices::iPhone5S;
+    if (deviceDescription == "iPhone6,2") // iPhone 5S (Global)
+        return KnownDevices::iPhone5S;
+    if (deviceDescription == "iPhone7,1") // iPhone 6 Plus
+        return KnownDevices::iPhone6Plus;
+    if (deviceDescription == "iPhone7,2") // iPhone 6
+        return KnownDevices::iPhone6;
+    if (deviceDescription == "iPhone8,1") // iPhone 6s
+        return KnownDevices::iPhone6S;
+    if (deviceDescription == "iPhone8,2") // iPhone 6s Plus
+        return KnownDevices::iPhone6SPlus;
+    if (deviceDescription == "iPhone8,4") // iPhone SE (GSM)
+        return KnownDevices::iPhoneSE;
+    if (deviceDescription == "iPhone9,1") // iPhone 7
+        return KnownDevices::iPhone7;
+    if (deviceDescription == "iPhone9,2") // iPhone 7 Plus
+        return KnownDevices::iPhone7Plus;
+    if (deviceDescription == "iPhone9,3") // iPhone 7
+        return KnownDevices::iPhone7;
+    if (deviceDescription == "iPhone9,4") // iPhone 7 Plus
+        return KnownDevices::iPhone7Plus;
+    if (deviceDescription == "iPhone10,1") // iPhone 8
+        return KnownDevices::iPhone8;
+    if (deviceDescription == "iPhone10,2") // iPhone 8 Plus
+        return KnownDevices::iPhone8Plus;
+    if (deviceDescription == "iPhone10,3") // iPhone X Global
+        return KnownDevices::iPhoneX;
+    if (deviceDescription == "iPhone10,4") // iPhone 8
+        return KnownDevices::iPhone8;
+    if (deviceDescription == "iPhone10,5") // iPhone 8 Plus
+        return KnownDevices::iPhone8Plus;
+    if (deviceDescription == "iPhone10,6") // iPhone X GSM
+        return KnownDevices::iPhoneX;
+    if (deviceDescription == "iPhone11,2") // iPhone XS
+        return KnownDevices::iPhoneXS;
+    if (deviceDescription == "iPhone11,4") // iPhone XS Max
+        return KnownDevices::iPhoneXSMax;
+    if (deviceDescription == "iPhone11,6") // iPhone XS Max Global
+        return KnownDevices::iPhoneXSMax;
+    if (deviceDescription == "iPhone11,8") // iPhone XR
+        return KnownDevices::iPhoneXR;
+    if (deviceDescription == "iPhone12,1") // iPhone 11
+        return KnownDevices::iPhone11;
+    if (deviceDescription == "iPhone12,3") // iPhone 11 Pro
+        return KnownDevices::iPhone11Pro;
+    if (deviceDescription == "iPhone12,5") // iPhone 11 Pro Max
+        return KnownDevices::iPhone11ProMax;
+    if (deviceDescription == "iPhone12,8") // iPhone SE 2nd Gen
+        return KnownDevices::iPhoneSE2;
     if (deviceDescription.contains("iPhone"))
         return KnownDevices::GenericiPhone;
+    
+    return {};
+}
+
+static JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPad(const juce::String& deviceDescription)
+{
     if (deviceDescription == "iPad")
         return KnownDevices::iPad;
     if (deviceDescription == "iPad 2")
@@ -166,12 +270,222 @@ static KnownDevices getDeviceType()
         return KnownDevices::iPadmini4;
     if (deviceDescription == "iPad mini 5")
         return KnownDevices::iPadmini5;
+    if (deviceDescription == "iPad1,1") // iPad
+        return KnownDevices::iPad;
+    if (deviceDescription == "iPad1,2") // iPad 3G
+        return KnownDevices::iPad3G;
+    if (deviceDescription == "iPad2,1") // 2nd Gen iPad
+        return KnownDevices::iPad2;
+    if (deviceDescription == "iPad2,2") // 2nd Gen iPad GSM
+        return KnownDevices::iPad2;
+    if (deviceDescription == "iPad2,3") // 2nd Gen iPad CDMA
+        return KnownDevices::iPad2;
+    if (deviceDescription == "iPad2,4") // 2nd Gen iPad New Revision
+        return KnownDevices::iPad2;
+    if (deviceDescription == "iPad3,1") // 3rd Gen iPad
+        return KnownDevices::iPad3;
+    if (deviceDescription == "iPad3,2") // 3rd Gen iPad CDMA
+        return KnownDevices::iPad3;
+    if (deviceDescription == "iPad3,3") // 3rd Gen iPad GSM
+        return KnownDevices::iPad3;
+    if (deviceDescription == "iPad2,5") // iPad mini
+        return KnownDevices::iPadmini;
+    if (deviceDescription == "iPad2,6") // iPad mini GSM+LTE
+        return KnownDevices::iPadmini;
+    if (deviceDescription == "iPad2,7") // iPad mini CDMA+LTE
+        return KnownDevices::iPadmini;
+    if (deviceDescription == "iPad3,4") // 4th Gen iPad
+        return KnownDevices::iPad4;
+    if (deviceDescription == "iPad3,5") // 4th Gen iPad GSM+LTE
+        return KnownDevices::iPad4;
+    if (deviceDescription == "iPad3,6") // 4th Gen iPad CDMA+LTE
+        return KnownDevices::iPad4;
+    if (deviceDescription == "iPad4,1") // iPad Air (WiFi)
+        return KnownDevices::iPadAir;
+    if (deviceDescription == "iPad4,2") // iPad Air (GSM+CDMA)
+        return KnownDevices::iPadAir;
+    if (deviceDescription == "iPad4,3") // 1st Gen iPad Air (China)
+        return KnownDevices::iPadAir;
+    if (deviceDescription == "iPad4,4") // iPad mini Retina (WiFi)
+        return KnownDevices::iPadmini;
+    if (deviceDescription == "iPad4,5") // iPad mini Retina (GSM+CDMA)
+        return KnownDevices::iPadmini;
+    if (deviceDescription == "iPad4,6") // iPad mini Retina (China)
+        return KnownDevices::iPadmini;
+    if (deviceDescription == "iPad4,7") // iPad mini 3 (WiFi)
+        return KnownDevices::iPadmini3;
+    if (deviceDescription == "iPad4,8") // iPad mini 3 (GSM+CDMA)
+        return KnownDevices::iPadmini3;
+    if (deviceDescription == "iPad4,9") // iPad Mini 3 (China)
+        return KnownDevices::iPadmini3;
+    if (deviceDescription == "iPad5,1") // iPad mini 4 (WiFi)
+        return KnownDevices::iPadmini4;
+    if (deviceDescription == "iPad5,2") // 4th Gen iPad mini (WiFi+Cellular)
+        return KnownDevices::iPadmini4;
+    if (deviceDescription == "iPad5,3") // iPad Air 2 (WiFi)
+        return KnownDevices::iPadAir2;
+    if (deviceDescription == "iPad5,4") // iPad Air 2 (Cellular)
+        return KnownDevices::iPadAir2;
+    if (deviceDescription == "iPad6,3") // iPad Pro (9.7 inch, WiFi)
+        return KnownDevices::iPadPro970;
+    if (deviceDescription == "iPad6,4") // iPad Pro (9.7 inch, WiFi+LTE)
+        return KnownDevices::iPadPro970;
+    if (deviceDescription == "iPad6,7") // iPad Pro (12.9 inch, WiFi)
+        return KnownDevices::iPadPro1290;
+    if (deviceDescription == "iPad6,8") // iPad Pro (12.9 inch, WiFi+LTE)
+        return KnownDevices::iPadPro1290;
+    if (deviceDescription == "iPad6,11") // iPad (2017)
+        return KnownDevices::iPad2017;
+    if (deviceDescription == "iPad6,12") // iPad (2017)
+        return KnownDevices::iPad2017;
+    if (deviceDescription == "iPad7,1") // iPad Pro 2nd Gen (WiFi)
+        return KnownDevices::iPadPro2;
+    if (deviceDescription == "iPad7,2") // iPad Pro 2nd Gen (WiFi+Cellular)
+        return KnownDevices::iPadPro2;
+    if (deviceDescription == "iPad7,3") // iPad Pro 10.5-inch
+        return KnownDevices::iPadPro1050;
+    if (deviceDescription == "iPad7,4") // iPad Pro 10.5-inch
+        return KnownDevices::iPadPro1050;
+    if (deviceDescription == "iPad7,5") // iPad 6th Gen (WiFi)
+        return KnownDevices::iPad6;
+    if (deviceDescription == "iPad7,6") // iPad 6th Gen (WiFi+Cellular)
+        return KnownDevices::iPad6;
+    if (deviceDescription == "iPad7,11") // iPad 7th Gen 10.2-inch (WiFi)
+        return KnownDevices::iPad1027;
+    if (deviceDescription == "iPad7,12") // iPad 7th Gen 10.2-inch (WiFi+Cellular)
+        return KnownDevices::iPad1027;
+    if (deviceDescription == "iPad8,1") // iPad Pro 11 inch (WiFi)
+        return KnownDevices::iPadPro1101;
+    if (deviceDescription == "iPad8,2") // iPad Pro 11 inch (1TB, WiFi)
+        return KnownDevices::iPadPro1101;
+    if (deviceDescription == "iPad8,3") // iPad Pro 11 inch (WiFi+Cellular)
+        return KnownDevices::iPadPro1101;
+    if (deviceDescription == "iPad8,4") // iPad Pro 11 inch (1TB, WiFi+Cellular)
+        return KnownDevices::iPadPro1101;
+    if (deviceDescription == "iPad8,5") // iPad Pro 12.9 inch 3rd Gen (WiFi)
+        return KnownDevices::iPadPro1293;
+    if (deviceDescription == "iPad8,6") // iPad Pro 12.9 inch 3rd Gen (1TB, WiFi)
+        return KnownDevices::iPadPro1293;
+    if (deviceDescription == "iPad8,7") // iPad Pro 12.9 inch 3rd Gen (WiFi+Cellular)
+        return KnownDevices::iPadPro1293;
+    if (deviceDescription == "iPad8,8") // iPad Pro 12.9 inch 3rd Gen (1TB, WiFi+Cellular)
+        return KnownDevices::iPadPro1293;
+    if (deviceDescription == "iPad8,9") // iPad Pro 11 inch 2nd Gen (WiFi)
+        return KnownDevices::iPadPro1102;
+    if (deviceDescription == "iPad8,10") // iPad Pro 11 inch 2nd Gen (WiFi+Cellular)
+        return KnownDevices::iPadPro1102;
+    if (deviceDescription == "iPad8,11") // iPad Pro 12.9 inch 4th Gen (WiFi)
+        return KnownDevices::iPadPro1294;
+    if (deviceDescription == "iPad8,12") // iPad Pro 12.9 inch 4th Gen (WiFi+Cellular)
+        return KnownDevices::iPadPro1294;
+    if (deviceDescription == "iPad11,1") // iPad mini 5th Gen (WiFi)
+        return KnownDevices::iPadmini5;
+    if (deviceDescription == "iPad11,2") // iPad mini 5th Gen
+        return KnownDevices::iPadmini5;
+    if (deviceDescription == "iPad11,3") // iPad Air 3rd Gen (WiFi)
+        return KnownDevices::iPadAir3;
+    if (deviceDescription == "iPad11,4") // iPad Air 3rd Gen
+        return KnownDevices::iPadAir3;
     if (deviceDescription.contains("iPad"))
         return KnownDevices::GenericiPad;
-    if (deviceDescription.contains("Mac"))
-        return KnownDevices::GenericMac;
 
-    return InvalidDevice;
+    return {};
+}
+
+static JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeMac(const juce::String& deviceDescription)
+{
+    ignoreUnused(deviceDescription);
+    return KnownDevices::GenericMac;
+}
+
+static JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPod(const juce::String& deviceDescription)
+{
+    if (deviceDescription == "iPod1,1") // 1st Gen iPod
+        return KnownDevices::iPod1;
+    if (deviceDescription == "iPod2,1") // 2nd Gen iPod
+        return KnownDevices::iPod2;
+    if (deviceDescription == "iPod3,1") // 3rd Gen iPod
+        return KnownDevices::iPod3;
+    if (deviceDescription == "iPod4,1") // 4th Gen iPod
+        return KnownDevices::iPod4;
+    if (deviceDescription == "iPod5,1") // 5th Gen iPod
+        return KnownDevices::iPod5;
+    if (deviceDescription == "iPod7,1") // 6th Gen iPod
+        return KnownDevices::iPod6;
+    if (deviceDescription == "iPod9,1") // 7th Gen iPod
+        return KnownDevices::iPod7;
+
+    return {};
+}
+
+static JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeAppleWatch(const juce::String& deviceDescription)
+{
+    if (deviceDescription == "Watch1,1") // Apple Watch 38mm case
+        return KnownDevices::AppleWatch;
+    if (deviceDescription == "Watch1,2") // Apple Watch 42mm case
+        return KnownDevices::AppleWatch;
+    if (deviceDescription == "Watch2,6") // Apple Watch Series 1 38mm case
+        return KnownDevices::AppleWatch1;
+    if (deviceDescription == "Watch2,7") // Apple Watch Series 1 42mm case
+        return KnownDevices::AppleWatch1;
+    if (deviceDescription == "Watch2,3") // Apple Watch Series 2 38mm case
+        return KnownDevices::AppleWatch2;
+    if (deviceDescription == "Watch2,4") // Apple Watch Series 2 42mm case
+        return KnownDevices::AppleWatch2;
+    if (deviceDescription == "Watch3,1") // Apple Watch Series 3 38mm case (GPS+Cellular)
+        return KnownDevices::AppleWatch3;
+    if (deviceDescription == "Watch3,2") // Apple Watch Series 3 42mm case (GPS+Cellular)
+        return KnownDevices::AppleWatch3;
+    if (deviceDescription == "Watch3,3") // Apple Watch Series 3 38mm case (GPS)
+        return KnownDevices::AppleWatch3;
+    if (deviceDescription == "Watch3,4") // Apple Watch Series 3 42mm case (GPS)
+        return KnownDevices::AppleWatch3;
+    if (deviceDescription == "Watch4,1") // Apple Watch Series 4 40mm case (GPS)
+        return KnownDevices::AppleWatch4;
+    if (deviceDescription == "Watch4,2") // Apple Watch Series 4 44mm case (GPS)
+        return KnownDevices::AppleWatch4;
+    if (deviceDescription == "Watch4,3") // Apple Watch Series 4 40mm case (GPS+Cellular)
+        return KnownDevices::AppleWatch4;
+    if (deviceDescription == "Watch4,4") // Apple Watch Series 4 44mm case (GPS+Cellular)
+        return KnownDevices::AppleWatch4;
+    if (deviceDescription == "Watch5,1") // Apple Watch Series 5 40mm case (GPS)
+        return KnownDevices::AppleWatch5;
+    if (deviceDescription == "Watch5,2") // Apple Watch Series 5 44mm case (GPS)
+        return KnownDevices::AppleWatch5;
+    if (deviceDescription == "Watch5,3") // Apple Watch Series 5 40mm case (GPS+Cellular)
+        return KnownDevices::AppleWatch5;
+    if (deviceDescription == "Watch5,4") // Apple Watch Series 5 44mm case (GPS+Cellular)
+        return KnownDevices::AppleWatch5;
+
+    return {};
+}
+
+static JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeOther(const juce::String& deviceDescription)
+{
+    if (deviceDescription == "i386") // iPhone Simulator
+        return KnownDevices::iPhoneSim_i386;
+    if (deviceDescription == "x86_64") // iPhone Simulator
+        return KnownDevices::iPhoneSim_x86_64;
+    else
+        return InvalidDevice;
+}
+
+static KnownDevices getDeviceType()
+{
+    auto deviceDescription = SystemStats::getDeviceDescription();
+
+    if (deviceDescription.contains("iPhone"))
+        return getDeviceTypeIPhone(deviceDescription);
+    else if (deviceDescription.contains("iPad"))
+        return getDeviceTypeIPad(deviceDescription);
+    else if (deviceDescription.contains("Mac"))
+        return getDeviceTypeMac(deviceDescription);
+    else if (deviceDescription.contains("iPod"))
+        return getDeviceTypeIPod(deviceDescription);
+    else if (deviceDescription.contains("AppleWatch"))
+        return getDeviceTypeAppleWatch(deviceDescription);
+    else
+        return getDeviceTypeOther(deviceDescription);
 };
 
 static KnownDevices getGenericDeviceType()
@@ -184,6 +498,15 @@ static KnownDevices getGenericDeviceType()
         return GenericPC;
     case GenericAndroidPhone:
         return GenericAndroidPhone;
+    case GenericiPod:
+    case iPod1:
+    case iPod2:
+    case iPod3:
+    case iPod4:
+    case iPod5:
+    case iPod6:
+    case iPod7:
+        return GenericiPod;
     case GenericiPhone:
     case iPhone:
     case iPhone3G:
@@ -191,12 +514,12 @@ static KnownDevices getGenericDeviceType()
     case iPhone4:
     case iPhone4S:
     case iPhone5:
-    case iPhone5c:
-    case iPhone5s:
+    case iPhone5C:
+    case iPhone5S:
     case iPhone6:
     case iPhone6Plus:
-    case iPhone6s:
-    case iPhone6sPlus:
+    case iPhone6S:
+    case iPhone6SPlus:
     case iPhoneSE:
     case iPhone7:
     case iPhone7Plus:
@@ -209,6 +532,7 @@ static KnownDevices getGenericDeviceType()
     case iPhone11:
     case iPhone11Pro:
     case iPhone11ProMax:
+    case iPhoneSE2:
         return GenericiPhone;
     case GenericiPad:
     case iPad:
@@ -225,12 +549,29 @@ static KnownDevices getGenericDeviceType()
     case iPadPro2:
     case iPadPro3:
     case iPadPro4:
+    case iPadPro970:
+    case iPadPro1050:
+    case iPadPro1120:
+    case iPadPro1290:
+    case iPad1027:
+    case iPadPro1101:
+    case iPadPro1293:
+    case iPadPro1102:
+    case iPadPro1294:
     case iPadmini:
     case iPadmini2:
     case iPadmini3:
     case iPadmini4:
     case iPadmini5:
+    case iPad2017:
         return GenericiPad;
+    case AppleWatch:
+    case AppleWatch1:
+    case AppleWatch2:
+    case AppleWatch3:
+    case AppleWatch4:
+    case AppleWatch5:
+        return GenericAppleWatch;
     default:
         return InvalidDevice;
     }
@@ -247,12 +588,12 @@ static int const getDeviceDisplayNotchIndent()
     case iPhone4:
     case iPhone4S:
     case iPhone5:
-    case iPhone5c:
-    case iPhone5s:
+    case iPhone5C:
+    case iPhone5S:
     case iPhone6:
     case iPhone6Plus:
-    case iPhone6s:
-    case iPhone6sPlus:
+    case iPhone6S:
+    case iPhone6SPlus:
     case iPhoneSE:
     case iPhoneSE2:
     case iPhone7:
@@ -314,12 +655,12 @@ static int const getDeviceDisplaySlideBarIndent()
     case iPhone4:
     case iPhone4S:
     case iPhone5:
-    case iPhone5c:
-    case iPhone5s:
+    case iPhone5C:
+    case iPhone5S:
     case iPhone6:
     case iPhone6Plus:
-    case iPhone6s:
-    case iPhone6sPlus:
+    case iPhone6S:
+    case iPhone6SPlus:
     case iPhoneSE:
     case iPhoneSE2:
     case iPhone7:
