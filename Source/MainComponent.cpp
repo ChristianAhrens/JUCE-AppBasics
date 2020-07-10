@@ -28,13 +28,19 @@ MainComponent::MainComponent()
     m_splitButton->setButtonDown("A");
     addAndMakeVisible(m_splitButton.get());
 
-    std::vector<String> svgImages{ 
+    std::vector<String> svgImages{
+        {BinaryData::fast_rewind24px_svg},
+        {BinaryData::skip_previous24px_svg},
+        {BinaryData::play_arrow24px_svg},
+        {BinaryData::pause24px_svg},
+        {BinaryData::stop24px_svg},
+        {BinaryData::skip_next24px_svg},
+        {BinaryData::fast_forward24px_svg},
         {BinaryData::close_fullscreen24px_svg},
         {BinaryData::equalizer24px_svg},
         {BinaryData::graphic_eq24px_svg},
         {BinaryData::grid_on24px_svg},
         {BinaryData::mediation24px_svg},
-        {BinaryData::pause24px_svg},
         {BinaryData::radio_button_checked24px_svg},
         {BinaryData::radio_button_unchecked24px_svg},
         {BinaryData::settings24px_svg},
@@ -96,7 +102,7 @@ void MainComponent::resized()
     fb.performLayout(getLocalBounds().toFloat());
 
     Grid buttonGrid;
-    buttonGrid.templateRows = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
+    buttonGrid.templateRows = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
     buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
     for (auto const& button : m_buttons)
     {
