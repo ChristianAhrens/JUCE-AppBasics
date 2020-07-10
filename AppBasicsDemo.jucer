@@ -14,12 +14,16 @@
               file="Resources/Images/fast_forward-24px.svg"/>
         <FILE id="qHPVU5" name="fast_rewind-24px.svg" compile="0" resource="1"
               file="Resources/Images/fast_rewind-24px.svg"/>
+        <FILE id="XYdxg0" name="folder_open-24px.svg" compile="0" resource="1"
+              file="Resources/Images/folder_open-24px.svg"/>
         <FILE id="MnDll2" name="graphic_eq-24px.svg" compile="0" resource="1"
               file="Resources/Images/graphic_eq-24px.svg"/>
         <FILE id="ZqfE8t" name="grid_on-24px.svg" compile="0" resource="1"
               file="Resources/Images/grid_on-24px.svg"/>
         <FILE id="p7RmCF" name="mediation-24px.svg" compile="0" resource="1"
               file="Resources/Images/mediation-24px.svg"/>
+        <FILE id="ziMUnb" name="open_in_full-24px.svg" compile="0" resource="1"
+              file="Resources/Images/open_in_full-24px.svg"/>
         <FILE id="CO96rM" name="pause-24px.svg" compile="0" resource="1" file="Resources/Images/pause-24px.svg"/>
         <FILE id="wQTUgD" name="play_arrow-24px.svg" compile="0" resource="1"
               file="Resources/Images/play_arrow-24px.svg"/>
@@ -46,6 +50,8 @@
             file="Source/CustomLookAndFeel.cpp"/>
       <FILE id="sJfTMU" name="CustomLookAndFeel.h" compile="0" resource="0"
             file="Source/CustomLookAndFeel.h"/>
+      <FILE id="OwjqvP" name="Image_utils.hpp" compile="0" resource="0" file="Source/Image_utils.hpp"/>
+      <FILE id="BrqVvW" name="iOS_utils.hpp" compile="0" resource="0" file="Source/iOS_utils.hpp"/>
       <FILE id="zswaEW" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="WTxEOG" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
