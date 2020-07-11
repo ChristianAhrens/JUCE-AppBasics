@@ -50,12 +50,20 @@
             file="Source/CustomLookAndFeel.cpp"/>
       <FILE id="sJfTMU" name="CustomLookAndFeel.h" compile="0" resource="0"
             file="Source/CustomLookAndFeel.h"/>
+      <FILE id="lKpUnQ" name="DemoOverlayComponent.cpp" compile="1" resource="0"
+            file="Source/DemoOverlayComponent.cpp"/>
+      <FILE id="Dm7BMo" name="DemoOverlayComponent.h" compile="0" resource="0"
+            file="Source/DemoOverlayComponent.h"/>
       <FILE id="OwjqvP" name="Image_utils.hpp" compile="0" resource="0" file="Source/Image_utils.hpp"/>
       <FILE id="BrqVvW" name="iOS_utils.hpp" compile="0" resource="0" file="Source/iOS_utils.hpp"/>
       <FILE id="zswaEW" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="WTxEOG" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="pgmcMh" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="ZrYcuD" name="OverlayToggleComponentBase.cpp" compile="1"
+            resource="0" file="Source/OverlayToggleComponentBase.cpp"/>
+      <FILE id="f2S0Im" name="OverlayToggleComponentBase.h" compile="0" resource="0"
+            file="Source/OverlayToggleComponentBase.h"/>
       <FILE id="CvTFDy" name="SplitButtonComponent.cpp" compile="1" resource="0"
             file="Source/SplitButtonComponent.cpp"/>
       <FILE id="xLmsEO" name="SplitButtonComponent.h" compile="0" resource="0"

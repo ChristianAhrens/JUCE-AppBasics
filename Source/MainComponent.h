@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 
 #include "SplitButtonComponent.h"
+#include "DemoOverlayComponent.h"
 #include "CustomLookAndFeel.h"
 
 namespace AppBasicsDemo
@@ -53,7 +54,8 @@ public:
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent   : public Component
+class MainComponent   : public Component, 
+                        public JUCEAppBasics::OverlayToggleComponentBase::OverlayParent
 {
 public:
     //==============================================================================
@@ -68,6 +70,7 @@ private:
     //==============================================================================
     std::unique_ptr<DemoHeaderFooterComponent>  m_header;
     std::unique_ptr<DemoBodyComponent>          m_body;
+    std::unique_ptr<DemoOverlayComponent>       m_overlay;
     std::unique_ptr<DemoHeaderFooterComponent>  m_footer;
 
     std::vector<std::unique_ptr<DrawableButton>>            m_buttons;

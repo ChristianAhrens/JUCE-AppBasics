@@ -21,6 +21,10 @@ MainComponent::MainComponent()
 	addAndMakeVisible(m_header.get());
 	m_body = std::make_unique<DemoBodyComponent>();
 	addAndMakeVisible(m_body.get());
+    m_overlay = std::make_unique<DemoOverlayComponent>();
+    m_overlay->addOverlayParent(this);
+    m_overlay->parentResize = [this] { resized(); };
+    addAndMakeVisible(m_overlay.get());
 	m_footer = std::make_unique<DemoHeaderFooterComponent>();
 	addAndMakeVisible(m_footer.get());
 
@@ -64,7 +68,7 @@ MainComponent::MainComponent()
         addAndMakeVisible(m_buttons.back().get());
     }
 
-	setSize(300, 400);
+	setSize(300, 420);
 }
 
 MainComponent::~MainComponent()
@@ -83,24 +87,37 @@ void MainComponent::resized()
 
     auto safety = JUCEAppBasics::iOS_utils::getDeviceSafetyMargins();
 
-	FlexBox fb;
-	fb.flexDirection = FlexBox::Direction::column;
-	fb.items.addArray({
-        FlexItem(*m_header.get()).withFlex(1).withMaxHeight(panelDefaultSize + safety._top),
-        FlexItem(*m_splitButton.get()).withFlex(1).withMargin(juce::FlexItem::Margin(1, 1, 1, 1)),
-        FlexItem(*m_body.get()).withFlex(4),
-        FlexItem(*m_footer.get()).withFlex(1).withMaxHeight(panelDefaultSize + safety._bottom) });
-
-    fb.performLayout(getLocalBounds().toFloat());
-
-    Grid buttonGrid;
-    buttonGrid.templateRows = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
-    buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
-    for (auto const& button : m_buttons)
+    if (isOverlayActive())
     {
-        buttonGrid.items.add(GridItem(button.get()).withMargin(juce::GridItem::Margin(1, 1, 1, 1)));
+        auto safeBounds = getLocalBounds();
+        safeBounds.removeFromTop(safety._top);
+        safeBounds.removeFromBottom(safety._bottom);
+        safeBounds.removeFromLeft(safety._left);
+        safeBounds.removeFromRight(safety._right);
+        m_activeOverlay->setBounds(safeBounds);
     }
-    buttonGrid.performLayout(m_body->getBounds().reduced(15));
+    else
+    {
+        FlexBox fb;
+        fb.flexDirection = FlexBox::Direction::column;
+        fb.items.addArray({
+            FlexItem(*m_header.get()).withFlex(1).withMaxHeight(panelDefaultSize + safety._top),
+            FlexItem(*m_splitButton.get()).withFlex(1).withMargin(juce::FlexItem::Margin(1, 1, 1, 1)),
+            FlexItem(*m_body.get()).withFlex(5),
+            FlexItem(*m_overlay.get()).withFlex(1),
+            FlexItem(*m_footer.get()).withFlex(1).withMaxHeight(panelDefaultSize + safety._bottom) });
+
+        fb.performLayout(getLocalBounds().toFloat());
+
+        Grid buttonGrid;
+        buttonGrid.templateRows = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
+        buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
+        for (auto const& button : m_buttons)
+        {
+            buttonGrid.items.add(GridItem(button.get()).withMargin(juce::GridItem::Margin(1, 1, 1, 1)));
+        }
+        buttonGrid.performLayout(m_body->getBounds().reduced(15));
+    }
 }
 
 }
