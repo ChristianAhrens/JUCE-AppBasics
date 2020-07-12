@@ -26,7 +26,7 @@ public:
     String getCurrentStateAsText();
 
 protected:
-    void changeState() override;
+    void changeOverlayState() override;
 
 private:
     std::unique_ptr<Label>  m_stateLabel;

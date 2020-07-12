@@ -67,8 +67,8 @@ public:
     std::function<void()> parentResize;
 
 protected:
-    OverlayState getCurrentState();
-    virtual void changeState();
+    OverlayState getCurrentOverlayState() const;
+    virtual void changeOverlayState();
 
 private:
     void setMinimized();

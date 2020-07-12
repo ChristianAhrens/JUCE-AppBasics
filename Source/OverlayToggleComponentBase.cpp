@@ -44,7 +44,12 @@ void OverlayToggleComponentBase::addOverlayParent(OverlayParent *p)
 
 Rectangle<int>  OverlayToggleComponentBase::getOverlayBounds() const
 {
-    return getLocalBounds().reduced(10);
+    if (getCurrentOverlayState() == maximized)
+        return getLocalBounds().reduced(10);
+    else if (getCurrentOverlayState() == minimized)
+        return getLocalBounds();
+    else
+        return getBounds();
 }
 
 void OverlayToggleComponentBase::paint(Graphics& g)
@@ -57,23 +62,27 @@ void OverlayToggleComponentBase::paint(Graphics& g)
 
 void OverlayToggleComponentBase::resized()
 {
-    m_toggleOverlayButton->setBounds(Rectangle<int>(getWidth() - 35, 10, 25, 25));
+    auto buttonSize = Point<int>(25, 25);
+    auto topRight = getOverlayBounds().getTopRight();
+    auto buttonOrig = topRight - Point<int>(buttonSize.getX(), 0);
+
+    m_toggleOverlayButton->setBounds(Rectangle<int>(buttonOrig, buttonOrig + buttonSize));
 }
 
 void OverlayToggleComponentBase::buttonClicked(Button* button)
 {
     if (button == m_toggleOverlayButton.get())
     {
-        changeState();
+        changeOverlayState();
 
         if (m_overlayParent)
         {
-            if ((getCurrentState() == minimized) && m_overlayParent->isOverlayActive())
+            if ((getCurrentOverlayState() == minimized) && m_overlayParent->isOverlayActive())
             {
                 m_overlayParent->activateOverlayComponent(nullptr);
                 setAlwaysOnTop(false);
             }
-            else if((getCurrentState() == maximized) && !m_overlayParent->isOverlayActive())
+            else if((getCurrentOverlayState() == maximized) && !m_overlayParent->isOverlayActive())
             {
                 m_overlayParent->activateOverlayComponent(this);
                 setAlwaysOnTop(true);
@@ -84,14 +93,14 @@ void OverlayToggleComponentBase::buttonClicked(Button* button)
     }
 }
 
-OverlayToggleComponentBase::OverlayState OverlayToggleComponentBase::getCurrentState()
+OverlayToggleComponentBase::OverlayState OverlayToggleComponentBase::getCurrentOverlayState() const
 {
     return m_overlayState;
 }
 
-void OverlayToggleComponentBase::changeState()
+void OverlayToggleComponentBase::changeOverlayState()
 {
-    if (getCurrentState() == OverlayState::minimized)
+    if (getCurrentOverlayState() == OverlayState::minimized)
         setMaximized();
     else
         setMinimized();

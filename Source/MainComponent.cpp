@@ -78,7 +78,7 @@ MainComponent::~MainComponent()
 void MainComponent::paint (Graphics& g)
 {
 	// (Our component is opaque, so we must completely fill the background with a solid colour)
-	g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
+	g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
 }
 
 void MainComponent::resized()
@@ -101,11 +101,11 @@ void MainComponent::resized()
         FlexBox fb;
         fb.flexDirection = FlexBox::Direction::column;
         fb.items.addArray({
-            FlexItem(*m_header.get()).withFlex(1).withMaxHeight(panelDefaultSize + safety._top),
-            FlexItem(*m_splitButton.get()).withFlex(1).withMargin(juce::FlexItem::Margin(1, 1, 1, 1)),
-            FlexItem(*m_body.get()).withFlex(5),
-            FlexItem(*m_overlay.get()).withFlex(1),
-            FlexItem(*m_footer.get()).withFlex(1).withMaxHeight(panelDefaultSize + safety._bottom) });
+            FlexItem(*m_header.get())       .withFlex(1).withMaxHeight(panelDefaultSize + safety._top),
+            FlexItem(*m_splitButton.get())  .withFlex(1).withMargin(juce::FlexItem::Margin(1, 1, 1, 1)),
+            FlexItem(*m_body.get())         .withFlex(5),
+            FlexItem(*m_overlay.get())      .withFlex(1).withMargin(juce::FlexItem::Margin(10, 10, 10, 10)),
+            FlexItem(*m_footer.get())       .withFlex(1).withMaxHeight(panelDefaultSize + safety._bottom) });
 
         fb.performLayout(getLocalBounds().toFloat());
 

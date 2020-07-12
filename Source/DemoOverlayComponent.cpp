@@ -37,9 +37,9 @@ void DemoOverlayComponent::resized()
     fb.performLayout(getOverlayBounds().toFloat());
 }
 
-void DemoOverlayComponent::changeState()
+void DemoOverlayComponent::changeOverlayState()
 {
-    OverlayToggleComponentBase::changeState();
+    OverlayToggleComponentBase::changeOverlayState();
 
     m_stateLabel->setText(getCurrentStateAsText(), dontSendNotification);
 }
@@ -48,7 +48,7 @@ String DemoOverlayComponent::getCurrentStateAsText()
 {
     String retVal;
 
-    switch (getCurrentState())
+    switch (getCurrentOverlayState())
     {
     case minimized:
         retVal = "Minimized state.";
