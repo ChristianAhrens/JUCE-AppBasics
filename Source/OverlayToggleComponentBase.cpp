@@ -26,7 +26,7 @@ OverlayToggleComponentBase::OverlayToggleComponentBase()
     m_toggleOverlayButton->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
     m_toggleOverlayButton->setClickingTogglesState(true);
     m_toggleOverlayButton->setAlwaysOnTop(true);
-    m_toggleOverlayButton->addListener(this);
+    m_toggleOverlayButton->onClick = [this] { toggleClicked(); };
     addAndMakeVisible(m_toggleOverlayButton.get());
 
     setMinimized();
@@ -69,27 +69,24 @@ void OverlayToggleComponentBase::resized()
     m_toggleOverlayButton->setBounds(Rectangle<int>(buttonOrig, buttonOrig + buttonSize));
 }
 
-void OverlayToggleComponentBase::buttonClicked(Button* button)
+void OverlayToggleComponentBase::toggleClicked()
 {
-    if (button == m_toggleOverlayButton.get())
+    changeOverlayState();
+
+    if (m_overlayParent)
     {
-        changeOverlayState();
-
-        if (m_overlayParent)
+        if ((getCurrentOverlayState() == minimized) && m_overlayParent->isOverlayActive())
         {
-            if ((getCurrentOverlayState() == minimized) && m_overlayParent->isOverlayActive())
-            {
-                m_overlayParent->activateOverlayComponent(nullptr);
-                setAlwaysOnTop(false);
-            }
-            else if((getCurrentOverlayState() == maximized) && !m_overlayParent->isOverlayActive())
-            {
-                m_overlayParent->activateOverlayComponent(this);
-                setAlwaysOnTop(true);
-            }
-
-            parentResize();
+            m_overlayParent->activateOverlayComponent(nullptr);
+            setAlwaysOnTop(false);
         }
+        else if((getCurrentOverlayState() == maximized) && !m_overlayParent->isOverlayActive())
+        {
+            m_overlayParent->activateOverlayComponent(this);
+            setAlwaysOnTop(true);
+        }
+
+        parentResize();
     }
 }
 
