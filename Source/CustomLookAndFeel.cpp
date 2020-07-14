@@ -49,6 +49,19 @@ CustomLookAndFeel::CustomLookAndFeel()
     setColour(ListBox::ColourIds::backgroundColourId, Colours::darkgrey);
     setColour(ListBox::ColourIds::outlineColourId, Colours::lightgrey);
     setColour(ListBox::ColourIds::textColourId, Colours::white);
+	
+	setColour(TableHeaderComponent::ColourIds::textColourId, Colours::white);
+	setColour(TableHeaderComponent::ColourIds::backgroundColourId, Colours::darkgrey);
+	setColour(TableHeaderComponent::ColourIds::outlineColourId, Colours::grey);
+	setColour(TableHeaderComponent::ColourIds::highlightColourId, Colours::grey);
+
+	setColour(ScrollBar::ColourIds::backgroundColourId, Colours::darkgrey);
+	setColour(ScrollBar::ColourIds::thumbColourId, Colours::grey);
+	setColour(ScrollBar::ColourIds::trackColourId, Colours::grey);
+
+	setColour(TableListBox::ColourIds::backgroundColourId, Colours::darkgrey);
+	setColour(TableListBox::ColourIds::outlineColourId, Colours::lightgrey);
+	setColour(TableListBox::ColourIds::textColourId, Colours::white);
 }
 
 CustomLookAndFeel::~CustomLookAndFeel()
