@@ -53,7 +53,9 @@ MainComponent::MainComponent()
         {BinaryData::show_chart24px_svg},
         {BinaryData::track_changes24px_svg},
         {BinaryData::waves24px_svg},
-        {BinaryData::folder_open24px_svg} };
+        {BinaryData::folder_open24px_svg},
+        {BinaryData::grain24px_svg},
+        {BinaryData::vertical_split24px_svg} };
 
     for(auto imageName : svgImages)
     {

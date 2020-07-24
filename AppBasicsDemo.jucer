@@ -16,6 +16,7 @@
               file="Resources/Images/fast_rewind-24px.svg"/>
         <FILE id="XYdxg0" name="folder_open-24px.svg" compile="0" resource="1"
               file="Resources/Images/folder_open-24px.svg"/>
+        <FILE id="Kknakc" name="grain-24px.svg" compile="0" resource="1" file="Resources/Images/grain-24px.svg"/>
         <FILE id="MnDll2" name="graphic_eq-24px.svg" compile="0" resource="1"
               file="Resources/Images/graphic_eq-24px.svg"/>
         <FILE id="ZqfE8t" name="grid_on-24px.svg" compile="0" resource="1"
@@ -42,6 +43,8 @@
         <FILE id="WEruaD" name="stop-24px.svg" compile="0" resource="1" file="Resources/Images/stop-24px.svg"/>
         <FILE id="UjwnVc" name="track_changes-24px.svg" compile="0" resource="1"
               file="Resources/Images/track_changes-24px.svg"/>
+        <FILE id="FYHKz4" name="vertical_split-24px.svg" compile="0" resource="1"
+              file="Resources/Images/vertical_split-24px.svg"/>
         <FILE id="SyQmGq" name="waves-24px.svg" compile="0" resource="1" file="Resources/Images/waves-24px.svg"/>
       </GROUP>
     </GROUP>
