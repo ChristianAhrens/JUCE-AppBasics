@@ -1,7 +1,9 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
+    MainComponent.h
+    Created: 28 Jul 2020 11:21:42am
+    Author:  Christian Ahrens
 
   ==============================================================================
 */
@@ -11,6 +13,7 @@
 #include <JuceHeader.h>
 
 #include "DemoOverlayComponent.h"
+#include "AppConfig.h"
 
 #include "../../Source/CustomLookAndFeel.h"
 #include "../../Source/SplitButtonComponent.h"
@@ -76,6 +79,8 @@ private:
 
     std::vector<std::unique_ptr<DrawableButton>>            m_buttons;
     std::unique_ptr<JUCEAppBasics::SplitButtonComponent>    m_splitButton;
+
+    std::unique_ptr<AppConfig>  m_config;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

@@ -13,12 +13,16 @@
 namespace JUCEAppBasics
 {
 
-std::unique_ptr<AppConfigurationBase> AppConfigurationBase::m_singleton = nullptr;
+AppConfigurationBase* AppConfigurationBase::m_singleton = nullptr;
 
 
 AppConfigurationBase::AppConfigurationBase(const File& file)
 	: m_file(std::make_unique<File>(file))
 {
+	if (m_singleton)
+		jassertfalse;
+	m_singleton = this;
+
 	if (!exists() && !create())
 		jassertfalse;
 
@@ -31,13 +35,33 @@ AppConfigurationBase::~AppConfigurationBase()
 
 AppConfigurationBase* AppConfigurationBase::getInstance() noexcept
 {
-	if (!m_singleton)
+	if (m_singleton == nullptr)
 	{
-		DBG("The configuration object was not yet created! Please make shure to do so somewhere in your project and set your derived instance to the singleton object in your overloaded constructor!");
+		DBG("The configuration object was not yet created! Please make shure to do so in your derived class!");
 		jassertfalse;
 	}
 
-	return m_singleton.get();
+	return m_singleton;
+}
+
+String AppConfigurationBase::getDefaultConfigFilePath() noexcept
+{
+	static String s_configPath{ File::getSpecialLocation(File::SpecialLocationType::userApplicationDataDirectory).getFullPathName() + "/"
+										+ JUCEApplication::getInstance()->getApplicationName() + "/"
+										+ JUCEApplication::getInstance()->getApplicationName() + ".config" };
+
+	return s_configPath;
+}
+
+bool AppConfigurationBase::isValid()
+{
+	if (!m_xml)
+		return false;
+
+	if (!m_xml->hasTagName(JUCEApplication::getInstance()->getApplicationName()))
+		return false;
+
+	return true;
 }
 
 bool AppConfigurationBase::exists()

@@ -1,7 +1,9 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
+    MainComponent.cpp
+    Created: 28 Jul 2020 11:21:42am
+    Author:  Christian Ahrens
 
   ==============================================================================
 */
@@ -70,11 +72,15 @@ MainComponent::MainComponent()
         addAndMakeVisible(m_buttons.back().get());
     }
 
+    m_config = std::make_unique<AppConfig>(AppConfig::getDefaultConfigFilePath());
+    m_config->triggerListenersUpdate();
+
 	setSize(300, 420);
 }
 
 MainComponent::~MainComponent()
 {
+    m_config->triggerListenersUpdate();
 }
 
 void MainComponent::paint (Graphics& g)

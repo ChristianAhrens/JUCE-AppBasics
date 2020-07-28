@@ -69,6 +69,8 @@
         <FILE id="uE2Ohq" name="SplitButtonComponent.h" compile="0" resource="0"
               file="../Source/SplitButtonComponent.h"/>
       </GROUP>
+      <FILE id="XZEBCF" name="AppConfig.cpp" compile="1" resource="0" file="Source/AppConfig.cpp"/>
+      <FILE id="eniefb" name="AppConfig.h" compile="0" resource="0" file="Source/AppConfig.h"/>
       <FILE id="lKpUnQ" name="DemoOverlayComponent.cpp" compile="1" resource="0"
             file="Source/DemoOverlayComponent.cpp"/>
       <FILE id="Dm7BMo" name="DemoOverlayComponent.h" compile="0" resource="0"

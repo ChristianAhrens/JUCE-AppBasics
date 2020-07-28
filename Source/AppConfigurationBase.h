@@ -47,10 +47,10 @@ public:
 	virtual ~AppConfigurationBase();
 
 	static AppConfigurationBase* getInstance() noexcept;
-	virtual void CreateInstance() = 0;
-	static std::unique_ptr<AppConfigurationBase>	m_singleton;
+	static AppConfigurationBase*	m_singleton;
+	static String getDefaultConfigFilePath() noexcept;
 
-	virtual bool isValid() = 0;
+	virtual bool isValid();
 
 	void addListener(AppConfigurationBase::Listener* l);
 	void triggerListenersUpdate();
@@ -58,15 +58,16 @@ public:
 	std::unique_ptr<XmlElement> getConfigState(StringRef tagName);
 	bool setConfigState(std::unique_ptr<XmlElement> stateXml);
 
+protected:
+	std::unique_ptr<File>		m_file;
+	std::unique_ptr<XmlElement>	m_xml{ nullptr };
+
 private:
 	bool initializeFromDisk();
 	bool exists();
 	bool create();
 	bool flush();
 	void debugPrintXmlTree();
-
-	std::unique_ptr<File>		m_file;
-	std::unique_ptr<XmlElement>	m_xml{ nullptr };
 
 	std::vector<Listener*>		m_listeners;
 
