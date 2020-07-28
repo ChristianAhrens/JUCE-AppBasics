@@ -10,9 +10,10 @@
 
 #include <JuceHeader.h>
 
-#include "SplitButtonComponent.h"
 #include "DemoOverlayComponent.h"
-#include "CustomLookAndFeel.h"
+
+#include "../../Source/CustomLookAndFeel.h"
+#include "../../Source/SplitButtonComponent.h"
 
 namespace AppBasicsDemo
 {

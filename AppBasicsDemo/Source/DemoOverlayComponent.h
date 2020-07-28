@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "OverlayToggleComponentBase.h"
+#include "../../Source/OverlayToggleComponentBase.h"
 
 //==============================================================================
 class DemoOverlayComponent : public JUCEAppBasics::OverlayToggleComponentBase

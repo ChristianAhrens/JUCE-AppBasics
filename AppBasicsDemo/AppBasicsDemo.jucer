@@ -6,75 +6,77 @@
   <MAINGROUP id="wsXNhp" name="AppBasicsDemo">
     <GROUP id="{3482B756-6423-A110-A5E5-7E6AADE98E41}" name="Resources">
       <GROUP id="{E6327702-ADFE-25DB-51B3-D943A20FA2E6}" name="Images">
-        <FILE id="ZTmzXD" name="close_fullscreen-24px.svg" compile="0" resource="1"
-              file="Resources/Images/close_fullscreen-24px.svg"/>
-        <FILE id="xXKbTx" name="equalizer-24px.svg" compile="0" resource="1"
-              file="Resources/Images/equalizer-24px.svg"/>
-        <FILE id="YkxDCp" name="fast_forward-24px.svg" compile="0" resource="1"
-              file="Resources/Images/fast_forward-24px.svg"/>
-        <FILE id="qHPVU5" name="fast_rewind-24px.svg" compile="0" resource="1"
-              file="Resources/Images/fast_rewind-24px.svg"/>
-        <FILE id="XYdxg0" name="folder_open-24px.svg" compile="0" resource="1"
-              file="Resources/Images/folder_open-24px.svg"/>
-        <FILE id="Kknakc" name="grain-24px.svg" compile="0" resource="1" file="Resources/Images/grain-24px.svg"/>
-        <FILE id="MnDll2" name="graphic_eq-24px.svg" compile="0" resource="1"
-              file="Resources/Images/graphic_eq-24px.svg"/>
-        <FILE id="ZqfE8t" name="grid_on-24px.svg" compile="0" resource="1"
-              file="Resources/Images/grid_on-24px.svg"/>
-        <FILE id="p7RmCF" name="mediation-24px.svg" compile="0" resource="1"
-              file="Resources/Images/mediation-24px.svg"/>
-        <FILE id="ziMUnb" name="open_in_full-24px.svg" compile="0" resource="1"
-              file="Resources/Images/open_in_full-24px.svg"/>
-        <FILE id="CO96rM" name="pause-24px.svg" compile="0" resource="1" file="Resources/Images/pause-24px.svg"/>
-        <FILE id="wQTUgD" name="play_arrow-24px.svg" compile="0" resource="1"
-              file="Resources/Images/play_arrow-24px.svg"/>
-        <FILE id="r7kfqq" name="radio_button_checked-24px.svg" compile="0"
-              resource="1" file="Resources/Images/radio_button_checked-24px.svg"/>
-        <FILE id="TiXvWk" name="radio_button_unchecked-24px.svg" compile="0"
-              resource="1" file="Resources/Images/radio_button_unchecked-24px.svg"/>
-        <FILE id="qZEIhV" name="settings-24px.svg" compile="0" resource="1"
-              file="Resources/Images/settings-24px.svg"/>
-        <FILE id="q5jvrF" name="show_chart-24px.svg" compile="0" resource="1"
-              file="Resources/Images/show_chart-24px.svg"/>
-        <FILE id="xJgUWD" name="skip_next-24px.svg" compile="0" resource="1"
-              file="Resources/Images/skip_next-24px.svg"/>
-        <FILE id="bJwUbB" name="skip_previous-24px.svg" compile="0" resource="1"
-              file="Resources/Images/skip_previous-24px.svg"/>
-        <FILE id="WEruaD" name="stop-24px.svg" compile="0" resource="1" file="Resources/Images/stop-24px.svg"/>
-        <FILE id="UjwnVc" name="track_changes-24px.svg" compile="0" resource="1"
-              file="Resources/Images/track_changes-24px.svg"/>
-        <FILE id="FYHKz4" name="vertical_split-24px.svg" compile="0" resource="1"
-              file="Resources/Images/vertical_split-24px.svg"/>
-        <FILE id="SyQmGq" name="waves-24px.svg" compile="0" resource="1" file="Resources/Images/waves-24px.svg"/>
+        <FILE id="LgCA5K" name="close_fullscreen-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/close_fullscreen-24px.svg"/>
+        <FILE id="D3tjjx" name="equalizer-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/equalizer-24px.svg"/>
+        <FILE id="cGlvGX" name="fast_forward-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/fast_forward-24px.svg"/>
+        <FILE id="Yi9ggp" name="fast_rewind-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/fast_rewind-24px.svg"/>
+        <FILE id="LFfIsO" name="folder_open-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/folder_open-24px.svg"/>
+        <FILE id="JaXFou" name="grain-24px.svg" compile="0" resource="1" file="../Resources/Images/grain-24px.svg"/>
+        <FILE id="lkczaK" name="graphic_eq-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/graphic_eq-24px.svg"/>
+        <FILE id="phRJfY" name="grid_on-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/grid_on-24px.svg"/>
+        <FILE id="O2Ct6t" name="mediation-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/mediation-24px.svg"/>
+        <FILE id="r7bC6d" name="open_in_full-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/open_in_full-24px.svg"/>
+        <FILE id="gDRh21" name="pause-24px.svg" compile="0" resource="1" file="../Resources/Images/pause-24px.svg"/>
+        <FILE id="Bl75my" name="play_arrow-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/play_arrow-24px.svg"/>
+        <FILE id="yARLnD" name="radio_button_checked-24px.svg" compile="0"
+              resource="1" file="../Resources/Images/radio_button_checked-24px.svg"/>
+        <FILE id="irfWUb" name="radio_button_unchecked-24px.svg" compile="0"
+              resource="1" file="../Resources/Images/radio_button_unchecked-24px.svg"/>
+        <FILE id="oO4uO2" name="settings-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/settings-24px.svg"/>
+        <FILE id="oUZt9y" name="show_chart-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/show_chart-24px.svg"/>
+        <FILE id="s4q4cY" name="skip_next-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/skip_next-24px.svg"/>
+        <FILE id="KwdX9w" name="skip_previous-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/skip_previous-24px.svg"/>
+        <FILE id="pwwmby" name="stop-24px.svg" compile="0" resource="1" file="../Resources/Images/stop-24px.svg"/>
+        <FILE id="bc6RJW" name="track_changes-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/track_changes-24px.svg"/>
+        <FILE id="gEjTUS" name="vertical_split-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/vertical_split-24px.svg"/>
+        <FILE id="ypSyIz" name="waves-24px.svg" compile="0" resource="1" file="../Resources/Images/waves-24px.svg"/>
       </GROUP>
     </GROUP>
     <GROUP id="{45B42ABC-4AC3-D8D9-5073-D1AEE8199147}" name="Sources">
-      <FILE id="kInusp" name="AppConfigurationBase.cpp" compile="1" resource="0"
-            file="Source/AppConfigurationBase.cpp"/>
-      <FILE id="qEuE9u" name="AppConfigurationBase.h" compile="0" resource="0"
-            file="Source/AppConfigurationBase.h"/>
-      <FILE id="bJSgjR" name="CustomLookAndFeel.cpp" compile="1" resource="0"
-            file="Source/CustomLookAndFeel.cpp"/>
-      <FILE id="sJfTMU" name="CustomLookAndFeel.h" compile="0" resource="0"
-            file="Source/CustomLookAndFeel.h"/>
+      <GROUP id="{E593B705-C9A2-5B5A-DD31-76E78DD47AEA}" name="AppBasics">
+        <FILE id="IQDEE3" name="AppConfigurationBase.cpp" compile="1" resource="0"
+              file="../Source/AppConfigurationBase.cpp"/>
+        <FILE id="bM2wOQ" name="AppConfigurationBase.h" compile="0" resource="0"
+              file="../Source/AppConfigurationBase.h"/>
+        <FILE id="KFF65F" name="CustomLookAndFeel.cpp" compile="1" resource="0"
+              file="../Source/CustomLookAndFeel.cpp"/>
+        <FILE id="WDdQfY" name="CustomLookAndFeel.h" compile="0" resource="0"
+              file="../Source/CustomLookAndFeel.h"/>
+        <FILE id="hUyPry" name="Image_utils.hpp" compile="0" resource="0" file="../Source/Image_utils.hpp"/>
+        <FILE id="I7XyBn" name="iOS_utils.hpp" compile="0" resource="0" file="../Source/iOS_utils.hpp"/>
+        <FILE id="HmsVkJ" name="OverlayToggleComponentBase.cpp" compile="1"
+              resource="0" file="../Source/OverlayToggleComponentBase.cpp"/>
+        <FILE id="cJwcrP" name="OverlayToggleComponentBase.h" compile="0" resource="0"
+              file="../Source/OverlayToggleComponentBase.h"/>
+        <FILE id="OdhtJR" name="SplitButtonComponent.cpp" compile="1" resource="0"
+              file="../Source/SplitButtonComponent.cpp"/>
+        <FILE id="uE2Ohq" name="SplitButtonComponent.h" compile="0" resource="0"
+              file="../Source/SplitButtonComponent.h"/>
+      </GROUP>
       <FILE id="lKpUnQ" name="DemoOverlayComponent.cpp" compile="1" resource="0"
             file="Source/DemoOverlayComponent.cpp"/>
       <FILE id="Dm7BMo" name="DemoOverlayComponent.h" compile="0" resource="0"
             file="Source/DemoOverlayComponent.h"/>
-      <FILE id="OwjqvP" name="Image_utils.hpp" compile="0" resource="0" file="Source/Image_utils.hpp"/>
-      <FILE id="BrqVvW" name="iOS_utils.hpp" compile="0" resource="0" file="Source/iOS_utils.hpp"/>
       <FILE id="zswaEW" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="WTxEOG" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="pgmcMh" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
-      <FILE id="ZrYcuD" name="OverlayToggleComponentBase.cpp" compile="1"
-            resource="0" file="Source/OverlayToggleComponentBase.cpp"/>
-      <FILE id="f2S0Im" name="OverlayToggleComponentBase.h" compile="0" resource="0"
-            file="Source/OverlayToggleComponentBase.h"/>
-      <FILE id="CvTFDy" name="SplitButtonComponent.cpp" compile="1" resource="0"
-            file="Source/SplitButtonComponent.cpp"/>
-      <FILE id="xLmsEO" name="SplitButtonComponent.h" compile="0" resource="0"
-            file="Source/SplitButtonComponent.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
