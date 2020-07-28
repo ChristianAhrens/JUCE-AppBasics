@@ -49,6 +49,10 @@
       </GROUP>
     </GROUP>
     <GROUP id="{45B42ABC-4AC3-D8D9-5073-D1AEE8199147}" name="Sources">
+      <FILE id="kInusp" name="AppConfigurationBase.cpp" compile="1" resource="0"
+            file="Source/AppConfigurationBase.cpp"/>
+      <FILE id="qEuE9u" name="AppConfigurationBase.h" compile="0" resource="0"
+            file="Source/AppConfigurationBase.h"/>
       <FILE id="bJSgjR" name="CustomLookAndFeel.cpp" compile="1" resource="0"
             file="Source/CustomLookAndFeel.cpp"/>
       <FILE id="sJfTMU" name="CustomLookAndFeel.h" compile="0" resource="0"
