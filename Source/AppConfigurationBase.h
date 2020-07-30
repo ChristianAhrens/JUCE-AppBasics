@@ -30,16 +30,24 @@ public:
 		{
 			auto config = AppConfigurationBase::getInstance();
 			if (config != nullptr)
-				config->triggerListenersUpdate();
+				config->triggerConfigurationDump();
 		};
 	};
 
-	class Listener
+	class Dumper
 	{
 	public:
-        virtual ~Listener(){};
+        virtual ~Dumper(){};
         
 		virtual void performConfigurationDump() = 0;
+	};
+
+	class Watcher
+	{
+	public:
+		virtual ~Watcher(){};
+
+		virtual void onConfigUpdated() = 0;
 	};
 
 public:
@@ -52,10 +60,15 @@ public:
 
 	virtual bool isValid();
 
-	void addListener(AppConfigurationBase::Listener* l);
-	void triggerListenersUpdate();
+	void addDumper(AppConfigurationBase::Dumper* d);
+	void triggerConfigurationDump();
+	void clearDumpers();
 
-	std::unique_ptr<XmlElement> getConfigState(StringRef tagName);
+	void addWatcher(AppConfigurationBase::Watcher* w);
+	void triggerWatcherUpdate();
+	void clearWatchers();
+
+	std::unique_ptr<XmlElement> getConfigState(StringRef tagName = StringRef());
 	bool setConfigState(std::unique_ptr<XmlElement> stateXml);
 
 protected:
@@ -69,7 +82,8 @@ private:
 	bool flush();
 	void debugPrintXmlTree();
 
-	std::vector<Listener*>		m_listeners;
+	std::vector<Dumper*>		m_dumpers;
+	std::vector<Watcher*>		m_watchers;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AppConfigurationBase)
 };

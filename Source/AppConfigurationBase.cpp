@@ -108,26 +108,52 @@ bool AppConfigurationBase::flush()
 	if (!m_xml->writeTo(*m_file.get()))
 		jassertfalse;
 
+	triggerWatcherUpdate();
+
 	return true;
 }
 
-void AppConfigurationBase::addListener(AppConfigurationBase::Listener* l)
+void AppConfigurationBase::addDumper(AppConfigurationBase::Dumper* d)
 {
-	m_listeners.push_back(l);
+	m_dumpers.push_back(d);
 }
 
-void AppConfigurationBase::triggerListenersUpdate()
+void AppConfigurationBase::triggerConfigurationDump()
 {
-	for (auto l : m_listeners)
-		l->performConfigurationDump();
+	for (auto d : m_dumpers)
+		d->performConfigurationDump();
 
 	flush();
+}
+
+void AppConfigurationBase::clearDumpers()
+{
+	m_dumpers.clear();
+}
+
+void AppConfigurationBase::addWatcher(AppConfigurationBase::Watcher* w)
+{
+	m_watchers.push_back(w);
+}
+
+void AppConfigurationBase::triggerWatcherUpdate()
+{
+	for (auto w : m_watchers)
+		w->onConfigUpdated();
+}
+
+void AppConfigurationBase::clearWatchers()
+{
+	m_watchers.clear();
 }
 
 std::unique_ptr<XmlElement> AppConfigurationBase::getConfigState(StringRef tagName)
 {
 	if (m_xml)
 	{
+		if (tagName.isEmpty())
+			return std::make_unique<XmlElement>(*m_xml);
+
 		XmlElement *tagNameElement = m_xml->getChildByName(tagName);
 		if (tagNameElement)
 			return std::make_unique<XmlElement>(*tagNameElement);
