@@ -69,7 +69,7 @@ public:
 	void clearWatchers();
 
 	std::unique_ptr<XmlElement> getConfigState(StringRef tagName = StringRef());
-	bool setConfigState(std::unique_ptr<XmlElement> stateXml);
+	bool setConfigState(std::unique_ptr<XmlElement> stateXml, StringRef attributeName = StringRef());
 
 protected:
 	std::unique_ptr<File>		m_file;

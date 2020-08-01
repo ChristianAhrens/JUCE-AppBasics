@@ -164,13 +164,13 @@ std::unique_ptr<XmlElement> AppConfigurationBase::getConfigState(StringRef tagNa
 		return nullptr;
 }
 
-bool AppConfigurationBase::setConfigState(std::unique_ptr<XmlElement> stateXml)
+bool AppConfigurationBase::setConfigState(std::unique_ptr<XmlElement> stateXml, StringRef attributeName)
 {
 	if (stateXml && m_xml)
 	{
 		XmlElement *existingChildElement = m_xml->getChildByName(stateXml->getTagName());
 
-		if(!existingChildElement)
+		if(!existingChildElement || existingChildElement->getIntAttribute(attributeName) != stateXml->getIntAttribute(attributeName))
 			m_xml->addChildElement(new XmlElement(*stateXml));
 		else
 			m_xml->replaceChildElement(existingChildElement, new XmlElement(*stateXml));
