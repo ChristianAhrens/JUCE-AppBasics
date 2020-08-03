@@ -169,6 +169,17 @@ bool AppConfigurationBase::setConfigState(std::unique_ptr<XmlElement> stateXml, 
 	if (stateXml && m_xml)
 	{
 		XmlElement *existingChildElement = m_xml->getChildByName(stateXml->getTagName());
+		XmlElement* childElement = existingChildElement;
+		while (childElement != nullptr && attributeName.isNotEmpty())
+		{
+			if (childElement->getIntAttribute(attributeName) == stateXml->getIntAttribute(attributeName))
+			{
+				existingChildElement = childElement;
+				break;
+			}
+
+			childElement = childElement->getNextElementWithTagName(stateXml->getTagName());
+		}
 
 		if(!existingChildElement || existingChildElement->getIntAttribute(attributeName) != stateXml->getIntAttribute(attributeName))
 			m_xml->addChildElement(std::make_unique<XmlElement>(*stateXml).release());
@@ -179,6 +190,15 @@ bool AppConfigurationBase::setConfigState(std::unique_ptr<XmlElement> stateXml, 
 	}
 		
 	return false;
+}
+
+bool AppConfigurationBase::resetConfigState(std::unique_ptr<XmlElement> fullStateXml)
+{
+	m_xml.reset(fullStateXml.release());
+
+	triggerWatcherUpdate();
+
+	return true;
 }
 
 void AppConfigurationBase::debugPrintXmlTree()

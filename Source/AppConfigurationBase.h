@@ -70,6 +70,7 @@ public:
 
 	std::unique_ptr<XmlElement> getConfigState(StringRef tagName = StringRef());
 	bool setConfigState(std::unique_ptr<XmlElement> stateXml, StringRef attributeName = StringRef());
+	bool resetConfigState(std::unique_ptr<XmlElement> fullStateXml);
 
 protected:
 	std::unique_ptr<File>		m_file;
