@@ -171,7 +171,7 @@ bool AppConfigurationBase::setConfigState(std::unique_ptr<XmlElement> stateXml, 
 		XmlElement *existingChildElement = m_xml->getChildByName(stateXml->getTagName());
 
 		if(!existingChildElement || existingChildElement->getIntAttribute(attributeName) != stateXml->getIntAttribute(attributeName))
-			m_xml->addChildElement(new XmlElement(*stateXml));
+			m_xml->addChildElement(std::make_unique<XmlElement>(*stateXml).release());
 		else
 			m_xml->replaceChildElement(existingChildElement, new XmlElement(*stateXml));
 
