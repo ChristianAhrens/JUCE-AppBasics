@@ -18,8 +18,8 @@ CustomLookAndFeel::CustomLookAndFeel()
 	setColour(ResizableWindow::ColourIds::backgroundColourId, Colours::darkgrey);
 
 	setColour(TextEditor::ColourIds::backgroundColourId, Colours::darkgrey);
-	setColour(TextEditor::ColourIds::textColourId, Colours::dimgrey);
-	setColour(TextEditor::ColourIds::highlightColourId, Colours::white);
+	setColour(TextEditor::ColourIds::textColourId, Colours::white);
+	setColour(TextEditor::ColourIds::highlightColourId, Colours::dimgrey);
 	setColour(TextEditor::ColourIds::highlightedTextColourId, Colours::lightgrey);
 	setColour(TextEditor::ColourIds::outlineColourId, Colours::lightgrey);
 	setColour(TextEditor::ColourIds::focusedOutlineColourId, Colours::lightgrey);
@@ -62,6 +62,12 @@ CustomLookAndFeel::CustomLookAndFeel()
 	setColour(TableListBox::ColourIds::backgroundColourId, Colours::darkgrey);
 	setColour(TableListBox::ColourIds::outlineColourId, Colours::lightgrey);
 	setColour(TableListBox::ColourIds::textColourId, Colours::white);
+
+	setColour(CodeEditorComponent::ColourIds::backgroundColourId, Colours::darkgrey);
+	setColour(CodeEditorComponent::ColourIds::defaultTextColourId, Colours::white);
+	setColour(CodeEditorComponent::ColourIds::highlightColourId, Colours::lightgrey);
+	setColour(CodeEditorComponent::ColourIds::lineNumberBackgroundId, Colours::grey);
+	setColour(CodeEditorComponent::ColourIds::lineNumberTextId, Colours::white);
 }
 
 CustomLookAndFeel::~CustomLookAndFeel()
@@ -84,6 +90,66 @@ void CustomLookAndFeel::drawButtonBackground(Graphics& g,
 
     g.setColour(baseColour);
 	g.fillRoundedRectangle(bounds, 0);
+}
+
+void CustomLookAndFeel::drawGroupComponentOutline(Graphics& g,
+	int width, 
+	int height, 
+	const String& text,
+	const Justification& position, 
+	GroupComponent& group)
+{
+	// code from LookAndFeel_V2 but without rounded edges
+
+    const float textH = 15.0f;
+    const float indent = 3.0f;
+    const float textEdgeGap = 4.0f;
+
+    Font f(textH);
+
+    Path p;
+    auto x = indent;
+    auto y = f.getAscent() - 3.0f;
+    auto w = jmax(0.0f, (float)width - x * 2.0f);
+    auto h = jmax(0.0f, (float)height - y - indent);
+
+    auto textW = text.isEmpty() ? 0
+        : jlimit(0.0f,
+            jmax(0.0f, w - textEdgeGap * 2),
+            (float)f.getStringWidth(text) + textEdgeGap * 2.0f);
+    auto textX = textEdgeGap;
+
+    if (position.testFlags(Justification::horizontallyCentred))
+        textX = (w - textW) * 0.5f;
+    else if (position.testFlags(Justification::right))
+        textX = w - textW - textEdgeGap;
+
+    p.startNewSubPath(x + textX + textW, y);
+    p.lineTo(x + w, y);
+
+    p.lineTo(x + w, y + h);
+
+    p.lineTo(x , y + h);
+
+    p.lineTo(x, y);
+
+    p.lineTo(x + textX, y);
+
+    auto alpha = group.isEnabled() ? 1.0f : 0.5f;
+
+    g.setColour(group.findColour(GroupComponent::outlineColourId)
+        .withMultipliedAlpha(alpha));
+
+    g.strokePath(p, PathStrokeType(2.0f));
+
+    g.setColour(group.findColour(GroupComponent::textColourId)
+        .withMultipliedAlpha(alpha));
+    g.setFont(f);
+    g.drawText(text,
+        roundToInt(x + textX), 0,
+        roundToInt(textW),
+        roundToInt(textH),
+        Justification::centred, true);
 }
 
 }
