@@ -152,4 +152,48 @@ void CustomLookAndFeel::drawGroupComponentOutline(Graphics& g,
         Justification::centred, true);
 }
 
+void CustomLookAndFeel::drawTickBox(Graphics& g, Component& component,
+    float x, float y, float w, float h,
+    const bool ticked,
+    const bool isEnabled,
+    const bool shouldDrawButtonAsHighlighted,
+    const bool shouldDrawButtonAsDown)
+{
+    ignoreUnused(isEnabled, shouldDrawButtonAsHighlighted, shouldDrawButtonAsDown);
+
+    Rectangle<float> tickBounds(x, y, w, h);
+
+    g.setColour(component.findColour(ToggleButton::tickDisabledColourId));
+    g.drawRect(tickBounds, 1.0f);
+
+    if (ticked)
+    {
+        g.setColour(component.findColour(ToggleButton::tickColourId));
+        auto tick = getTickShape(0.75f);
+        g.fillPath(tick, tick.getTransformToScaleToFit(tickBounds.reduced(4, 5).toFloat(), false));
+    }
+}
+
+void CustomLookAndFeel::drawComboBox(Graphics& g, int width, int height, bool,
+    int, int, int, int, ComboBox& box)
+{
+    auto cornerSize = box.findParentComponentOfClass<ChoicePropertyComponent>() != nullptr ? 0.0f : 3.0f;
+    Rectangle<int> boxBounds(0, 0, width, height);
+
+    g.setColour(box.findColour(ComboBox::backgroundColourId));
+    g.fillRect(boxBounds.toFloat());
+
+    g.setColour(box.findColour(ComboBox::outlineColourId));
+    g.drawRect(boxBounds.toFloat().reduced(0.5f, 0.5f), 1.0f);
+
+    Rectangle<int> arrowZone(width - 30, 0, 20, height);
+    Path path;
+    path.startNewSubPath((float)arrowZone.getX() + 3.0f, (float)arrowZone.getCentreY() - 2.0f);
+    path.lineTo((float)arrowZone.getCentreX(), (float)arrowZone.getCentreY() + 3.0f);
+    path.lineTo((float)arrowZone.getRight() - 3.0f, (float)arrowZone.getCentreY() - 2.0f);
+
+    g.setColour(box.findColour(ComboBox::arrowColourId).withAlpha((box.isEnabled() ? 0.9f : 0.2f)));
+    g.strokePath(path, PathStrokeType(2.0f));
+}
+
 }
