@@ -73,14 +73,14 @@ MainComponent::MainComponent()
     }
 
     m_config = std::make_unique<AppConfig>(AppConfig::getDefaultConfigFilePath());
-    m_config->triggerListenersUpdate();
+    m_config->triggerWatcherUpdate();
 
 	setSize(300, 420);
 }
 
 MainComponent::~MainComponent()
 {
-    m_config->triggerListenersUpdate();
+    m_config->triggerWatcherUpdate();
 }
 
 void MainComponent::paint (Graphics& g)
