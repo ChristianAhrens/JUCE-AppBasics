@@ -38,12 +38,14 @@ CustomLookAndFeel::CustomLookAndFeel()
     setColour(PopupMenu::ColourIds::highlightedBackgroundColourId, Colours::white);
     setColour(PopupMenu::ColourIds::highlightedTextColourId, Colours::lightgrey);
 
-	setColour(TextButton::ColourIds::buttonColourId, Colours::darkgrey.brighter());
-	setColour(TextButton::ColourIds::buttonOnColourId, Colours::lightgrey);
+	setColour(TextButton::ColourIds::buttonColourId, Colours::darkgrey); // this applies for DrawableButton as well
+	setColour(TextButton::ColourIds::buttonOnColourId, Colours::grey); // this applies for DrawableButton as well
 	setColour(TextButton::ColourIds::textColourOffId, Colours::white);
 	setColour(TextButton::ColourIds::textColourOnId, Colours::white);
 
-	setColour(DrawableButton::ColourIds::backgroundColourId, Colours::darkgrey);
+    setColour(DrawableButton::ColourIds::textColourId, Colours::white);
+    setColour(DrawableButton::ColourIds::textColourOnId, Colours::white);
+    setColour(DrawableButton::ColourIds::backgroundColourId, Colours::darkgrey);
 	setColour(DrawableButton::ColourIds::backgroundOnColourId, Colours::darkgrey);
     
     setColour(ListBox::ColourIds::backgroundColourId, Colours::darkgrey);
