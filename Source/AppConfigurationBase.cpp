@@ -96,7 +96,7 @@ bool AppConfigurationBase::initializeFromDisk()
 	return false;
 }
 
-bool AppConfigurationBase::flush()
+bool AppConfigurationBase::flush(bool includeWatcherUpdate)
 {
 	if (!m_xml)
 		return false;
@@ -108,7 +108,8 @@ bool AppConfigurationBase::flush()
 	if (!m_xml->writeTo(*m_file.get()))
 		jassertfalse;
 
-	triggerWatcherUpdate();
+	if (includeWatcherUpdate)
+		triggerWatcherUpdate();
 
 	return true;
 }
@@ -118,12 +119,13 @@ void AppConfigurationBase::addDumper(AppConfigurationBase::Dumper* d)
 	m_dumpers.push_back(d);
 }
 
-void AppConfigurationBase::triggerConfigurationDump()
+void AppConfigurationBase::triggerConfigurationDump(bool includeWatcherUpdate)
 {
+
 	for (auto d : m_dumpers)
 		d->performConfigurationDump();
 
-	flush();
+	flush(includeWatcherUpdate);
 }
 
 void AppConfigurationBase::clearDumpers()

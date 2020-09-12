@@ -26,11 +26,11 @@ public:
 		virtual std::unique_ptr<XmlElement> createStateXml() = 0;
 		virtual bool setStateXml(XmlElement* stateXml) = 0;
 
-		void triggerConfigurationUpdate()
+		void triggerConfigurationUpdate(bool includeWatcherUpdate)
 		{
 			auto config = AppConfigurationBase::getInstance();
 			if (config != nullptr)
-				config->triggerConfigurationDump();
+				config->triggerConfigurationDump(includeWatcherUpdate);
 		};
 	};
 
@@ -61,7 +61,7 @@ public:
 	virtual bool isValid();
 
 	void addDumper(AppConfigurationBase::Dumper* d);
-	void triggerConfigurationDump();
+	void triggerConfigurationDump(bool includeWatcherUpdate = true);
 	void clearDumpers();
 
 	void addWatcher(AppConfigurationBase::Watcher* w);
@@ -80,7 +80,7 @@ private:
 	bool initializeFromDisk();
 	bool exists();
 	bool create();
-	bool flush();
+	bool flush(bool includeWatcherUpdate);
 	void debugPrintXmlTree();
 
 	std::vector<Dumper*>		m_dumpers;
