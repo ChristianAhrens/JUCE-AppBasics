@@ -15,6 +15,8 @@
 #include "DemoOverlayComponent.h"
 #include "AppConfig.h"
 
+#include "../../Source/ZeroconfDiscoverComponent.h"
+
 #include "../../Source/CustomLookAndFeel.h"
 #include "../../Source/SplitButtonComponent.h"
 
@@ -72,13 +74,17 @@ public:
     
 private:
     //==============================================================================
-    std::unique_ptr<DemoHeaderFooterComponent>  m_header;
-    std::unique_ptr<DemoBodyComponent>          m_body;
-    std::unique_ptr<DemoOverlayComponent>       m_overlay;
-    std::unique_ptr<DemoHeaderFooterComponent>  m_footer;
+    void handleServiceSelected(JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType type, JUCEAppBasics::ZeroconfDiscoverComponent::ServiceInfo* info);
+    
+    //==============================================================================
+    std::unique_ptr<DemoHeaderFooterComponent>                  m_header;
+    std::unique_ptr<DemoBodyComponent>                          m_body;
+    std::unique_ptr<JUCEAppBasics::ZeroconfDiscoverComponent>   m_zeroconf;
+    std::unique_ptr<DemoOverlayComponent>                       m_overlay;
+    std::unique_ptr<DemoHeaderFooterComponent>                  m_footer;
 
-    std::vector<std::unique_ptr<DrawableButton>>            m_buttons;
-    std::unique_ptr<JUCEAppBasics::SplitButtonComponent>    m_splitButton;
+    std::vector<std::unique_ptr<DrawableButton>>                m_buttons;
+    std::unique_ptr<JUCEAppBasics::SplitButtonComponent>        m_splitButton;
 
     std::unique_ptr<AppConfig>  m_config;
 
