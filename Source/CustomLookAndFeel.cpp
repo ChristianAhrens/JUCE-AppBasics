@@ -179,7 +179,6 @@ void CustomLookAndFeel::drawTickBox(Graphics& g, Component& component,
 void CustomLookAndFeel::drawComboBox(Graphics& g, int width, int height, bool,
     int, int, int, int, ComboBox& box)
 {
-    auto cornerSize = box.findParentComponentOfClass<ChoicePropertyComponent>() != nullptr ? 0.0f : 3.0f;
     Rectangle<int> boxBounds(0, 0, width, height);
 
     g.setColour(box.findColour(ComboBox::backgroundColourId));
