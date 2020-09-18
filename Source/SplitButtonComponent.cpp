@@ -109,10 +109,10 @@ void SplitButtonComponent::buttonClicked(Button* button)
     if (button)
     {
         uint64 buttonID = m_firstButtonID;
-        for (const std::pair<const uint64, std::unique_ptr<TextButton>>& p : m_buttons)
+        for (auto const& buttonKV : m_buttons)
         {
-            if (p.second.get() == button)
-                buttonID = p.first;
+            if (buttonKV.second.get() == button)
+                buttonID = buttonKV.first;
         }
 
         setButtonDown(buttonID);
