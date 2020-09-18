@@ -61,7 +61,7 @@ void ZeroconfDiscoverComponent::addDiscoverService(ZeroconfServiceType serviceTy
 		std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
 		JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::find_replace24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage);
 
-		m_discoveryButtons.insert(std::make_pair(serviceName, std::make_unique<DrawableButton>(serviceName, DrawableButton::ButtonStyle::ImageFitted)));
+		m_discoveryButtons.insert(std::make_pair(serviceName, std::make_unique<DrawableButton>(serviceName, DrawableButton::ButtonStyle::ImageOnButtonBackground)));
 		m_discoveryButtons.at(serviceName)->addListener(this);
 		m_discoveryButtons.at(serviceName)->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
 		m_discoveryButtons.at(serviceName)->setButtonText(serviceName);
@@ -352,28 +352,31 @@ void ZeroconfDiscoverComponent::ZeroconfSearcher::updateService(ServiceInfo * se
 	service->port = port;
 }
 
-void ZeroconfDiscoverComponent::paint (Graphics& g)
-{
-	// (Our component is opaque, so we must completely fill the background with a solid colour)
-	g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
-}
-
 void ZeroconfDiscoverComponent::resized()
 {
-	auto buttonBounds = getLocalBounds().reduced(2);
-    
-    FlexBox fb;
-    fb.flexDirection = FlexBox::Direction::row;
-    for (auto const& buttonKV : m_discoveryButtons)
-    {
-        if (m_showServiceNameLabels && m_serviceNameLabels.count(buttonKV.first) != 0)
-        {
-            fb.items.add(FlexItem().withFlex(1));
-            fb.items.add(FlexItem(*m_serviceNameLabels.at(buttonKV.first).get()).withFlex(2).withMargin(FlexItem::Margin(2, 2, 2, 2)));
-        }
-        fb.items.add(FlexItem(*buttonKV.second.get()).withFlex(2).withMargin(FlexItem::Margin(2, 2, 2, 2)));
-    }
-    fb.performLayout(buttonBounds);
+	if (m_useSeparateServiceSearchers)
+	{
+		auto buttonBounds = getLocalBounds().reduced(2);
+
+		FlexBox fb;
+		fb.flexDirection = FlexBox::Direction::row;
+		for (auto const& buttonKV : m_discoveryButtons)
+		{
+			if (m_showServiceNameLabels && m_serviceNameLabels.count(buttonKV.first) != 0)
+			{
+				fb.items.add(FlexItem().withFlex(1));
+				fb.items.add(FlexItem(*m_serviceNameLabels.at(buttonKV.first).get()).withFlex(2).withMargin(FlexItem::Margin(2, 2, 2, 2)));
+			}
+			fb.items.add(FlexItem(*buttonKV.second.get()).withFlex(2).withMargin(FlexItem::Margin(2, 2, 2, 2)));
+		}
+		fb.performLayout(buttonBounds);
+	}
+	else
+	{
+		jassert(m_discoveryButtons.size() == 1);
+		if (m_discoveryButtons.size() == 1)
+			m_discoveryButtons.begin()->second->setBounds(getLocalBounds());
+	}
 }
 
 void ZeroconfDiscoverComponent::buttonClicked(Button* button)

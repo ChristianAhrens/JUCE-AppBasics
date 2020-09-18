@@ -76,7 +76,6 @@ public:
     void buttonClicked(Button*) override;
 	
     //==============================================================================
-    void paint (Graphics&) override;
     void resized() override;
     
     //==============================================================================
