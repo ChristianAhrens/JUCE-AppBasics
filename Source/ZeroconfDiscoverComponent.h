@@ -60,7 +60,7 @@ public:
 	};
     
 public:
-    ZeroconfDiscoverComponent();
+    ZeroconfDiscoverComponent(bool useSeparateServiceSearchers, bool showServiceNameLabels = true);
     ~ZeroconfDiscoverComponent();
     
     void addDiscoverService(ZeroconfServiceType serviceType, unsigned short announcementPort = 0);
@@ -90,13 +90,15 @@ public:
 private:
     ZeroconfSearcher * getSearcher(StringRef name);
 
-    ServiceInfo * showMenuAndGetService(StringRef service, bool showLocal = true, bool showRemote = true, bool separateLocalAndRemote = true, bool excludeInternal = true);
+    ServiceInfo * showMenuAndGetService();
+    ServiceInfo * showMenuAndGetService(StringRef service);
     
     void search();
 
     void addSearcher(StringRef name, StringRef serviceName, unsigned short announcementPort = 0);
     void removeSearcher(StringRef name);
     
+    bool                                                m_useSeparateServiceSearchers;
     OwnedArray<ZeroconfSearcher, CriticalSection>       m_searchers;
     
     std::map<String, std::unique_ptr<DrawableButton>>   m_discoveryButtons;

@@ -23,8 +23,7 @@ MainComponent::MainComponent()
 	addAndMakeVisible(m_header.get());
 	m_body = std::make_unique<DemoBodyComponent>();
 	addAndMakeVisible(m_body.get());
-    m_zeroconf = std::make_unique<JUCEAppBasics::ZeroconfDiscoverComponent>();
-    m_zeroconf->setShowServiceNameLabels(true);
+    m_zeroconf = std::make_unique<JUCEAppBasics::ZeroconfDiscoverComponent>(true, true);
     m_zeroconf->addDiscoverService(JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType::ZST_OSC, 50013);
     m_zeroconf->addDiscoverService(JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType::ZST_OCA, 50014);
     m_zeroconf->onServiceSelected = [=](JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType type, JUCEAppBasics::ZeroconfDiscoverComponent::ServiceInfo* info) { handleServiceSelected(type, info); };

@@ -24,9 +24,12 @@ namespace JUCEAppBasics
 {
 
 //==============================================================================
-ZeroconfDiscoverComponent::ZeroconfDiscoverComponent() :
+ZeroconfDiscoverComponent::ZeroconfDiscoverComponent(bool useSeparateServiceSearchers, bool showServiceNameLabels) :
 	Thread("Zeroconf")
 {
+	m_useSeparateServiceSearchers = useSeparateServiceSearchers;
+
+	setShowServiceNameLabels(showServiceNameLabels);
 	startThread();
 	startTimer(5000); //every 5s
 }
@@ -53,18 +56,21 @@ void ZeroconfDiscoverComponent::addDiscoverService(ZeroconfServiceType serviceTy
     auto serviceName = getServiceName(serviceType);
     auto serviceDescriptor = getServiceDescriptor(serviceType);
     
-    std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
-    JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::find_replace24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage);
+	if(m_useSeparateServiceSearchers || m_discoveryButtons.empty())
+	{
+		std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
+		JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::find_replace24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage);
 
-    m_discoveryButtons.insert(std::make_pair(serviceName, std::make_unique<DrawableButton>(serviceName, DrawableButton::ButtonStyle::ImageFitted)));
-    m_discoveryButtons.at(serviceName)->addListener(this);
-    m_discoveryButtons.at(serviceName)->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
-    m_discoveryButtons.at(serviceName)->setButtonText(serviceName);
-    addAndMakeVisible(m_discoveryButtons.at(serviceName).get());
+		m_discoveryButtons.insert(std::make_pair(serviceName, std::make_unique<DrawableButton>(serviceName, DrawableButton::ButtonStyle::ImageFitted)));
+		m_discoveryButtons.at(serviceName)->addListener(this);
+		m_discoveryButtons.at(serviceName)->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
+		m_discoveryButtons.at(serviceName)->setButtonText(serviceName);
+		addAndMakeVisible(m_discoveryButtons.at(serviceName).get());
     
-    m_serviceNameLabels.insert(std::make_pair(serviceName, std::make_unique<Label>(serviceName, serviceName + ":")));
-    addAndMakeVisible(m_serviceNameLabels.at(serviceName).get());
-    
+		m_serviceNameLabels.insert(std::make_pair(serviceName, std::make_unique<Label>(serviceName, serviceName + ":")));
+		addAndMakeVisible(m_serviceNameLabels.at(serviceName).get());
+	}
+
     addSearcher(serviceName, serviceDescriptor, announcementPort);
 }
 
@@ -93,13 +99,46 @@ void ZeroconfDiscoverComponent::removeSearcher(StringRef name)
 
 ZeroconfDiscoverComponent::ZeroconfSearcher * ZeroconfDiscoverComponent::getSearcher(StringRef name)
 {
-	for (auto &s : m_searchers) if (s->m_name == name)
-		return s;
+	for (auto &s : m_searchers)
+		if (s->m_name == name)
+			return s;
 
 	return nullptr;
 }
 
-ZeroconfDiscoverComponent::ServiceInfo * ZeroconfDiscoverComponent::showMenuAndGetService(StringRef searcherName, bool /*showLocal*/, bool /*showRemote*/, bool /*separateLocalAndRemote*/, bool /*excludeInternal*/)
+ZeroconfDiscoverComponent::ServiceInfo* ZeroconfDiscoverComponent::showMenuAndGetService()
+{
+	if (m_searchers.isEmpty())
+	{
+		DBG("No searcher found");
+		return nullptr;
+	}
+
+	PopupMenu p;
+	std::vector<ServiceInfo*> serviceList;
+	for (auto& searcher : m_searchers)
+	{
+		for (auto& service : searcher->m_services)
+		{
+			serviceList.push_back(service);
+			p.addItem (serviceList.size(), service->name + " on " + service->host + " (" + service->ip + ":" + String(service->port) + ")");
+		}
+	}
+
+	if(p.getNumItems() == 0)
+	{
+		p.addItem(-1, "No service found", false);
+	}
+
+	int result = p.show();
+
+	if (result <= 0)
+		return nullptr;
+
+	return serviceList[result - 1];
+}
+
+ZeroconfDiscoverComponent::ServiceInfo * ZeroconfDiscoverComponent::showMenuAndGetService(StringRef searcherName)
 {
 	ZeroconfSearcher * s = getSearcher(searcherName);
 
@@ -341,12 +380,28 @@ void ZeroconfDiscoverComponent::buttonClicked(Button* button)
 {
     for (auto const& buttonKV : m_discoveryButtons)
     {
-        if (button == buttonKV.second.get())
+		if (!m_useSeparateServiceSearchers)
+		{
+			ZeroconfDiscoverComponent::ServiceInfo* selectedService = showMenuAndGetService();
+
+			if (onServiceSelected)
+			{
+				if (selectedService)
+					onServiceSelected(getServiceType(selectedService->name), selectedService);
+				else
+					onServiceSelected(ZST_Unkown, nullptr);
+			}
+
+			return;
+		}
+        else if (button == buttonKV.second.get())
         {
             ZeroconfDiscoverComponent::ServiceInfo* selectedService = showMenuAndGetService(buttonKV.first);
             
             if (onServiceSelected)
                 onServiceSelected(getServiceType(buttonKV.first), selectedService);
+
+			return;
         }
     }
 }
