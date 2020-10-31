@@ -159,7 +159,7 @@ static JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPhone(const juce::St
         return KnownDevices::iPhone11ProMax;
     if (deviceDescription == "iPhone 12")
         return KnownDevices::iPhone12;
-    if (deviceDescription == "iPhone 12 Mini")
+    if (deviceDescription == "iPhone 12 mini")
         return KnownDevices::iPhone12Mini;
     if (deviceDescription == "iPhone 12 Pro")
         return KnownDevices::iPhone12Pro;
@@ -558,6 +558,10 @@ static KnownDevices getGenericDeviceType()
     case iPhone11Pro:
     case iPhone11ProMax:
     case iPhoneSE2:
+    case iPhone12:
+    case iPhone12Mini:
+    case iPhone12Pro:
+    case iPhone12ProMax:
         return GenericiPhone;
     case GenericiPad:
     case iPad:
@@ -708,6 +712,10 @@ static int const getDeviceDisplaySlideBarIndent()
     case iPhone11:
     case iPhone11Pro:
     case iPhone11ProMax:
+    case iPhone12:
+    case iPhone12Mini:
+    case iPhone12Pro:
+    case iPhone12ProMax:
         slideBarIndent = 20;
         break;
     case iPad:
