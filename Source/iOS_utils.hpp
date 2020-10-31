@@ -47,6 +47,10 @@ enum KnownDevices
     iPhone11,
     iPhone11Pro,
     iPhone11ProMax,
+    iPhone12,
+    iPhone12Mini,
+    iPhone12Pro,
+    iPhone12ProMax,
     iPhoneSim_i386,
     iPhoneSim_x86_64,
     GenericiPad,
@@ -80,6 +84,7 @@ enum KnownDevices
     iPadmini4,
     iPadmini5,
     iPad2017,
+    iPadAir4,
     iPod1,
     iPod2,
     iPod3,
@@ -152,6 +157,14 @@ static JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPhone(const juce::St
         return KnownDevices::iPhone11Pro;
     if (deviceDescription == "iPhone 11 Pro Max")
         return KnownDevices::iPhone11ProMax;
+    if (deviceDescription == "iPhone 12")
+        return KnownDevices::iPhone12;
+    if (deviceDescription == "iPhone 12 Mini")
+        return KnownDevices::iPhone12Mini;
+    if (deviceDescription == "iPhone 12 Pro")
+        return KnownDevices::iPhone12Pro;
+    if (deviceDescription == "iPhone 12 Pro Max")
+        return KnownDevices::iPhone12ProMax;
     if (deviceDescription == "iPhone1,1") // iPhone
         return KnownDevices::iPhone;
     if (deviceDescription == "iPhone1,2") // iPhone 3G
@@ -224,6 +237,14 @@ static JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPhone(const juce::St
         return KnownDevices::iPhone11ProMax;
     if (deviceDescription == "iPhone12,8") // iPhone SE 2nd Gen
         return KnownDevices::iPhoneSE2;
+    if (deviceDescription == "iPhone13,1") // iPhone 12 Mini
+        return KnownDevices::iPhone12;
+    if (deviceDescription == "iPhone13,2") // iPhone 12
+        return KnownDevices::iPhone12Mini;
+    if (deviceDescription == "iPhone13,3") // iPhone 12 Pro
+        return KnownDevices::iPhone12Pro;
+    if (deviceDescription == "iPhone13,4") // iPhone 12 Pro Max
+        return KnownDevices::iPhone12ProMax;
     if (deviceDescription.contains("iPhone"))
         return KnownDevices::GenericiPhone;
     
@@ -385,7 +406,11 @@ static JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPad(const juce::Stri
     if (deviceDescription == "iPad11,3") // iPad Air 3rd Gen (WiFi)
         return KnownDevices::iPadAir3;
     if (deviceDescription == "iPad11,4") // iPad Air 3rd Gen
-        return KnownDevices::iPadAir3;
+        return KnownDevices::iPadAir3; 
+    if (deviceDescription == "iPad13,1") // iPad air 4th Gen(WiFi)
+        return KnownDevices::iPadAir4;
+    if (deviceDescription == "iPad13,2") // iPad air 4th Gen(WiFi + Celular)
+        return KnownDevices::iPadAir4;
     if (deviceDescription.contains("iPad"))
         return KnownDevices::GenericiPad;
 
@@ -609,6 +634,10 @@ static int const getDeviceDisplayNotchIndent()
     case iPhone11:
     case iPhone11Pro:
     case iPhone11ProMax:
+    case iPhone12:
+    case iPhone12Mini:
+    case iPhone12Pro:
+    case iPhone12ProMax:
     case GenericiPhone:
         displayNotchIndent = 35;
         break;
@@ -631,7 +660,10 @@ static int const getDeviceDisplayNotchIndent()
     case iPadmini3:
     case iPadmini4:
     case iPadmini5:
+    case iPadAir4:
     case GenericiPad:
+        displayNotchIndent = 0;
+        break;
     case GenericMac:
     case GenericPC:
     case GenericAndroidPhone:
