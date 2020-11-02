@@ -51,6 +51,12 @@ void ZeroconfDiscoverComponent::setShowServiceNameLabels(bool show)
         labelKV.second->setVisible(show);
 };
 
+void ZeroconfDiscoverComponent::clearServices()
+{
+	for (int i = ZST_Unkown + 1; i < ZST_Max; ++i)
+		removeDiscoverService(static_cast<ZeroconfServiceType>(i));
+}
+
 void ZeroconfDiscoverComponent::addDiscoverService(ZeroconfServiceType serviceType, unsigned short announcementPort)
 {
     auto serviceName = getServiceName(serviceType);
@@ -72,6 +78,25 @@ void ZeroconfDiscoverComponent::addDiscoverService(ZeroconfServiceType serviceTy
 	}
 
     addSearcher(serviceName, serviceDescriptor, announcementPort);
+}
+
+void ZeroconfDiscoverComponent::removeDiscoverService(ZeroconfServiceType serviceType)
+{
+	auto serviceName = getServiceName(serviceType);
+
+	if (m_discoveryButtons.count(serviceName) > 0)
+	{
+		removeChildComponent(m_discoveryButtons.at(serviceName).get());
+		m_discoveryButtons.erase(serviceName);
+	}
+
+	if (m_serviceNameLabels.count(serviceName) > 0)
+	{
+		removeChildComponent(m_serviceNameLabels.at(serviceName).get());
+		m_serviceNameLabels.erase(serviceName);
+	}
+
+	removeSearcher(serviceName);
 }
 
 void ZeroconfDiscoverComponent::addSearcher(StringRef name, StringRef serviceName, unsigned short announcementPort)

@@ -29,6 +29,7 @@ public:
         ZST_Unkown,
         ZST_OSC,
         ZST_OCA,
+        ZST_Max
     };
 
 	struct ServiceInfo
@@ -63,7 +64,9 @@ public:
     ZeroconfDiscoverComponent(bool useSeparateServiceSearchers, bool showServiceNameLabels = true);
     ~ZeroconfDiscoverComponent();
     
+    void clearServices();
     void addDiscoverService(ZeroconfServiceType serviceType, unsigned short announcementPort = 0);
+    void removeDiscoverService(ZeroconfServiceType serviceType);
     void setShowServiceNameLabels(bool show);
     
     //==============================================================================
