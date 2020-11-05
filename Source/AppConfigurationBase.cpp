@@ -101,9 +101,9 @@ bool AppConfigurationBase::flush(bool includeWatcherUpdate)
 	if (!m_xml)
 		return false;
 
-#ifdef DEBUG
-	debugPrintXmlTree();
-#endif
+//#ifdef DEBUG
+//	debugPrintXmlTree();
+//#endif
 
 	if (!m_xml->writeTo(*m_file.get()))
 		jassertfalse;
