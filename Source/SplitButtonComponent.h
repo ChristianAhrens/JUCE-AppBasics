@@ -27,7 +27,7 @@ public:
     public:
         virtual ~Listener(){};
 
-        virtual void buttonClicked(uint64 buttonId) = 0;
+        virtual void buttonClicked(JUCEAppBasics::SplitButtonComponent* button, uint64 buttonId) = 0;
     };
     
 public:

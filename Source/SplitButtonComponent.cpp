@@ -119,7 +119,7 @@ void SplitButtonComponent::buttonClicked(Button* button)
 
         if(m_listener)
         {
-            m_listener->buttonClicked(buttonID);
+            m_listener->buttonClicked(this, buttonID);
         }
     }
 }
