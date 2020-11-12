@@ -41,29 +41,36 @@ MainComponent::MainComponent()
     addAndMakeVisible(m_splitButton.get());
 
     std::vector<String> svgImages{
-        {BinaryData::fast_rewind24px_svg},
-        {BinaryData::skip_previous24px_svg},
-        {BinaryData::play_arrow24px_svg},
-        {BinaryData::pause24px_svg},
-        {BinaryData::stop24px_svg},
-        {BinaryData::skip_next24px_svg},
-        {BinaryData::fast_forward24px_svg},
-        {BinaryData::find_replace24px_svg},
-        {BinaryData::open_in_full24px_svg},
+        {BinaryData::call_made24px_svg},
+        {BinaryData::call_received24px_svg},
+        {BinaryData::cancel24px_svg},
         {BinaryData::close_fullscreen24px_svg},
         {BinaryData::equalizer24px_svg},
+        {BinaryData::fast_forward24px_svg},
+        {BinaryData::fast_rewind24px_svg},
+        {BinaryData::find_replace24px_svg},
+        {BinaryData::folder_open24px_svg},
+        {BinaryData::grain24px_svg},
         {BinaryData::graphic_eq24px_svg},
         {BinaryData::grid_on24px_svg},
+        {BinaryData::input24px_svg},
         {BinaryData::mediation24px_svg},
+        {BinaryData::open_in_full24px_svg},
+        {BinaryData::open_in_new24px_svg},
+        {BinaryData::outbond24px_svg},
+        {BinaryData::pause24px_svg},
+        {BinaryData::play_arrow24px_svg},
         {BinaryData::radio_button_checked24px_svg},
         {BinaryData::radio_button_unchecked24px_svg},
         {BinaryData::settings24px_svg},
         {BinaryData::show_chart24px_svg},
+        {BinaryData::skip_next24px_svg},
+        {BinaryData::skip_previous24px_svg},
+        {BinaryData::stop24px_svg},
         {BinaryData::track_changes24px_svg},
-        {BinaryData::waves24px_svg},
-        {BinaryData::folder_open24px_svg},
-        {BinaryData::grain24px_svg},
-        {BinaryData::vertical_split24px_svg} };
+        {BinaryData::vertical_split24px_svg},
+        {BinaryData::volume_off24px_svg},
+        {BinaryData::waves24px_svg}, };
 
     for(auto imageName : svgImages)
     {
@@ -126,7 +133,7 @@ void MainComponent::resized()
 
         Grid buttonGrid;
         buttonGrid.templateRows = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
-        buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
+        buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
         for (auto const& button : m_buttons)
         {
             buttonGrid.items.add(GridItem(button.get()).withMargin(juce::GridItem::Margin(1, 1, 1, 1)));

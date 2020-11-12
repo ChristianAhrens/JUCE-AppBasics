@@ -6,6 +6,11 @@
   <MAINGROUP id="wsXNhp" name="AppBasicsDemo">
     <GROUP id="{3482B756-6423-A110-A5E5-7E6AADE98E41}" name="Resources">
       <GROUP id="{E6327702-ADFE-25DB-51B3-D943A20FA2E6}" name="Images">
+        <FILE id="ANlbjk" name="call_made-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/call_made-24px.svg"/>
+        <FILE id="W0Dvu6" name="call_received-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/call_received-24px.svg"/>
+        <FILE id="ovhgPb" name="cancel-24px.svg" compile="0" resource="1" file="../Resources/Images/cancel-24px.svg"/>
         <FILE id="LgCA5K" name="close_fullscreen-24px.svg" compile="0" resource="1"
               file="../Resources/Images/close_fullscreen-24px.svg"/>
         <FILE id="D3tjjx" name="equalizer-24px.svg" compile="0" resource="1"
@@ -23,10 +28,15 @@
               file="../Resources/Images/graphic_eq-24px.svg"/>
         <FILE id="phRJfY" name="grid_on-24px.svg" compile="0" resource="1"
               file="../Resources/Images/grid_on-24px.svg"/>
+        <FILE id="HWJuZT" name="input-24px.svg" compile="0" resource="1" file="../Resources/Images/input-24px.svg"/>
         <FILE id="O2Ct6t" name="mediation-24px.svg" compile="0" resource="1"
               file="../Resources/Images/mediation-24px.svg"/>
         <FILE id="r7bC6d" name="open_in_full-24px.svg" compile="0" resource="1"
               file="../Resources/Images/open_in_full-24px.svg"/>
+        <FILE id="s0Zu13" name="open_in_new-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/open_in_new-24px.svg"/>
+        <FILE id="a8CFhR" name="outbond-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/outbond-24px.svg"/>
         <FILE id="gDRh21" name="pause-24px.svg" compile="0" resource="1" file="../Resources/Images/pause-24px.svg"/>
         <FILE id="Bl75my" name="play_arrow-24px.svg" compile="0" resource="1"
               file="../Resources/Images/play_arrow-24px.svg"/>
@@ -47,6 +57,8 @@
               file="../Resources/Images/track_changes-24px.svg"/>
         <FILE id="gEjTUS" name="vertical_split-24px.svg" compile="0" resource="1"
               file="../Resources/Images/vertical_split-24px.svg"/>
+        <FILE id="CSHQVX" name="volume_off-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/volume_off-24px.svg"/>
         <FILE id="ypSyIz" name="waves-24px.svg" compile="0" resource="1" file="../Resources/Images/waves-24px.svg"/>
       </GROUP>
     </GROUP>
