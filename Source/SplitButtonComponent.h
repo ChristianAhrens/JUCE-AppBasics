@@ -44,6 +44,11 @@ public:
     const uint64 getButtonDown();
     const String getButtonDownText();
 
+    void setButtonEnabled(const uint64 buttonId, bool enabled);
+    void setButtonEnabled(const String& buttonText, bool enabled);
+    const bool getButtonEnabled(const uint64 buttonId);
+    const bool getButtonEnabled(const String& buttonText);
+
     void paint (Graphics&) override;
     void resized() override;
     

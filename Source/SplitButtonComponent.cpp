@@ -88,6 +88,42 @@ const String SplitButtonComponent::getButtonDownText()
     return "";
 }
 
+void SplitButtonComponent::setButtonEnabled(const uint64 buttonId, bool enabled)
+{
+    if (m_buttons.count(buttonId) > 0)
+        m_buttons[buttonId]->setEnabled(enabled);
+}
+
+void SplitButtonComponent::setButtonEnabled(const String& buttonText, bool enabled)
+{
+    for (const std::pair<const uint64, std::unique_ptr<TextButton>>& p : m_buttons)
+    {
+        if (p.second->getButtonText() == buttonText)
+            p.second->setEnabled(enabled);
+    }
+}
+
+const bool SplitButtonComponent::getButtonEnabled(const uint64 buttonId)
+{
+    if (m_buttons.count(buttonId) > 0)
+        return m_buttons[buttonId]->isEnabled();
+    else
+        return false;
+}
+
+const bool SplitButtonComponent::getButtonEnabled(const String& buttonText)
+{
+    for (const std::pair<const uint64, std::unique_ptr<TextButton>>& p : m_buttons)
+    {
+        if (p.second->getButtonText() == buttonText)
+            return p.second->isEnabled();
+        else
+            return false;
+    }
+
+    return false;
+}
+
 void SplitButtonComponent::paint (Graphics& g)
 {
 	Component::paint(g);
