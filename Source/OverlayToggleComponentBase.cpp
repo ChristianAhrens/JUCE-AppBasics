@@ -10,7 +10,7 @@
 
 #include "OverlayToggleComponentBase.h"
 
-#include "Image_utils.hpp"
+#include "Image_utils.h"
 
 namespace JUCEAppBasics
 {

@@ -1,17 +1,15 @@
-#pragma once
-
-#include <JuceHeader.h>
+#include "Image_utils.h"
 
 namespace JUCEAppBasics
 {
 namespace Image_utils
 {
     
-static void getDrawableButtonImages(juce::String BinaryDataString, 
+void getDrawableButtonImages(juce::String BinaryDataString, 
     std::unique_ptr<juce::Drawable> &NormalImage, std::unique_ptr<juce::Drawable> &OverImage, std::unique_ptr<juce::Drawable> &DownImage, std::unique_ptr<juce::Drawable>& DisabledImage,
     std::unique_ptr<juce::Drawable> &NormalOnImage, std::unique_ptr<juce::Drawable> &OverOnImage, std::unique_ptr<juce::Drawable> &DownOnImage, std::unique_ptr<juce::Drawable>& DisabledOnImage,
-    Colour normalColour = Colours::white, Colour overColour = Colours::lightgrey, Colour downColour = Colours::grey, Colour disabledColour = Colours::grey,
-    Colour normalOnColour = Colours::white, Colour overOnColour = Colours::white, Colour downOnColour = Colours::white, Colour disabledOnColour = Colours::white)
+    Colour normalColour, Colour overColour, Colour downColour, Colour disabledColour,
+    Colour normalOnColour, Colour overOnColour, Colour downOnColour, Colour disabledOnColour)
 {
     std::unique_ptr<XmlElement> svg_xml = XmlDocument::parse(BinaryDataString);
 
@@ -36,9 +34,9 @@ static void getDrawableButtonImages(juce::String BinaryDataString,
     DisabledOnImage->replaceColour(Colours::black, disabledOnColour);
 }
 
-static void getDrawableButtonImages(juce::String BinaryDataString,
+void getDrawableButtonImages(juce::String BinaryDataString,
     std::unique_ptr<juce::Drawable>& NormalImage, std::unique_ptr<juce::Drawable>& OverImage, std::unique_ptr<juce::Drawable>& DownImage, std::unique_ptr<juce::Drawable>& DisabledImage,
-    Colour normalColour = Colours::white, Colour overColour = Colours::lightgrey, Colour downColour = Colours::grey, Colour disabledColour = Colours::grey)
+    Colour normalColour, Colour overColour, Colour downColour, Colour disabledColour)
 {
     std::unique_ptr<XmlElement> svg_xml = XmlDocument::parse(BinaryDataString);
 

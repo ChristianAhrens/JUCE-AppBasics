@@ -109,8 +109,10 @@
               file="../Source/CustomLookAndFeel.cpp"/>
         <FILE id="WDdQfY" name="CustomLookAndFeel.h" compile="0" resource="0"
               file="../Source/CustomLookAndFeel.h"/>
-        <FILE id="hUyPry" name="Image_utils.hpp" compile="0" resource="0" file="../Source/Image_utils.hpp"/>
-        <FILE id="I7XyBn" name="iOS_utils.hpp" compile="0" resource="0" file="../Source/iOS_utils.hpp"/>
+        <FILE id="EZv5l0" name="Image_utils.cpp" compile="1" resource="0" file="../Source/Image_utils.cpp"/>
+        <FILE id="rPtR5y" name="Image_utils.h" compile="0" resource="0" file="../Source/Image_utils.h"/>
+        <FILE id="SzhlUq" name="iOS_utils.cpp" compile="1" resource="0" file="../Source/iOS_utils.cpp"/>
+        <FILE id="fjHBgW" name="iOS_utils.h" compile="0" resource="0" file="../Source/iOS_utils.h"/>
         <FILE id="HmsVkJ" name="OverlayToggleComponentBase.cpp" compile="1"
               resource="0" file="../Source/OverlayToggleComponentBase.cpp"/>
         <FILE id="cJwcrP" name="OverlayToggleComponentBase.h" compile="0" resource="0"

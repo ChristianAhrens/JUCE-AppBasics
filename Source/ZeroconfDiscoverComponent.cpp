@@ -10,7 +10,7 @@
 
 #include "ZeroconfDiscoverComponent.h"
 
-#include "Image_utils.hpp"
+#include "Image_utils.h"
 
 #ifdef JUCE_WINDOWS
 #include <Winsock2.h>

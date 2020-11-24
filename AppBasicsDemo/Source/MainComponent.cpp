@@ -10,8 +10,8 @@
 
 #include "MainComponent.h"
 
-#include "../../Source/iOS_utils.hpp"
-#include "../../Source/Image_utils.hpp"
+#include "../../Source/iOS_utils.h"
+#include "../../Source/Image_utils.h"
 
 namespace AppBasicsDemo
 {
