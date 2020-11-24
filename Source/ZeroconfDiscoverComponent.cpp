@@ -146,7 +146,7 @@ ZeroconfDiscoverComponent::ServiceInfo* ZeroconfDiscoverComponent::showMenuAndGe
 		for (auto& service : searcher->m_services)
 		{
 			serviceList.push_back(service);
-			p.addItem (serviceList.size(), service->name + " on " + service->host + " (" + service->ip + ":" + String(service->port) + ")");
+			p.addItem(static_cast<int>(serviceList.size()), service->name + " on " + service->host + " (" + service->ip + ":" + String(service->port) + ")");
 		}
 	}
 

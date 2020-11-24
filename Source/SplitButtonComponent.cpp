@@ -34,7 +34,7 @@ void SplitButtonComponent::addListener(Listener *l)
 
 uint64 SplitButtonComponent::addButton(const String& buttonText)
 {
-    uint64 buttonID = getNextButtonID();
+    std::uint64_t buttonID = getNextButtonID();
 
     m_buttons[buttonID] = std::make_unique<TextButton>(buttonText);
     addAndMakeVisible(m_buttons[buttonID].get(), dontSendNotification);
@@ -52,7 +52,7 @@ void SplitButtonComponent::addButtons(const StringArray& buttonTexts)
 
 void SplitButtonComponent::setButtonDown(const uint64 buttonId)
 {
-    for (const std::pair<const uint64, std::unique_ptr<TextButton>>& p : m_buttons)
+    for (auto const& p : m_buttons)
     {
         p.second->setToggleState(p.first == buttonId, dontSendNotification);
     }
@@ -60,7 +60,7 @@ void SplitButtonComponent::setButtonDown(const uint64 buttonId)
 
 void SplitButtonComponent::setButtonDown(const String& buttonText)
 {
-    for (const std::pair<const uint64, std::unique_ptr<TextButton>>& p : m_buttons)
+    for (auto const& p : m_buttons)
     {
         p.second->setToggleState(p.second->getButtonText() == buttonText, dontSendNotification);
     }
@@ -68,7 +68,7 @@ void SplitButtonComponent::setButtonDown(const String& buttonText)
 
 const uint64 SplitButtonComponent::getButtonDown()
 {
-    for (const std::pair<const uint64, std::unique_ptr<TextButton>>& p : m_buttons)
+    for (auto const& p : m_buttons)
     {
         if (p.second->getToggleState())
             return p.first;
@@ -79,7 +79,7 @@ const uint64 SplitButtonComponent::getButtonDown()
 
 const String SplitButtonComponent::getButtonDownText()
 {
-    for (const std::pair<const uint64, std::unique_ptr<TextButton>>& p : m_buttons)
+    for (auto const& p : m_buttons)
     {
         if (p.second->getToggleState())
             return p.second->getButtonText();
@@ -88,7 +88,7 @@ const String SplitButtonComponent::getButtonDownText()
     return "";
 }
 
-void SplitButtonComponent::setButtonEnabled(const uint64 buttonId, bool enabled)
+void SplitButtonComponent::setButtonEnabled(const std::uint64_t buttonId, bool enabled)
 {
     if (m_buttons.count(buttonId) > 0)
         m_buttons[buttonId]->setEnabled(enabled);
@@ -96,29 +96,27 @@ void SplitButtonComponent::setButtonEnabled(const uint64 buttonId, bool enabled)
 
 void SplitButtonComponent::setButtonEnabled(const String& buttonText, bool enabled)
 {
-    for (const std::pair<const uint64, std::unique_ptr<TextButton>>& p : m_buttons)
+    for (auto const& p : m_buttons)
     {
         if (p.second->getButtonText() == buttonText)
             p.second->setEnabled(enabled);
     }
 }
 
-const bool SplitButtonComponent::getButtonEnabled(const uint64 buttonId)
+bool SplitButtonComponent::getButtonEnabled(std::uint64_t buttonId) const
 {
-    if (m_buttons.count(buttonId) > 0)
-        return m_buttons[buttonId]->isEnabled();
+    if (m_buttons.count(buttonId) > 0 && m_buttons.at(buttonId))
+        return m_buttons.at(buttonId)->isEnabled();
     else
         return false;
 }
 
-const bool SplitButtonComponent::getButtonEnabled(const String& buttonText)
+bool SplitButtonComponent::getButtonEnabled(const String& buttonText) const
 {
-    for (const std::pair<const uint64, std::unique_ptr<TextButton>>& p : m_buttons)
+    for (auto const& p : m_buttons)
     {
-        if (p.second->getButtonText() == buttonText)
+        if (p.second && p.second->getButtonText() == buttonText)
             return p.second->isEnabled();
-        else
-            return false;
     }
 
     return false;
@@ -133,7 +131,7 @@ void SplitButtonComponent::resized()
 {
     FlexBox fb;
     fb.flexDirection = FlexBox::Direction::row;
-    for (const std::pair<const uint64, std::unique_ptr<TextButton>>& p : m_buttons)
+    for (auto const& p : m_buttons)
     {
         fb.items.add(FlexItem(*p.second.get()).withFlex(1));
     }
@@ -144,11 +142,11 @@ void SplitButtonComponent::buttonClicked(Button* button)
 {
     if (button)
     {
-        uint64 buttonID = m_firstButtonID;
-        for (auto const& buttonKV : m_buttons)
+        std::uint64_t buttonID = m_firstButtonID;
+        for (auto const& p : m_buttons)
         {
-            if (buttonKV.second.get() == button)
-                buttonID = buttonKV.first;
+            if (p.second.get() == button)
+                buttonID = p.first;
         }
 
         setButtonDown(buttonID);
