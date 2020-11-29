@@ -223,8 +223,11 @@ ZeroconfDiscoverComponent::ZeroconfSearcher::ZeroconfSearcher(StringRef name, St
 	m_serviceName(serviceName),
 	m_servus(String(serviceName).toStdString())
 {
-    if (announcementPort != 0)
-        m_servus.announce(announcementPort, JUCEApplication::getInstance()->getApplicationName().toStdString());
+	if (announcementPort != 0)
+	{
+		auto announcementResult = m_servus.announce(announcementPort, JUCEApplication::getInstance()->getApplicationName().toStdString());
+		DBG(String("Servus announcement of ") + serviceName + String(" on ") + String(announcementPort) + String(" returned ") + String(announcementResult.getCode()));
+	}
 }
 
 ZeroconfDiscoverComponent::ZeroconfSearcher::~ZeroconfSearcher()
