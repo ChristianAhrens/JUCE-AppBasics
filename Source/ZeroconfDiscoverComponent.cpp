@@ -165,25 +165,29 @@ ZeroconfDiscoverComponent::ServiceInfo* ZeroconfDiscoverComponent::showMenuAndGe
 
 ZeroconfDiscoverComponent::ServiceInfo * ZeroconfDiscoverComponent::showMenuAndGetService(StringRef searcherName)
 {
-	ZeroconfSearcher * s = getSearcher(searcherName);
+	auto searcher = getSearcher(searcherName);
 
-	if (s == nullptr)
+	if (searcher == nullptr)
 	{
 		DBG("No searcher found for service " << searcherName);
 		return nullptr;
 	}
 
 	PopupMenu p;
-	if (s->m_services.isEmpty())
+	if (searcher->m_services.isEmpty())
 	{
 		p.addItem(-1, "No service found", false);
 	}
 	else
 	{
-		for (int i = 0; i < s->m_services.size(); ++i)
+		for (int i = 0; i < searcher->m_services.size(); ++i)
 		{
-			ServiceInfo * info = s->m_services[i];
-			p.addItem(1 + i, info->name + " on " + info->host + " (" + info->ip + ":" + String(info->port) + ")");
+			auto info = searcher->m_services[i];
+            String serviceItemString = info->name + " on " + (info->host.isEmpty() ? info->ip : info->host);
+#ifdef DEBUG
+            serviceItemString += " (" + info->ip + ":" + String(info->port) + ")";
+#endif
+			p.addItem(1 + i, serviceItemString);
 		}
 	}
 
@@ -192,7 +196,7 @@ ZeroconfDiscoverComponent::ServiceInfo * ZeroconfDiscoverComponent::showMenuAndG
 	if (result <= 0)
 		return nullptr;
 	
-	return s->m_services[result - 1];
+	return searcher->m_services[result - 1];
 }
 
 void ZeroconfDiscoverComponent::search()
