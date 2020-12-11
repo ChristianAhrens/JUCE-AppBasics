@@ -55,10 +55,15 @@ String AppConfigurationBase::getDefaultConfigFilePath() noexcept
 
 bool AppConfigurationBase::isValid()
 {
-	if (!m_xml)
+	return isValid(m_xml);
+}
+
+bool AppConfigurationBase::isValid(const std::unique_ptr<XmlElement>& xmlConfiguration)
+{
+	if (!xmlConfiguration)
 		return false;
 
-	if (!m_xml->hasTagName(JUCEApplication::getInstance()->getApplicationName()))
+	if (!xmlConfiguration->hasTagName(JUCEApplication::getInstance()->getApplicationName()))
 		return false;
 
 	return true;

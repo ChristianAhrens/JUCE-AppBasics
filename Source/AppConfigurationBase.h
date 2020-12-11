@@ -59,6 +59,7 @@ public:
 	static String getDefaultConfigFilePath() noexcept;
 
 	virtual bool isValid();
+	static bool isValid(const std::unique_ptr<XmlElement>& xmlConfiguration);
 
 	void addDumper(AppConfigurationBase::Dumper* d);
 	void triggerConfigurationDump(bool includeWatcherUpdate = true);
