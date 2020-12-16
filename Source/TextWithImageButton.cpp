@@ -65,19 +65,22 @@ void TextWithImageButton::paint(Graphics& g)
     const int yIndent = jmin(4, proportionOfHeight(0.3f));
     const int cornerSize = jmin(getHeight(), getWidth()) / 2;
 
-    const int fontHeight = roundToInt(font.getHeight() * 0.6f);
-    const int leftIndent = jmin(fontHeight, 2 + cornerSize / (isConnectedOnLeft() ? 4 : 2));
-    const int rightIndent = jmin(fontHeight, 2 + cornerSize / (isConnectedOnRight() ? 4 : 2));
-    const int textWidth = getWidth() - leftIndent - rightIndent;
+    auto fontHeight = roundToInt(font.getHeight() * 0.6f);
+    auto leftIndent = jmin(fontHeight, 2 + cornerSize / (isConnectedOnLeft() ? 4 : 2));
+    auto rightIndent = jmin(fontHeight, 2 + cornerSize / (isConnectedOnRight() ? 4 : 2));
+    auto textWidth = getWidth() - leftIndent - rightIndent;
 
     Justification::Flags textPosition;
     switch (m_imagePosition.getFlags())
     {
     case Justification::centredRight:
         textPosition = Justification::centredLeft;
+        textWidth -= getImageBounds().toNearestInt().getWidth();
         break;
     case Justification::centredLeft:
         textPosition = Justification::centredRight;
+        leftIndent += getImageBounds().toNearestInt().getWidth();
+        textWidth -= getImageBounds().toNearestInt().getWidth();
         break;
     default:
         textPosition = Justification::centred;
