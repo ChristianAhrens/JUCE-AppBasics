@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 
-#include <Servus/servus.h>
+#include <servus/servus.h>
 
 namespace JUCEAppBasics
 {
