@@ -1,0 +1,3 @@
+[submodule "submodules/Servus"]
+	path = submodules/Servus
+	url = https://github.com/ChristianAhrens/Servus

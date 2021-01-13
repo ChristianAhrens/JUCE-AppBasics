@@ -4,6 +4,41 @@
               companyName="Christian Ahrens" companyEmail="christianahrens@me.com"
               companyCopyright="2020" jucerFormatVersion="1" defines="SERVUS_STATIC">
   <MAINGROUP id="wsXNhp" name="AppBasicsDemo">
+    <GROUP id="{A7277E36-AB94-4408-FC2B-39F558038811}" name="submodules">
+      <GROUP id="{660A873D-8777-01FC-D961-61E86545E85A}" name="Servus">
+        <FILE id="FydoCK" name="api.h" compile="0" resource="0" file="../submodules/Servus/servus/api.h"/>
+        <FILE id="I9UYHm" name="defines.h" compile="0" resource="0" file="../submodules/Servus/servus/defines.h"/>
+        <FILE id="ETCZNp" name="definesDarwin.h" compile="0" resource="0" file="../submodules/Servus/servus/definesDarwin.h"/>
+        <FILE id="AfkKIr" name="definesWin32.h" compile="0" resource="0" file="../submodules/Servus/servus/definesWin32.h"/>
+        <FILE id="dgvfes" name="listener.h" compile="0" resource="0" file="../submodules/Servus/servus/listener.h"/>
+        <FILE id="XtJv9U" name="result.h" compile="0" resource="0" file="../submodules/Servus/servus/result.h"/>
+        <FILE id="DDIPDD" name="serializable.cpp" compile="1" resource="0"
+              file="../submodules/Servus/servus/serializable.cpp"/>
+        <FILE id="xoQTMs" name="serializable.h" compile="0" resource="0" file="../submodules/Servus/servus/serializable.h"/>
+        <FILE id="VAjMJ6" name="servus.cpp" compile="1" resource="0" file="../submodules/Servus/servus/servus.cpp"/>
+        <FILE id="aI0xat" name="servus.h" compile="0" resource="0" file="../submodules/Servus/servus/servus.h"/>
+        <FILE id="KeICZK" name="types.h" compile="0" resource="0" file="../submodules/Servus/servus/types.h"/>
+        <FILE id="Of9H6b" name="uint128_t.cpp" compile="1" resource="0" file="../submodules/Servus/servus/uint128_t.cpp"/>
+        <FILE id="Nq8dZU" name="uint128_t.h" compile="0" resource="0" file="../submodules/Servus/servus/uint128_t.h"/>
+        <FILE id="YmtwCj" name="uri.cpp" compile="1" resource="0" file="../submodules/Servus/servus/uri.cpp"/>
+        <FILE id="bgwGPp" name="uri.h" compile="0" resource="0" file="../submodules/Servus/servus/uri.h"/>
+        <FILE id="i0A2Dl" name="version.cpp" compile="1" resource="0" file="../submodules/Servus/servus/version.cpp"/>
+        <FILE id="lkBzYb" name="version.h" compile="0" resource="0" file="../submodules/Servus/servus/version.h"/>
+        <GROUP id="{234E1B5B-BD5D-3280-E846-9860066AA879}" name="none">
+          <FILE id="PSJteE" name="servus.h" compile="0" resource="0" file="../submodules/Servus/servus/none/servus.h"/>
+        </GROUP>
+        <GROUP id="{DF248749-A70C-0C59-9E71-55EC0C1CDEFF}" name="md5">
+          <FILE id="Qh1F19" name="md5.cc" compile="1" resource="0" file="../submodules/Servus/servus/md5/md5.cc"/>
+          <FILE id="YlIMgc" name="md5.hh" compile="0" resource="0" file="../submodules/Servus/servus/md5/md5.hh"/>
+        </GROUP>
+        <GROUP id="{62780484-E23F-FB31-3ADC-7DAAB6063000}" name="dnssd">
+          <FILE id="AoWtpi" name="servus.h" compile="0" resource="0" file="../submodules/Servus/servus/dnssd/servus.h"/>
+        </GROUP>
+        <GROUP id="{443DF99C-C0C5-0237-E858-369842D38ACA}" name="avahi">
+          <FILE id="X1J7YR" name="servus.h" compile="0" resource="0" file="../submodules/Servus/servus/avahi/servus.h"/>
+        </GROUP>
+      </GROUP>
+    </GROUP>
     <GROUP id="{3482B756-6423-A110-A5E5-7E6AADE98E41}" name="Resources">
       <GROUP id="{E6327702-ADFE-25DB-51B3-D943A20FA2E6}" name="Images">
         <FILE id="ANlbjk" name="call_made-24px.svg" compile="0" resource="1"
@@ -65,42 +100,6 @@
     </GROUP>
     <GROUP id="{45B42ABC-4AC3-D8D9-5073-D1AEE8199147}" name="Sources">
       <GROUP id="{E593B705-C9A2-5B5A-DD31-76E78DD47AEA}" name="AppBasics">
-        <GROUP id="{660A873D-8777-01FC-D961-61E86545E85A}" name="Servus">
-          <GROUP id="{234E1B5B-BD5D-3280-E846-9860066AA879}" name="none">
-            <FILE id="Bfoylu" name="servus.h" compile="0" resource="0" file="../Source/Servus/none/servus.h"/>
-          </GROUP>
-          <GROUP id="{8C927DEF-3394-FA73-8748-400C8BA46CB0}" name="test">
-            <FILE id="IZKoFP" name="servus.h" compile="0" resource="0" file="../Source/Servus/test/servus.h"/>
-          </GROUP>
-          <GROUP id="{DF248749-A70C-0C59-9E71-55EC0C1CDEFF}" name="md5">
-            <FILE id="poltcc" name="md5.cc" compile="1" resource="0" file="../Source/Servus/md5/md5.cc"/>
-            <FILE id="OXQJGS" name="md5.hh" compile="0" resource="0" file="../Source/Servus/md5/md5.hh"/>
-          </GROUP>
-          <GROUP id="{62780484-E23F-FB31-3ADC-7DAAB6063000}" name="dnssd">
-            <FILE id="epFUwb" name="servus.h" compile="0" resource="0" file="../Source/Servus/dnssd/servus.h"/>
-          </GROUP>
-          <GROUP id="{443DF99C-C0C5-0237-E858-369842D38ACA}" name="avahi">
-            <FILE id="VFXNhf" name="servus.h" compile="0" resource="0" file="../Source/Servus/avahi/servus.h"/>
-          </GROUP>
-          <FILE id="Gwq60c" name="api.h" compile="0" resource="0" file="../Source/Servus/api.h"/>
-          <FILE id="pqhMaX" name="defines.h" compile="0" resource="0" file="../Source/Servus/defines.h"/>
-          <FILE id="Cp7lzr" name="definesDarwin.h" compile="0" resource="0" file="../Source/Servus/definesDarwin.h"/>
-          <FILE id="KrU0Zp" name="definesWin32.h" compile="0" resource="0" file="../Source/Servus/definesWin32.h"/>
-          <FILE id="xWQvAC" name="listener.h" compile="0" resource="0" file="../Source/Servus/listener.h"/>
-          <FILE id="r7cZx4" name="result.h" compile="0" resource="0" file="../Source/Servus/result.h"/>
-          <FILE id="TZxjx4" name="serializable.cpp" compile="1" resource="0"
-                file="../Source/Servus/serializable.cpp"/>
-          <FILE id="Yengvr" name="serializable.h" compile="0" resource="0" file="../Source/Servus/serializable.h"/>
-          <FILE id="QnAwPc" name="servus.cpp" compile="1" resource="0" file="../Source/Servus/servus.cpp"/>
-          <FILE id="Jf5A4g" name="servus.h" compile="0" resource="0" file="../Source/Servus/servus.h"/>
-          <FILE id="OzVGwW" name="types.h" compile="0" resource="0" file="../Source/Servus/types.h"/>
-          <FILE id="eFUJSN" name="uint128_t.cpp" compile="1" resource="0" file="../Source/Servus/uint128_t.cpp"/>
-          <FILE id="JyQFMG" name="uint128_t.h" compile="0" resource="0" file="../Source/Servus/uint128_t.h"/>
-          <FILE id="eleYWy" name="uri.cpp" compile="1" resource="0" file="../Source/Servus/uri.cpp"/>
-          <FILE id="x9jaKd" name="uri.h" compile="0" resource="0" file="../Source/Servus/uri.h"/>
-          <FILE id="y284A4" name="version.cpp" compile="1" resource="0" file="../Source/Servus/version.cpp"/>
-          <FILE id="JeZAJt" name="version.h" compile="0" resource="0" file="../Source/Servus/version.h"/>
-        </GROUP>
         <FILE id="IQDEE3" name="AppConfigurationBase.cpp" compile="1" resource="0"
               file="../Source/AppConfigurationBase.cpp"/>
         <FILE id="bM2wOQ" name="AppConfigurationBase.h" compile="0" resource="0"
@@ -145,9 +144,9 @@
                appSandbox="1" appSandboxOptions="com.apple.security.device.microphone,com.apple.security.network.client,com.apple.security.network.server"
                hardenedRuntimeOptions="com.apple.security.device.audio-input">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../Source/"/>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../submodules/Servus/"/>
         <CONFIGURATION isDebug="0" name="Release" customXcodeFlags="INSTALL_PATH = &quot;/Applications&quot;"
-                       headerPath="../../../Source/"/>
+                       headerPath="../../../submodules/Servus/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../../../../Applications/JUCE/modules"/>
@@ -169,8 +168,8 @@
     <XCODE_IPHONE targetFolder="Builds/iOS" smallIcon="y9CNR0" bigIcon="y9CNR0"
                   microphonePermissionNeeded="1" iosDevelopmentTeamID="SB7Q3PP4FQ">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../Source/"/>
-        <CONFIGURATION isDebug="0" name="Release" headerPath="../../../Source/"/>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../submodules/Servus/"/>
+        <CONFIGURATION isDebug="0" name="Release" headerPath="../../../submodules/Servus/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../../../../Applications/JUCE/modules"/>
@@ -191,8 +190,8 @@
     </XCODE_IPHONE>
     <VS2019 targetFolder="Builds/VisualStudio2019" smallIcon="y9CNR0" bigIcon="y9CNR0">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../Source/"/>
-        <CONFIGURATION isDebug="0" name="Release" headerPath="../../../Source/"/>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../submodules/Servus/"/>
+        <CONFIGURATION isDebug="0" name="Release" headerPath="../../../submodules/Servus/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../../../../Applications/JUCE/modules"/>
