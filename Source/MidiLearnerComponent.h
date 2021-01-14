@@ -17,35 +17,14 @@ namespace JUCEAppBasics
 
 class MidiLearnerComponent :
     public Component,
-    public Button::Listener
+    public Button::Listener,
+    private MidiInputCallback,
+    private MessageListener
 {
 public:
     struct MidiAssi
     {
-        String _undef;
-    };
-
-    class MidiAssiLearningPopupMenu : public PopupMenu
-    {
-    public:
-        MidiAssiLearningPopupMenu()
-        {
-        }
-
-        ~MidiAssiLearningPopupMenu()
-        {
-        }
-
-        MidiAssi show(int itemIDThatMustBeVisible = 0,
-            int minimumWidth = 0,
-            int maximumNumColumns = 0,
-            int standardItemHeight = 0,
-            ModalComponentManager::Callback* callback = nullptr)
-        {
-            auto itemId = PopupMenu::show(itemIDThatMustBeVisible, minimumWidth, maximumNumColumns, standardItemHeight, callback);
-
-            return MidiAssi();
-        }
+        String _rawMsg;
     };
 
 public:
@@ -57,15 +36,44 @@ public:
 
     //==============================================================================
     void buttonClicked(Button*) override;
+    
+    //==============================================================================
+    void handleIncomingMidiMessage(juce::MidiInput* source, const juce::MidiMessage& message) override;
+    
+    //==============================================================================
+    void handleMessage(const Message& msg) override;
 
     //==============================================================================
     std::function<void(MidiAssi)> onMidiAssiSet;
+    
+    //==============================================================================
+    void setSelectedDeviceIdx(int deviceIdx);
+    void setCurrentMidiAssi(MidiAssi currentAssi);
 
 private:
-    MidiAssi showMenuAndGetMidiAssi();
+    class CallbackMidiMessage : public Message
+    {
+    public:
+        /**
+        * Constructor with default initialization of message and source.
+        * @param m    The midi message to handle.
+        */
+        CallbackMidiMessage(const juce::MidiMessage& m) : _message(m) {}
+
+        juce::MidiMessage _message;
+    };
+    
+private:
+    void showMenu();
+    void handlePopupResult(int resultingAssiIdx);
 
     std::unique_ptr<TextEditor>         m_currentMidiAssiEdit;
     std::unique_ptr<DrawableButton>     m_learnButton;
+    int                                 m_deviceIdx{ -1 };
+    PopupMenu                           m_popup;
+    std::map<int, MidiAssi>             m_learnedAssiMap;
+    std::unique_ptr<AudioDeviceManager> m_deviceManager;
+    MidiAssi                            m_currentMidiAssi;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiLearnerComponent)
 };
