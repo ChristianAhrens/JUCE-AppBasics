@@ -30,6 +30,14 @@ public:
     bool operator<(const MidiCommandRangeAssignment& rhs) const;
 	bool operator>(const MidiCommandRangeAssignment& rhs) const;
     MidiCommandRangeAssignment& operator=(const MidiCommandRangeAssignment& rhs);
+    
+    bool isNoteOnCommand() const;
+    bool isNoteOffCommand() const;
+    bool isProgramChangeCommand() const;
+    bool isPitchCommand() const;
+    bool isAftertouchCommand() const;
+    bool isControllerCommand() const;
+    bool isChannelPressureCommand() const;
 
     juce::String getCommandDescription() const;
     juce::String getRangeDescription() const;
@@ -38,6 +46,8 @@ public:
     const std::vector<std::uint8_t>& getCommandData() const;
     static std::vector<std::uint8_t> getCommandData(const juce::MidiMessage& m);
     void setCommandData(const juce::MidiMessage& m);
+    int getCommandDataExpectedBytes() const;
+    static int getCommandDataExpectedBytes(const juce::MidiMessage& m);
 
     const juce::Range<int>& getValueRange() const;
     void setValueRange(const juce::Range<int>& r);

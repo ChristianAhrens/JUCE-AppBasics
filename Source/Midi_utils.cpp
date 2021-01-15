@@ -72,51 +72,98 @@ MidiCommandRangeAssignment& MidiCommandRangeAssignment::operator=(const MidiComm
 
 juce::String MidiCommandRangeAssignment::getCommandDescription() const
 {
-    if (m_commandData.size() > 1)
-    {
-        // note on
-        if ((m_commandData[0] & 0xf0) == 0x90)
-            return "NoteOn" + String(m_commandData[1]);
+    if (isNoteOnCommand() && (m_commandData.size() > 1))
+        return "NoteOn" + String(m_commandData[1]);
 
-        // note off
-        if ((m_commandData[0] & 0xf0) == 0x80)
-            return "NoteOff" + String(m_commandData[1]);
+    else if (isNoteOffCommand() && (m_commandData.size() > 1))
+        return "NoteOff" + String(m_commandData[1]);
 
-        // program change
-        if ((m_commandData[0] & 0xf0) == 0xc0)
-            return "ProgChange" + String(m_commandData[1]);
+    else if (isProgramChangeCommand() && (m_commandData.size() > 1))
+        return "ProgChange" + String(m_commandData[1]);
 
-        // pitch wheel
-        if ((m_commandData[0] & 0xf0) == 0xe0)
-            return "Pitch";
-        //// pitch wheel value
-        //data[1] | (data[2] << 7)
+    else if (isAftertouchCommand() && (m_commandData.size() > 1))
+        return "Aftertouch" + String(m_commandData[1]);
+    // aftertouch value
+    //data[2]
 
-        // aftertouch
-        if ((m_commandData[0] & 0xf0) == 0xa0)
-            return "Aftertouch" + String(m_commandData[1]);
-        // aftertouch value
-        //data[2]
+    else if (isControllerCommand() && (m_commandData.size() > 1))
+        return "Ctrl" + String(m_commandData[1]);
+    //// controller value
+    //data[2]
+    
+    else if (isPitchCommand())
+        return "Pitch";
+    //// pitch wheel value
+    //data[1] | (data[2] << 7)
+    
+    else if (isChannelPressureCommand())
+        return "Ch. pressure";
+    //// ch. pres. value
+    //data[1]
 
-        // controller
-        if ((m_commandData[0] & 0xf0) == 0xb0)
-            return "Ctrl" + String(m_commandData[1]);
-        //// controller value
-        //data[2]
+    else
+        return "Unknown";
+}
 
-        // channel pressure
-        if ((m_commandData[0] & 0xf0) == 0xd0)
-            return "Ch. pressure";
-        //// ch. pres. value
-        //data[1]
-    }
+bool MidiCommandRangeAssignment::isNoteOnCommand() const
+{
+    if (m_commandData.empty())
+        return false;
+    
+    return ((m_commandData[0] & 0xf0) == 0x90);
+}
 
-    return "Unknown";
+bool MidiCommandRangeAssignment::isNoteOffCommand() const
+{
+    if (m_commandData.empty())
+        return false;
+    
+    return ((m_commandData[0] & 0xf0) == 0x80);
+}
+
+bool MidiCommandRangeAssignment::isProgramChangeCommand() const
+{
+    if (m_commandData.empty())
+        return false;
+    
+    return ((m_commandData[0] & 0xf0) == 0xc0);
+}
+
+bool MidiCommandRangeAssignment::isPitchCommand() const
+{
+    if (m_commandData.empty())
+        return false;
+    
+    return ((m_commandData[0] & 0xf0) == 0xe0);
+}
+
+bool MidiCommandRangeAssignment::isAftertouchCommand() const
+{
+    if (m_commandData.empty())
+        return false;
+    
+    return ((m_commandData[0] & 0xf0) == 0xa0);
+}
+
+bool MidiCommandRangeAssignment::isControllerCommand() const
+{
+    if (m_commandData.empty())
+        return false;
+    
+    return ((m_commandData[0] & 0xf0) == 0xb0);
+}
+
+bool MidiCommandRangeAssignment::isChannelPressureCommand() const
+{
+    if (m_commandData.empty())
+        return false;
+    
+    return ((m_commandData[0] & 0xf0) == 0xd0);
 }
 
 juce::String MidiCommandRangeAssignment::getRangeDescription() const
 {
-    return String(m_valueRange.getStart()) + "..." + String(m_valueRange.getEnd());
+    return "(" + String(m_valueRange.getStart()) + " - " + String(m_valueRange.getEnd()) + ")";
 }
 
 juce::String MidiCommandRangeAssignment::getCommandRangeDescription() const
@@ -132,13 +179,51 @@ const std::vector<std::uint8_t>& MidiCommandRangeAssignment::getCommandData() co
 std::vector<std::uint8_t> MidiCommandRangeAssignment::getCommandData(const juce::MidiMessage& m)
 {
     auto dataBytes = m.getRawData();
-    auto dataByteLength = m.getRawDataSize();
-    auto commandDataByteLength = dataByteLength - 1;
+    auto dataBytesLength = m.getRawDataSize();
     auto commandData = std::vector<std::uint8_t>();
-    for (int i = 0; i < commandDataByteLength; ++i)
+    auto commandDataExpectedBytesLength = getCommandDataExpectedBytes(m);
+    
+    if (commandDataExpectedBytesLength > dataBytesLength)
+        return commandData;
+    
+    for (int i = 0; i < commandDataExpectedBytesLength; ++i)
         commandData.push_back(dataBytes[i]);
 
     return commandData;
+}
+
+int MidiCommandRangeAssignment::getCommandDataExpectedBytes() const
+{
+    if (   isNoteOnCommand()
+        || isNoteOffCommand()
+        || isProgramChangeCommand()
+        || isAftertouchCommand()
+        || isControllerCommand())
+        return 2;
+    
+    else if (   isChannelPressureCommand()
+        || isPitchCommand())
+        return 1;
+    
+    else
+        return 0;
+}
+
+int MidiCommandRangeAssignment::getCommandDataExpectedBytes(const juce::MidiMessage& m)
+{
+    if (   m.isNoteOn()
+        || m.isNoteOff()
+        || m.isProgramChange()
+        || m.isAftertouch()
+        || m.isController())
+        return 2;
+    
+    else if (m.isChannelPressure()
+        || m.isPitchWheel())
+        return 1;
+    
+    else
+        return 0;
 }
 
 void MidiCommandRangeAssignment::setCommandData(const juce::MidiMessage& m)
