@@ -12,6 +12,8 @@
 
 #include <JuceHeader.h>
 
+#include "../submodules/JUCE-AppBasics/Source/Midi_utils.h"
+
 namespace JUCEAppBasics
 {
 
@@ -21,12 +23,6 @@ class MidiLearnerComponent :
     private MidiInputCallback,
     private MessageListener
 {
-public:
-    struct MidiAssi
-    {
-        String _rawMsg;
-    };
-
 public:
     MidiLearnerComponent();
     ~MidiLearnerComponent();
@@ -44,11 +40,11 @@ public:
     void handleMessage(const Message& msg) override;
 
     //==============================================================================
-    std::function<void(MidiAssi)> onMidiAssiSet;
+    std::function<void(Component*, JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment)> onMidiAssiSet;
     
     //==============================================================================
     void setSelectedDeviceIdx(int deviceIdx);
-    void setCurrentMidiAssi(MidiAssi currentAssi);
+    void setCurrentMidiAssi(const JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment& currentAssi);
 
 private:
     class CallbackMidiMessage : public Message
@@ -56,24 +52,30 @@ private:
     public:
         /**
         * Constructor with default initialization of message and source.
-        * @param m    The midi message to handle.
+        * @param m	The midi message to handle.
+        * @param s	The source the message was received from.
         */
-        CallbackMidiMessage(const juce::MidiMessage& m) : _message(m) {}
+        CallbackMidiMessage(const juce::MidiMessage& m, juce::MidiInput* s) : _message(m), _source(s) {}
 
         juce::MidiMessage _message;
+        juce::MidiInput* _source;
     };
     
 private:
-    void showMenu();
+    void triggerLearning();
+    void updatePopupMenu();
     void handlePopupResult(int resultingAssiIdx);
+    void activateMidiInputCallback();
+    void deactivateMidiInputCallback();
 
-    std::unique_ptr<TextEditor>         m_currentMidiAssiEdit;
-    std::unique_ptr<DrawableButton>     m_learnButton;
-    int                                 m_deviceIdx{ -1 };
-    PopupMenu                           m_popup;
-    std::map<int, MidiAssi>             m_learnedAssiMap;
-    std::unique_ptr<AudioDeviceManager> m_deviceManager;
-    MidiAssi                            m_currentMidiAssi;
+    std::unique_ptr<TextEditor>                                             m_currentMidiAssiEdit;
+    std::unique_ptr<DrawableButton>                                         m_learnButton;
+    String                                                                  m_deviceIdentifier;
+    String                                                                  m_deviceName;
+    PopupMenu                                                               m_popup;
+    std::map<int, JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment>    m_learnedAssiMap;
+    std::unique_ptr<AudioDeviceManager>                                     m_deviceManager;
+    JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment                   m_currentMidiAssi;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiLearnerComponent)
 };
