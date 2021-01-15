@@ -31,6 +31,8 @@ MidiLearnerComponent::MidiLearnerComponent()
 	addAndMakeVisible(m_learnButton.get());
     
     m_deviceManager = std::make_unique<AudioDeviceManager>();
+    
+    startTimer(200);
 }
 
 MidiLearnerComponent::~MidiLearnerComponent()
@@ -53,6 +55,12 @@ void MidiLearnerComponent::buttonClicked(Button* button)
 	{
         triggerLearning();
 	}
+}
+
+void MidiLearnerComponent::timerCallback()
+{
+    if (isTimerUpdatingPopup())
+        updatePopupMenu();
 }
 
 void MidiLearnerComponent::activateMidiInputCallback()
@@ -110,7 +118,8 @@ void MidiLearnerComponent::handleMessage(const Message& msg)
             m_learnedAssiMap[nextKey] = commandRangeAssi;
         }
 
-        updatePopupMenu();
+        if (!isTimerUpdatingPopup())
+            startTimerUpdatingPopup();
     }
 }
 
@@ -131,6 +140,8 @@ void MidiLearnerComponent::updatePopupMenu()
 
     m_popup.showMenuAsync(PopupMenu::Options(), [this](int resultingAssiIdx) { 
         handlePopupResult(resultingAssiIdx); });
+    
+    stopTimerUpdatingPopup();
 }
 
 void MidiLearnerComponent::triggerLearning()

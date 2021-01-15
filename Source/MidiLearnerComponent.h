@@ -20,6 +20,7 @@ namespace JUCEAppBasics
 class MidiLearnerComponent :
     public Component,
     public Button::Listener,
+    public Timer,
     private MidiInputCallback,
     private MessageListener
 {
@@ -32,6 +33,9 @@ public:
 
     //==============================================================================
     void buttonClicked(Button*) override;
+    
+    //==============================================================================
+    void timerCallback() override;
     
     //==============================================================================
     void handleIncomingMidiMessage(juce::MidiInput* source, const juce::MidiMessage& message) override;
@@ -76,6 +80,14 @@ private:
     std::map<int, JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment>    m_learnedAssiMap;
     std::unique_ptr<AudioDeviceManager>                                     m_deviceManager;
     JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment                   m_currentMidiAssi;
+    
+    bool isTimerUpdatingPopup() {
+        return m_timerUpdatingPopup; };
+    void startTimerUpdatingPopup() {
+        m_timerUpdatingPopup = true; };
+    void stopTimerUpdatingPopup() {
+        m_timerUpdatingPopup = false; };
+    bool m_timerUpdatingPopup{ false };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiLearnerComponent)
 };
