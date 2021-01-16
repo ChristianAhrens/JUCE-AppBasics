@@ -292,7 +292,52 @@ bool MidiCommandRangeAssignment::isRangedCommandAssignment() const
     return (m_valueRange.getStart() != 0 || m_valueRange.getEnd() != 0);
 }
 
+juce::String MidiCommandRangeAssignment::serializeToHexString() const
+{
+    auto serialData = m_commandData;
+    if (isRangedCommandAssignment())
+    {
+        serialData.push_back(m_valueRange.getStart());
+        serialData.push_back(m_valueRange.getEnd());
+    }
     
+    return String::toHexString(&serialData, static_cast<int>(serialData.size()));
 }
 
+bool MidiCommandRangeAssignment::deserializeFromHexString(const juce::String& serialData)
+{
+    auto byteData = std::vector<std::uint8_t>();
+    auto byteStrings = StringArray::fromTokens(serialData, " ", StringRef());
+    for (auto const& byte : byteStrings)
+        byteData.push_back(byte.getHexValue32());
+    
+    auto commandDataStash = m_commandData;
+    
+    m_commandData = byteData;
+    auto newCommandDataByteLength = getCommandDataExpectedBytes();
+    m_commandData.resize(newCommandDataByteLength);
+    
+    auto byteDataLength = byteData.size();
+    auto rangeDataLength = byteDataLength - newCommandDataByteLength;
+    if (rangeDataLength == 2)
+    {
+        m_valueRange.setStart(byteData.at(byteDataLength - 3));
+        m_valueRange.setEnd(byteData.at(byteDataLength - 2));
+        
+        return true;
+    }
+    else if (rangeDataLength == 0)
+    {
+        return true;
+    }
+    else
+    {
+        m_commandData = commandDataStash;
+        return false;
+    }
 }
+
+    
+} // namespace JUCEAppBasics
+
+} // namespace Midi_utils
