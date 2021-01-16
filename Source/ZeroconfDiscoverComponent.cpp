@@ -64,12 +64,8 @@ void ZeroconfDiscoverComponent::addDiscoverService(ZeroconfServiceType serviceTy
     
 	if(m_useSeparateServiceSearchers || m_discoveryButtons.empty())
 	{
-		std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
-		JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::find_replace24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage);
-
 		m_discoveryButtons.insert(std::make_pair(serviceName, std::make_unique<DrawableButton>(serviceName, DrawableButton::ButtonStyle::ImageOnButtonBackground)));
 		m_discoveryButtons.at(serviceName)->addListener(this);
-		m_discoveryButtons.at(serviceName)->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
 		m_discoveryButtons.at(serviceName)->setButtonText(serviceName);
 		addAndMakeVisible(m_discoveryButtons.at(serviceName).get());
     
@@ -406,6 +402,24 @@ void ZeroconfDiscoverComponent::resized()
 		if (m_discoveryButtons.size() == 1)
 			m_discoveryButtons.begin()->second->setBounds(getLocalBounds());
 	}
+}
+
+/**
+ * Reimplemnted from Component to correctly adjust button drawable colouring
+ */
+void ZeroconfDiscoverComponent::lookAndFeelChanged()
+{
+	Component::lookAndFeelChanged();
+
+	auto colourOn = getLookAndFeel().findColour(TextButton::ColourIds::textColourOnId);
+	auto colourOff = getLookAndFeel().findColour(TextButton::ColourIds::textColourOffId);
+
+	std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
+	JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::school24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage,
+		colourOn, colourOff, colourOff, colourOff, colourOn, colourOn, colourOn, colourOn);
+
+	for (auto const& button : m_discoveryButtons)
+		button.second->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
 }
 
 void ZeroconfDiscoverComponent::buttonClicked(Button* button)

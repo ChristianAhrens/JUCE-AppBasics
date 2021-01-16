@@ -44,6 +44,9 @@ public:
     void handleMessage(const Message& msg) override;
 
     //==============================================================================
+    void lookAndFeelChanged() override;
+
+    //==============================================================================
     std::function<void(Component*, JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment)> onMidiAssiSet;
     
     //==============================================================================

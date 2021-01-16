@@ -24,13 +24,10 @@ MidiLearnerComponent::MidiLearnerComponent(std::int16_t refId)
     m_currentMidiAssiEdit->setReadOnly(true);
 	addAndMakeVisible(m_currentMidiAssiEdit.get());
 
-	std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
-	JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::school24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage);
-
 	m_learnButton = std::make_unique<DrawableButton>("Learn MIDI command", DrawableButton::ButtonStyle::ImageOnButtonBackground);
-	m_learnButton->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
 	m_learnButton->addListener(this);
 	addAndMakeVisible(m_learnButton.get());
+    lookAndFeelChanged();
     
     m_deviceManager = std::make_unique<AudioDeviceManager>();
     
@@ -127,6 +124,23 @@ void MidiLearnerComponent::handleMessage(const Message& msg)
         if (!isTimerUpdatingPopup())
             startTimerUpdatingPopup();
     }
+}
+
+/**
+ * Reimplemnted from Component to correctly adjust button drawable colouring
+ */
+void MidiLearnerComponent::lookAndFeelChanged()
+{
+    Component::lookAndFeelChanged();
+
+    auto colourOn = getLookAndFeel().findColour(TextButton::ColourIds::textColourOnId);
+    auto colourOff = getLookAndFeel().findColour(TextButton::ColourIds::textColourOffId);
+
+    std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
+    JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::school24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage,
+        colourOn, colourOff, colourOff, colourOff, colourOn, colourOn, colourOn, colourOn);
+
+    m_learnButton->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
 }
 
 void MidiLearnerComponent::updatePopupMenu()
