@@ -25,7 +25,7 @@ class MidiLearnerComponent :
     private MessageListener
 {
 public:
-    MidiLearnerComponent();
+    MidiLearnerComponent(std::int16_t refId = -1);
     ~MidiLearnerComponent();
 	
     //==============================================================================
@@ -49,6 +49,9 @@ public:
     //==============================================================================
     void setSelectedDeviceIdx(int deviceIdx);
     void setCurrentMidiAssi(const JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment& currentAssi);
+
+    void setReferredId(std::int16_t refId);
+    std::int16_t getReferredId() const;
 
 private:
     class CallbackMidiMessage : public Message
@@ -80,13 +83,12 @@ private:
     std::map<int, JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment>    m_learnedAssiMap;
     std::unique_ptr<AudioDeviceManager>                                     m_deviceManager;
     JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment                   m_currentMidiAssi;
-    
-    bool isTimerUpdatingPopup() {
-        return m_timerUpdatingPopup; };
-    void startTimerUpdatingPopup() {
-        m_timerUpdatingPopup = true; };
-    void stopTimerUpdatingPopup() {
-        m_timerUpdatingPopup = false; };
+    std::int16_t                                                            m_referredId{ -1 };
+
+    //==============================================================================
+    bool isTimerUpdatingPopup()     { return m_timerUpdatingPopup; };
+    void startTimerUpdatingPopup()  { m_timerUpdatingPopup = true; };
+    void stopTimerUpdatingPopup()   { m_timerUpdatingPopup = false; };
     bool m_timerUpdatingPopup{ false };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiLearnerComponent)

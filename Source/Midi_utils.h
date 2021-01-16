@@ -42,6 +42,7 @@ public:
     juce::String getCommandDescription() const;
     juce::String getRangeDescription() const;
     juce::String getCommandRangeDescription() const;
+    juce::String getNiceDescription() const;
 
     const std::vector<std::uint8_t>& getCommandData() const;
     static std::vector<std::uint8_t> getCommandData(const juce::MidiMessage& m);
@@ -53,6 +54,10 @@ public:
     void setValueRange(const juce::Range<int>& r);
     bool extendValueRange(int value);
     bool extendValueRange(const juce::MidiMessage& m);
+    bool isRangedCommandAssignment() const;
+
+    juce::String serializeToHexString() const;
+    bool deserializeFromHexString(const juce::String& serialData);
 
 private:
     std::vector<std::uint8_t>   m_commandData;

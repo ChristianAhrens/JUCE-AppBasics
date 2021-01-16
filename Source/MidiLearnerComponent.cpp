@@ -16,8 +16,10 @@ namespace JUCEAppBasics
 {
 
 //==============================================================================
-MidiLearnerComponent::MidiLearnerComponent()
+MidiLearnerComponent::MidiLearnerComponent(std::int16_t refId)
 {
+    setReferredId(refId);
+
 	m_currentMidiAssiEdit = std::make_unique<TextEditor>();
     m_currentMidiAssiEdit->setReadOnly(true);
 	addAndMakeVisible(m_currentMidiAssiEdit.get());
@@ -77,7 +79,12 @@ void MidiLearnerComponent::activateMidiInputCallback()
 void MidiLearnerComponent::deactivateMidiInputCallback()
 {
     if (m_deviceIdentifier.isNotEmpty())
+    {
+        if (m_deviceManager->isMidiInputDeviceEnabled(m_deviceIdentifier))
+            m_deviceManager->setMidiInputDeviceEnabled(m_deviceIdentifier, false);
+
         m_deviceManager->removeMidiInputCallback(m_deviceIdentifier, this);
+    }
 }
 
 void MidiLearnerComponent::handleIncomingMidiMessage(juce::MidiInput* source, const juce::MidiMessage& message)
@@ -114,7 +121,6 @@ void MidiLearnerComponent::handleMessage(const Message& msg)
         if (mapKeyIndex == -1)
         {
             auto nextKey = static_cast<int>(m_learnedAssiMap.size() + 1);
-            //m_learnedAssiMap.insert(std::make_pair(nextKey, commandRangeAssi));
             m_learnedAssiMap[nextKey] = commandRangeAssi;
         }
 
@@ -135,7 +141,7 @@ void MidiLearnerComponent::updatePopupMenu()
         m_popup.addItem(-1, "Waiting for input from " + m_deviceName, false);
 
         for (auto const& learnedAssiKV : m_learnedAssiMap)
-            m_popup.addItem(learnedAssiKV.first, learnedAssiKV.second.getCommandRangeDescription());
+            m_popup.addItem(learnedAssiKV.first, learnedAssiKV.second.getNiceDescription());
     }
 
     m_popup.showMenuAsync(PopupMenu::Options(), [this](int resultingAssiIdx) { 
@@ -197,7 +203,17 @@ void MidiLearnerComponent::setCurrentMidiAssi(const JUCEAppBasics::Midi_utils::M
     m_currentMidiAssi = currentAssi;
     
     if (m_currentMidiAssiEdit)
-        m_currentMidiAssiEdit->setText(m_currentMidiAssi.getCommandRangeDescription());
+        m_currentMidiAssiEdit->setText(m_currentMidiAssi.getNiceDescription());
+}
+
+void MidiLearnerComponent::setReferredId(std::int16_t refId)
+{
+    m_referredId = refId;
+}
+
+std::int16_t MidiLearnerComponent::getReferredId() const
+{
+    return m_referredId;
 }
 
 }

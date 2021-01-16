@@ -73,10 +73,10 @@ MidiCommandRangeAssignment& MidiCommandRangeAssignment::operator=(const MidiComm
 juce::String MidiCommandRangeAssignment::getCommandDescription() const
 {
     if (isNoteOnCommand() && (m_commandData.size() > 1))
-        return "NoteOn" + String(m_commandData[1]);
+        return "NoteOn " + MidiMessage::getMidiNoteName(m_commandData[1], true, true, 3);
 
     else if (isNoteOffCommand() && (m_commandData.size() > 1))
-        return "NoteOff" + String(m_commandData[1]);
+        return "NoteOff " + MidiMessage::getMidiNoteName(m_commandData[1], true, true, 3);
 
     else if (isProgramChangeCommand() && (m_commandData.size() > 1))
         return "ProgChange" + String(m_commandData[1]);
@@ -102,7 +102,7 @@ juce::String MidiCommandRangeAssignment::getCommandDescription() const
     //data[1]
 
     else
-        return "Unknown";
+        return "Unassigned";
 }
 
 bool MidiCommandRangeAssignment::isNoteOnCommand() const
@@ -169,6 +169,14 @@ juce::String MidiCommandRangeAssignment::getRangeDescription() const
 juce::String MidiCommandRangeAssignment::getCommandRangeDescription() const
 {
     return getCommandDescription() + " " + getRangeDescription();
+}
+
+juce::String MidiCommandRangeAssignment::getNiceDescription() const
+{
+    if (isRangedCommandAssignment())
+        return getCommandRangeDescription();
+    else
+        return getCommandDescription();
 }
 
 const std::vector<std::uint8_t>& MidiCommandRangeAssignment::getCommandData() const
@@ -277,6 +285,11 @@ bool MidiCommandRangeAssignment::extendValueRange(const juce::MidiMessage& m)
         return false;
 
     return extendValueRange(value);
+}
+
+bool MidiCommandRangeAssignment::isRangedCommandAssignment() const
+{
+    return (m_valueRange.getStart() != 0 || m_valueRange.getEnd() != 0);
 }
 
     
