@@ -89,10 +89,33 @@ private:
     std::int16_t                                                            m_referredId{ -1 };
 
     //==============================================================================
-    bool isTimerUpdatingPopup()     { return m_timerUpdatingPopup; };
-    void startTimerUpdatingPopup()  { m_timerUpdatingPopup = true; };
-    void stopTimerUpdatingPopup()   { m_timerUpdatingPopup = false; };
+    bool isTimerUpdatingPopup() { 
+        return m_timerUpdatingPopup; 
+    };
+    void startTimerUpdatingPopup() { 
+        m_timerUpdatingPopup = true; 
+    };
+    void stopTimerUpdatingPopup() { 
+        m_timerUpdatingPopup = false; 
+    };
     bool m_timerUpdatingPopup{ false };
+
+    //==============================================================================
+    bool isPopupResultMuted(bool clear = true) { 
+        if (m_popupResultMutedCount > 0) {
+            if (clear)
+                m_popupResultMutedCount = 0;
+            else
+                m_popupResultMutedCount--; 
+            return true;
+        } 
+        else 
+            return false; 
+    };
+    void addPopupResultMutedOnce() { 
+        m_popupResultMutedCount++; 
+    };
+    std::uint32_t m_popupResultMutedCount{ 0 };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiLearnerComponent)
 };

@@ -158,6 +158,7 @@ void MidiLearnerComponent::updatePopupMenu()
             m_popup.addItem(learnedAssiKV.first, learnedAssiKV.second.getNiceDescription());
     }
 
+    addPopupResultMutedOnce();
     m_popup.showMenuAsync(PopupMenu::Options(), [this](int resultingAssiIdx) { 
         handlePopupResult(resultingAssiIdx); });
     
@@ -176,6 +177,9 @@ void MidiLearnerComponent::triggerLearning()
 
 void MidiLearnerComponent::handlePopupResult(int resultingAssiIdx)
 {
+    if (isPopupResultMuted())
+        return;
+
     if (m_learnedAssiMap.count(resultingAssiIdx) > 0)
     {
         auto resultingAssi = m_learnedAssiMap[resultingAssiIdx];
