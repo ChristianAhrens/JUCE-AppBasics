@@ -202,36 +202,44 @@ std::vector<std::uint8_t> MidiCommandRangeAssignment::getCommandData(const juce:
 
 int MidiCommandRangeAssignment::getCommandDataExpectedBytes() const
 {
-    if (   isNoteOnCommand()
+    if (isNoteOnCommand()
         || isNoteOffCommand()
         || isProgramChangeCommand()
         || isAftertouchCommand()
         || isControllerCommand())
+    {
         return 2;
-    
-    else if (   isChannelPressureCommand()
+    }
+    else if (isChannelPressureCommand()
         || isPitchCommand())
+    {
         return 1;
-    
+    }
     else
+    {
         return 0;
+    }
 }
 
 int MidiCommandRangeAssignment::getCommandDataExpectedBytes(const juce::MidiMessage& m)
 {
-    if (   m.isNoteOn()
+    if (m.isNoteOn()
         || m.isNoteOff()
         || m.isProgramChange()
         || m.isAftertouch()
         || m.isController())
+    {
         return 2;
-    
+    }
     else if (m.isChannelPressure()
         || m.isPitchWheel())
+    {
         return 1;
-    
+    }
     else
+    {
         return 0;
+    }
 }
 
 void MidiCommandRangeAssignment::setCommandData(const juce::MidiMessage& m)
@@ -292,49 +300,85 @@ bool MidiCommandRangeAssignment::isRangedCommandAssignment() const
     return (m_valueRange.getStart() != 0 || m_valueRange.getEnd() != 0);
 }
 
+/**
+ * Method to serialize the entire current assignment information
+ * into a string that can be stored in config.
+ * If the current assignment uses a range, the range start and end values
+ * are included in the byte string representation as the last 4 bytes.
+ * @return The resulting serialized byte data string.
+ */
 juce::String MidiCommandRangeAssignment::serializeToHexString() const
 {
     auto serialData = m_commandData;
     if (isRangedCommandAssignment())
     {
-        serialData.push_back(m_valueRange.getStart());
-        serialData.push_back(m_valueRange.getEnd());
+        // The start/end int values are stored as two additional bytes each at the end of the data buffer
+        auto start = m_valueRange.getStart();
+        auto end = m_valueRange.getEnd();
+        serialData.push_back((start & 0xff00) >> 8);
+        serialData.push_back((start & 0x00ff));
+        serialData.push_back((end & 0xff00) >> 8);
+        serialData.push_back((end & 0x00ff));
     }
+
+    auto byteStrings = StringArray();
+    for (auto const& byte : serialData)
+        byteStrings.add(String::toHexString(byte));
     
-    return String::toHexString(&serialData, static_cast<int>(serialData.size()));
+    return byteStrings.joinIntoString(" ");
 }
 
+/**
+ * Method to read assignment data from a serialized string.
+ * The string is expected as space-separated hex byte values that
+ * are read into a uin8 buffer. The first bytes are then parsed for
+ * information on the encapsulated command type, which then us used
+ * to derive the expecte command byte count from. Depending on if four
+ * bytes, that can be taken as range data, are available apart from the command data,
+ * these are read into start/end range values as well.
+ * @param serialData    The serial byte data string to read assignment data from.
+ * @return  True on success, false if the input data was invalid.
+ */
 bool MidiCommandRangeAssignment::deserializeFromHexString(const juce::String& serialData)
 {
+    // read the given serial hex string data into byte vector
     auto byteData = std::vector<std::uint8_t>();
     auto byteStrings = StringArray::fromTokens(serialData, " ", StringRef());
-    for (auto const& byte : byteStrings)
-        byteData.push_back(byte.getHexValue32());
+    for (auto const& byteString : byteStrings)
+        byteData.push_back(static_cast<std::uint8_t>(byteString.getHexValue32()));
+    auto byteDataLength = byteData.size();
     
+    // save the current command data to be able to restore it, if something goes wrong
     auto commandDataStash = m_commandData;
     
+    // take over the just read byte vector into internal command data, to be able to use internal processing methods on ut
     m_commandData = byteData;
-    auto newCommandDataByteLength = getCommandDataExpectedBytes();
-    m_commandData.resize(newCommandDataByteLength);
-    
-    auto byteDataLength = byteData.size();
-    auto rangeDataLength = byteDataLength - newCommandDataByteLength;
-    if (rangeDataLength == 2)
+    auto newCommandDataByteLength = getCommandDataExpectedBytes(); // this relies on m_commandData (which is why we already modified it in the prev. line)
+    // if the command data length is zero, something went wrong and we did not recognize the command
+    jassert(newCommandDataByteLength != 0);
+    if (newCommandDataByteLength != 0)
     {
-        m_valueRange.setStart(byteData.at(byteDataLength - 3));
-        m_valueRange.setEnd(byteData.at(byteDataLength - 2));
-        
-        return true;
+        // trim the copied byte vector data in commanddata to only contain the actual command data
+        m_commandData.resize(newCommandDataByteLength);
+
+        // determine if the byte data contains four extra bytes for min-max range
+        auto rangeDataLength = byteDataLength - newCommandDataByteLength;
+        if (rangeDataLength == 4)
+        {
+            m_valueRange.setStart((byteData.at(byteDataLength - 4) << 8) | byteData.at(byteDataLength - 3));
+            m_valueRange.setEnd((byteData.at(byteDataLength - 2) << 8) | byteData.at(byteDataLength - 1));
+
+            return true;
+        }
+        else if (rangeDataLength == 0)
+        {
+            return true;
+        }
     }
-    else if (rangeDataLength == 0)
-    {
-        return true;
-    }
-    else
-    {
-        m_commandData = commandDataStash;
-        return false;
-    }
+
+    // if we end up here, something went wrong and we need to restore the original commandData
+    m_commandData = commandDataStash;
+    return false;
 }
 
     
