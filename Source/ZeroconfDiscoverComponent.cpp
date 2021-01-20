@@ -71,6 +71,8 @@ void ZeroconfDiscoverComponent::addDiscoverService(ZeroconfServiceType serviceTy
     
 		m_serviceNameLabels.insert(std::make_pair(serviceName, std::make_unique<Label>(serviceName, serviceName + ":")));
 		addAndMakeVisible(m_serviceNameLabels.at(serviceName).get());
+
+		lookAndFeelChanged();
 	}
 
     addSearcher(serviceName, serviceDescriptor, announcementPort);
@@ -415,7 +417,7 @@ void ZeroconfDiscoverComponent::lookAndFeelChanged()
 	auto colourOff = getLookAndFeel().findColour(TextButton::ColourIds::textColourOffId);
 
 	std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
-	JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::school24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage,
+	JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::find_replace24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage,
 		colourOn, colourOff, colourOff, colourOff, colourOn, colourOn, colourOn, colourOn);
 
 	for (auto const& button : m_discoveryButtons)
