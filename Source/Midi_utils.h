@@ -30,6 +30,8 @@ public:
     bool operator<(const MidiCommandRangeAssignment& rhs) const;
 	bool operator>(const MidiCommandRangeAssignment& rhs) const;
     MidiCommandRangeAssignment& operator=(const MidiCommandRangeAssignment& rhs);
+
+    bool isMatchingCommand(const juce::MidiMessage& m) const;
     
     bool isNoteOnCommand() const;
     bool isNoteOffCommand() const;

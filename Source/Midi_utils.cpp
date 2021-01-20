@@ -70,6 +70,11 @@ MidiCommandRangeAssignment& MidiCommandRangeAssignment::operator=(const MidiComm
     return *this;
 }
 
+bool MidiCommandRangeAssignment::isMatchingCommand(const juce::MidiMessage& m) const
+{
+    return (m_commandData == getCommandData(m));
+}
+
 juce::String MidiCommandRangeAssignment::getCommandDescription() const
 {
     if (isNoteOnCommand() && (m_commandData.size() > 1))
