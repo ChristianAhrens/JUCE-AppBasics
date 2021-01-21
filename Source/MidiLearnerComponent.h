@@ -25,7 +25,14 @@ class MidiLearnerComponent :
     private MessageListener
 {
 public:
-    MidiLearnerComponent(std::int16_t refId = -1);
+    typedef std::uint8_t AssignmentType;
+    static constexpr AssignmentType AT_Invalid      = 0x00;
+    static constexpr AssignmentType AT_Trigger      = 0x01;
+    static constexpr AssignmentType AT_ValueRange   = 0x02;
+    static constexpr AssignmentType AT_CommandRange = 0x04;
+
+public:
+    MidiLearnerComponent(std::int16_t refId = -1, AssignmentType assignmentTypesToBeLearned = AT_Trigger|AT_ValueRange|AT_CommandRange);
     ~MidiLearnerComponent();
 	
     //==============================================================================
@@ -83,10 +90,14 @@ private:
     String                                                                  m_deviceIdentifier;
     String                                                                  m_deviceName;
     PopupMenu                                                               m_popup;
-    std::map<int, JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment>    m_learnedAssiMap;
+    std::map<JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment>>    m_learnedDirectAssis;
+    std::map<JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment>>    m_learnedValueRangeAssis;
+    std::map<JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment>>    m_learnedCommandAndValueRangeAssis;
     std::unique_ptr<AudioDeviceManager>                                     m_deviceManager;
     JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment                   m_currentMidiAssi;
     std::int16_t                                                            m_referredId{ -1 };
+    int                                                                     m_popupItemIndexCounter{ 0 };
+    AssignmentType                                                          m_assignmentTypesToBeLearned{ AT_Invalid };
 
     //==============================================================================
     bool isTimerUpdatingPopup() { 

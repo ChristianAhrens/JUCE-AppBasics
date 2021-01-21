@@ -16,8 +16,10 @@ namespace JUCEAppBasics
 {
 
 //==============================================================================
-MidiLearnerComponent::MidiLearnerComponent(std::int16_t refId)
+MidiLearnerComponent::MidiLearnerComponent(std::int16_t refId, AssignmentType assignmentTypesToBeLearned)
 {
+    m_assignmentTypesToBeLearned = assignmentTypesToBeLearned;
+
     setReferredId(refId);
 
 	m_currentMidiAssiEdit = std::make_unique<TextEditor>();
@@ -100,27 +102,79 @@ void MidiLearnerComponent::handleMessage(const Message& msg)
 {
     if (auto* callbackMessage = dynamic_cast<const CallbackMidiMessage*> (&msg))
     {
+        // sanity check if the incoming message comes from the device we want to listen to
         if (m_deviceIdentifier.isEmpty() || (m_deviceIdentifier != callbackMessage->_source->getDeviceInfo().identifier))
             return;
 
+        // start handling of the incoming data
         auto commandRangeAssi = JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment(callbackMessage->_message);
+        auto commandType = commandRangeAssi.getCommandType();
+        auto& commandData = commandRangeAssi.getCommandData();
 
-        auto mapKeyIndex = -1;
-        for (auto& learnedAssiKV : m_learnedAssiMap)
+        // direct command assignments without value or command range
         {
-            if (learnedAssiKV.second.getCommandData() == commandRangeAssi.getCommandData())
+            // iterate through already known command data/type to find if existing entries can be extended
+            auto directAssisKeyIndex = -1;
+            if (m_learnedDirectAssis.count(commandType) > 0)
+                for (auto& learnedAssiKV : m_learnedDirectAssis.at(commandType))
+                    if (learnedAssiKV.second.getCommandData() == commandData && learnedAssiKV.second.isMatchingValueRange(callbackMessage->_message))
+                        directAssisKeyIndex = learnedAssiKV.first;
+
+            // if the command data/type is not yet represented, create new entries for it
+            if (directAssisKeyIndex == -1)
             {
-                learnedAssiKV.second.extendValueRange(callbackMessage->_message);
-                mapKeyIndex = learnedAssiKV.first;
+                auto nextKey = ++m_popupItemIndexCounter;
+                m_learnedDirectAssis[commandType][nextKey] = commandRangeAssi;
             }
         }
-        
-        if (mapKeyIndex == -1)
+
+        // command assignments with value range
         {
-            auto nextKey = static_cast<int>(m_learnedAssiMap.size() + 1);
-            m_learnedAssiMap[nextKey] = commandRangeAssi;
+            // iterate through already known command data/type to find if existing entries can be extended
+            auto commandAssisKeyIndex = -1;
+            if (m_learnedValueRangeAssis.count(commandType) > 0)
+            {
+                for (auto& learnedAssiKV : m_learnedValueRangeAssis.at(commandType))
+                {
+                    if (learnedAssiKV.second.getCommandData() == commandData)
+                    {
+                        learnedAssiKV.second.extendValueRange(callbackMessage->_message);
+                        commandAssisKeyIndex = learnedAssiKV.first;
+                    }
+                }
+            }
+
+            // if the command data/type is not yet represented, create new entries for it
+            if (commandAssisKeyIndex == -1)
+            {
+                auto nextKey = ++m_popupItemIndexCounter;
+                m_learnedValueRangeAssis[commandType][nextKey] = commandRangeAssi;
+            }
         }
 
+        // assignment of a range of command and range of values
+        {
+            // iterate through already known command data/type to find if existing entries can be extended
+            auto commandAndValueAssisKeyIndex = -1;
+            if (m_learnedCommandAndValueRangeAssis.count(commandType) > 0)
+            {
+                jassert(m_learnedCommandAndValueRangeAssis.at(commandType).size() == 1);
+                auto learnedAssiKV = m_learnedCommandAndValueRangeAssis.at(commandType).begin();
+                
+                learnedAssiKV->second.extendCommandRange(callbackMessage->_message);
+                learnedAssiKV->second.extendValueRange(callbackMessage->_message);
+                commandAndValueAssisKeyIndex = learnedAssiKV->first;
+            }
+
+            // if the command data/type is not yet represented, create new entries for it
+            if (commandAndValueAssisKeyIndex == -1)
+            {
+                auto nextKey = ++m_popupItemIndexCounter;
+                m_learnedCommandAndValueRangeAssis[commandType][nextKey] = commandRangeAssi;
+            }
+        }
+
+        // if the cyclical updating of the popup menu contents is not active, start now to display the new available assignments
         if (!isTimerUpdatingPopup())
             startTimerUpdatingPopup();
     }
@@ -148,14 +202,96 @@ void MidiLearnerComponent::updatePopupMenu()
     m_popup.dismissAllActiveMenus();
     m_popup.clear();
 
+    auto maxItemsBeforeSubmenu = 5;
+
     if (m_deviceIdentifier.isEmpty())
         m_popup.addItem(-1, "No MIDI Input Selected", false);
     else
     {
         m_popup.addItem(-1, "Waiting for input from " + m_deviceName, false);
 
-        for (auto const& learnedAssiKV : m_learnedAssiMap)
-            m_popup.addItem(learnedAssiKV.first, learnedAssiKV.second.getNiceDescription());
+        if (((m_assignmentTypesToBeLearned & AT_Trigger) == AT_Trigger) && !m_learnedDirectAssis.empty())
+        {
+            m_popup.addSeparator();
+
+            auto itemCount = 0;
+            for (auto const& learnedDirectAssiKV : m_learnedDirectAssis)
+                    itemCount += static_cast<int>(learnedDirectAssiKV.second.size());
+
+            if (itemCount > maxItemsBeforeSubmenu)
+            {
+                PopupMenu subMenu;
+                for (auto const& learnedDirectAssiKV : m_learnedDirectAssis)
+                    for (auto const& learnedAssiKV : learnedDirectAssiKV.second)
+                        subMenu.addItem(learnedAssiKV.first, learnedAssiKV.second.getNiceDescription());
+                m_popup.addSubMenu("Single Trigger Commands", subMenu);
+            }
+            else
+            {
+                m_popup.addItem(-1, "Single Trigger Commands", false);
+                for (auto const& learnedDirectAssiKV : m_learnedDirectAssis)
+                    for (auto const& learnedAssiKV : learnedDirectAssiKV.second)
+                        m_popup.addItem(learnedAssiKV.first, learnedAssiKV.second.getNiceDescription());
+            }
+        }
+
+        if (((m_assignmentTypesToBeLearned & AT_ValueRange) == AT_ValueRange) && !m_learnedValueRangeAssis.empty())
+        {
+            m_popup.addSeparator();
+
+            auto itemCount = 0;
+            for (auto const& learnedValueRangeAssiKV : m_learnedValueRangeAssis)
+                for (auto const& learnedAssiKV : learnedValueRangeAssiKV.second)
+                    if (learnedAssiKV.second.isValueRangeAssignment())
+                        itemCount++;
+
+            if (itemCount > maxItemsBeforeSubmenu)
+            {
+                PopupMenu subMenu;
+                for (auto const& learnedValueRangeAssiKV : m_learnedValueRangeAssis)
+                    for (auto const& learnedAssiKV : learnedValueRangeAssiKV.second)
+                        if (learnedAssiKV.second.isValueRangeAssignment())
+                            subMenu.addItem(learnedAssiKV.first, learnedAssiKV.second.getNiceDescription());
+                m_popup.addSubMenu("Value Range Commands", subMenu);
+            }
+            else
+            {
+                m_popup.addItem(-1, "Value Range Commands", false);
+                for (auto const& learnedValueRangeAssiKV : m_learnedValueRangeAssis)
+                    for (auto const& learnedAssiKV : learnedValueRangeAssiKV.second)
+                        if (learnedAssiKV.second.isValueRangeAssignment())
+                            m_popup.addItem(learnedAssiKV.first, learnedAssiKV.second.getNiceDescription());
+            }
+        }
+
+        if (((m_assignmentTypesToBeLearned & AT_CommandRange) == AT_CommandRange) && !m_learnedCommandAndValueRangeAssis.empty())
+        {
+            m_popup.addSeparator();
+
+            auto itemCount = 0;
+            for (auto const& learnedCommandAndValueRangeAssiKV : m_learnedCommandAndValueRangeAssis)
+                for (auto const& learnedAssiKV : learnedCommandAndValueRangeAssiKV.second)
+                    if (learnedAssiKV.second.isCommandRangeAssignment())
+                        itemCount++;
+
+            if (itemCount > maxItemsBeforeSubmenu)
+            {
+                PopupMenu subMenu;
+                for (auto const& learnedCommandAndValueRangeAssiKV : m_learnedCommandAndValueRangeAssis)
+                    for (auto const& learnedAssiKV : learnedCommandAndValueRangeAssiKV.second)
+                        if (learnedAssiKV.second.isCommandRangeAssignment())
+                            subMenu.addItem(learnedAssiKV.first, learnedAssiKV.second.getNiceDescription());
+                m_popup.addSubMenu("Command + Value Range Commands", subMenu);
+            }
+            else
+            {
+                m_popup.addItem(-1, "Command+Value Range Commands", false);
+                for (auto const& learnedCommandAndValueRangeAssiKV : m_learnedCommandAndValueRangeAssis)
+                    for (auto const& learnedAssiKV : learnedCommandAndValueRangeAssiKV.second)
+                        if (learnedAssiKV.second.isCommandRangeAssignment())
+                            m_popup.addItem(learnedAssiKV.first, learnedAssiKV.second.getNiceDescription());
+            }
+        }
     }
 
     addPopupResultMutedOnce();
@@ -167,7 +303,9 @@ void MidiLearnerComponent::updatePopupMenu()
 
 void MidiLearnerComponent::triggerLearning()
 {
-    m_learnedAssiMap.clear();
+    m_learnedDirectAssis.clear();
+    m_learnedValueRangeAssis.clear();
+    m_learnedCommandAndValueRangeAssis.clear();
     m_popup.clear();
 
     activateMidiInputCallback();
@@ -180,10 +318,45 @@ void MidiLearnerComponent::handlePopupResult(int resultingAssiIdx)
     if (isPopupResultMuted())
         return;
 
-    if (m_learnedAssiMap.count(resultingAssiIdx) > 0)
-    {
-        auto resultingAssi = m_learnedAssiMap[resultingAssiIdx];
+    auto resultingAssi = JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment();
+    auto resultingAssiFound = false;
 
+    for (auto const& commandTypeKV : m_learnedDirectAssis)
+    {
+        for (auto const& learnedAssiKV : m_learnedDirectAssis[commandTypeKV.first])
+        {
+            if (learnedAssiKV.first == resultingAssiIdx)
+            {
+                resultingAssi = learnedAssiKV.second;
+                resultingAssiFound = true;
+                break;
+            }
+        }
+        for (auto const& learnedAssiKV : m_learnedValueRangeAssis[commandTypeKV.first])
+        {
+            if (learnedAssiKV.first == resultingAssiIdx)
+            {
+                resultingAssi = learnedAssiKV.second;
+                resultingAssiFound = true;
+                break;
+            }
+        }
+        for (auto const& learnedAssiKV : m_learnedCommandAndValueRangeAssis[commandTypeKV.first])
+        {
+            if (learnedAssiKV.first == resultingAssiIdx)
+            {
+                resultingAssi = learnedAssiKV.second;
+                resultingAssiFound = true;
+                break;
+            }
+        }
+
+        if (resultingAssiFound)
+            break;
+    }
+
+    if (resultingAssiFound)
+    {
         setCurrentMidiAssi(resultingAssi);
 
         if (onMidiAssiSet)
@@ -191,8 +364,11 @@ void MidiLearnerComponent::handlePopupResult(int resultingAssiIdx)
 
         deactivateMidiInputCallback();
 
-        m_learnedAssiMap.clear();
+        m_learnedDirectAssis.clear();
+        m_learnedValueRangeAssis.clear();
+        m_learnedCommandAndValueRangeAssis.clear();
         m_popup.clear();
+        m_popupItemIndexCounter = 0;
     }
 }
 
