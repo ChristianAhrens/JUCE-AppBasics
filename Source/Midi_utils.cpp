@@ -36,7 +36,7 @@ MidiCommandRangeAssignment::~MidiCommandRangeAssignment()
 
 bool MidiCommandRangeAssignment::operator==(const MidiCommandRangeAssignment& rhs) const
 {
-    return (m_commandData == rhs.m_commandData && m_valueRange == rhs.m_valueRange);
+    return (m_commandData == rhs.m_commandData && m_valueRange == rhs.m_valueRange && m_commandRange == rhs.m_commandRange);
 }
 
 bool MidiCommandRangeAssignment::operator!=(const MidiCommandRangeAssignment& rhs) const
@@ -51,17 +51,24 @@ bool MidiCommandRangeAssignment::operator<(const MidiCommandRangeAssignment& rhs
 
 bool MidiCommandRangeAssignment::operator>(const MidiCommandRangeAssignment& rhs) const
 {
-    auto greaterThanRhs = true;
-    for (int i = 0; i < m_commandData.size() && i < rhs.m_commandData.size(); ++i)
-    {
-        if (m_commandData[i] <= rhs.m_commandData[i])
-        {
-            greaterThanRhs = false;
-            break;
-        }
-    }
+    if (getAsValue(m_commandData) > getAsValue(rhs.m_commandData))
+        return true;
 
-    return greaterThanRhs || ((m_commandData == rhs.m_commandData) && (m_valueRange.intersects(rhs.m_valueRange) ? m_valueRange.getLength() > rhs.m_valueRange.getLength() : m_valueRange.getStart() > rhs.m_valueRange.getStart()));
+    auto valueRangeGreaterThanRhs = false;
+    if (m_valueRange.intersects(rhs.m_valueRange))
+        valueRangeGreaterThanRhs = m_valueRange.getLength() > rhs.m_valueRange.getLength();
+    else
+        valueRangeGreaterThanRhs = m_valueRange.getStart() > rhs.m_valueRange.getStart();
+
+    auto commandRangeGreaterThanRhs = false;
+    auto commandRangeV = juce::Range<std::uint64_t>(getAsValue(m_commandRange.getStart()), getAsValue(m_commandRange.getEnd()));
+    auto rhsCommandRangeV = juce::Range<std::uint64_t>(getAsValue(rhs.m_commandRange.getStart()), getAsValue(rhs.m_commandRange.getEnd()));
+    if (commandRangeV.intersects(rhsCommandRangeV))
+        commandRangeGreaterThanRhs = commandRangeV.getLength() > rhsCommandRangeV.getLength();
+    else
+        commandRangeGreaterThanRhs = commandRangeV.getStart() > rhsCommandRangeV.getStart();
+
+    return ((m_commandData == rhs.m_commandData) && (valueRangeGreaterThanRhs || commandRangeGreaterThanRhs));
 }
 
 MidiCommandRangeAssignment& MidiCommandRangeAssignment::operator=(const MidiCommandRangeAssignment& rhs)
@@ -69,10 +76,27 @@ MidiCommandRangeAssignment& MidiCommandRangeAssignment::operator=(const MidiComm
     if (this != &rhs)
     {
         m_valueRange = rhs.m_valueRange;
+        m_commandRange = rhs.m_commandRange;
         m_commandData = rhs.m_commandData;
     }
 
     return *this;
+}
+
+std::uint64_t MidiCommandRangeAssignment::getAsValue(const std::vector<std::uint8_t>& data)
+{
+    jassert(data.size() <= 8); // more than 8 bytes won't fit into a uint64
+
+    auto retVal = std::uint64_t();
+
+    auto shiftMask = 0;
+    for (auto iter = data.end() - 1; iter > data.begin(); iter--)
+    {
+        retVal += (*iter << shiftMask);
+        shiftMask += 8;
+    }
+
+    return retVal;
 }
 
 juce::String MidiCommandRangeAssignment::getCommandDescription() const
@@ -241,6 +265,43 @@ MidiCommandRangeAssignment::CommandType MidiCommandRangeAssignment::getCommandTy
     return mcra.getCommandType();
 }
 
+bool MidiCommandRangeAssignment::isMatchingCommandType(const juce::MidiMessage& m) const
+{
+    return getCommandType() == getCommandType(m);
+}
+
+bool MidiCommandRangeAssignment::isMatchingCommandType(const std::vector<std::uint8_t>& commandData) const
+{
+    return getCommandType() == getCommandType(commandData);
+}
+
+int MidiCommandRangeAssignment::getCommandValue() const
+{
+    if (m_commandData.size() < 2)
+        return -1;
+
+    if (isNoteOnCommand())
+    {
+        return m_commandData.at(1);
+    }
+    else if (isNoteOffCommand())
+    {
+        return m_commandData.at(1);
+    }
+    else if (isProgramChangeCommand())
+    {
+        return m_commandData.at(1);
+    }
+    else if (isControllerCommand())
+    {
+        return m_commandData.at(1);
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 int MidiCommandRangeAssignment::getCommandValue(const juce::MidiMessage& m)
 {
     if (m.isNoteOn())
@@ -261,14 +322,14 @@ int MidiCommandRangeAssignment::getCommandValue(const juce::MidiMessage& m)
     }
     else
     {
-        return 0;
+        return -1;
     }
 }
 
 int MidiCommandRangeAssignment::getCommandValue(const std::vector<std::uint8_t>& commandData)
 {
     if (commandData.size() < 2)
-        return 0;
+        return -1;
 
     auto mcra = MidiCommandRangeAssignment(commandData);
 
@@ -290,7 +351,7 @@ int MidiCommandRangeAssignment::getCommandValue(const std::vector<std::uint8_t>&
     }
     else
     {
-        return 0;
+        return -1;
     }
 }
 
@@ -557,21 +618,35 @@ bool MidiCommandRangeAssignment::isMatchingCommandRange(const juce::MidiMessage&
 juce::String MidiCommandRangeAssignment::serializeToHexString() const
 {
     auto serialData = m_commandData;
-    if (isValueRangeAssignment())
+    if (isValueRangeAssignment() || isCommandRangeAssignment())
     {
         // The start/end int values are stored as two additional bytes each at the end of the data buffer
-        auto start = m_valueRange.getStart();
-        auto end = m_valueRange.getEnd();
-        serialData.push_back((start & 0xff00) >> 8);
-        serialData.push_back((start & 0x00ff));
-        serialData.push_back((end & 0xff00) >> 8);
-        serialData.push_back((end & 0x00ff));
+        auto vrstart = m_valueRange.getStart();
+        auto vrend = m_valueRange.getEnd();
+        serialData.push_back((vrstart & 0xff00) >> 8);
+        serialData.push_back((vrstart & 0x00ff));
+        serialData.push_back((vrend & 0xff00) >> 8);
+        serialData.push_back((vrend & 0x00ff));
+
+        if (isCommandRangeAssignment())
+        {
+            // The start/end int values are stored as two additional bytes each at the end of the data buffer
+            auto crstart = m_commandRange.getStart();
+            auto crend = m_commandRange.getEnd();
+            jassert(crstart.size() == crend.size());
+            auto rangeByteCount = static_cast<std::uint8_t>(crstart.size() + crend.size());
+            serialData.push_back(rangeByteCount);
+            serialData.insert(serialData.end(), crstart.begin(), crstart.end());
+            serialData.insert(serialData.end(), crend.begin(), crend.end());
+        }
     }
 
+    // dump all the serialized bytes into a byte string array
     auto byteStrings = StringArray();
     for (auto const& byte : serialData)
         byteStrings.add(String::toHexString(byte));
     
+    // join the byte strings into a single space separated string and return it
     return byteStrings.joinIntoString(" ");
 }
 
@@ -588,36 +663,74 @@ juce::String MidiCommandRangeAssignment::serializeToHexString() const
  */
 bool MidiCommandRangeAssignment::deserializeFromHexString(const juce::String& serialData)
 {
-    // read the given serial hex string data into byte vector
+    // Read the given serial hex string data into byte vector
     auto byteData = std::vector<std::uint8_t>();
     auto byteStrings = StringArray::fromTokens(serialData, " ", StringRef());
     for (auto const& byteString : byteStrings)
         byteData.push_back(static_cast<std::uint8_t>(byteString.getHexValue32()));
     auto byteDataLength = byteData.size();
     
-    // save the current command data to be able to restore it, if something goes wrong
+    // Save the current command data to be able to restore it, if something goes wrong
     auto commandDataStash = m_commandData;
     
-    // take over the just read byte vector into internal command data, to be able to use internal processing methods on ut
+    // Take over the just read byte vector into internal command data, to be able to use internal processing methods on ut
     m_commandData = byteData;
     auto newCommandDataByteLength = getCommandDataExpectedBytes(); // this relies on m_commandData (which is why we already modified it in the prev. line)
-    // if the command data length is zero, something went wrong and we did not recognize the command
+    // If the command data length is zero, something went wrong and we did not recognize the command
     jassert(newCommandDataByteLength != 0);
     if (newCommandDataByteLength != 0)
     {
-        // trim the copied byte vector data in commanddata to only contain the actual command data
+        // Trim the copied byte vector data in commanddata to only contain the actual command data
         m_commandData.resize(newCommandDataByteLength);
 
-        // determine if the byte data contains four extra bytes for min-max range
+        // Determine if the byte data contains four extra bytes for min-max range
         auto rangeDataLength = byteDataLength - newCommandDataByteLength;
-        if (rangeDataLength == 4)
+        if (rangeDataLength != 0)
         {
-            m_valueRange.setStart((byteData.at(byteDataLength - 4) << 8) | byteData.at(byteDataLength - 3));
-            m_valueRange.setEnd((byteData.at(byteDataLength - 2) << 8) | byteData.at(byteDataLength - 1));
+            auto valRangeByteCount = 4;
+            // Four additional bytes are interpreted as appended 2*2 bytes value range
+            if (rangeDataLength >= valRangeByteCount)
+            {
+                auto valRangeBytePos = newCommandDataByteLength;
+                m_valueRange.setStart(byteData.at(valRangeBytePos + 1) + (byteData.at(valRangeBytePos) << 8));
+                m_valueRange.setEnd(byteData.at(valRangeBytePos + 3) + (byteData.at(valRangeBytePos + 2) << 8));
 
-            return true;
+                // if only the four bytes were present, we are done
+                if (rangeDataLength == valRangeByteCount)
+                    return true;
+                // otherwise, we expect the next byte to define the count of commandrange bytes that still follow
+                else
+                {
+                    auto cmdRangeBytePos = valRangeBytePos + valRangeByteCount;
+                    auto cmdRangeByteCount = byteData.at(cmdRangeBytePos);
+                    cmdRangeBytePos++;
+
+                    // If we have four additional bytes and a straight number of bytes on top, we assume a value range 
+                    // followed by a command range being encoded in the additional bytes
+                    if (((cmdRangeByteCount) % 2 == 0) && ((byteData.size() - cmdRangeBytePos) % 2 == 0))
+                    {
+                        // we assume that half of the command range bytes are start and half are end value
+                        auto rangeValByteCount = cmdRangeByteCount / 2;
+                        auto rangeStart = std::vector<std::uint8_t>();
+                        rangeStart.reserve(rangeValByteCount);
+                        auto rangeEnd = std::vector<std::uint8_t>();
+                        rangeEnd.reserve(rangeValByteCount);
+                        auto i = 0;
+                        for (; i < rangeValByteCount; ++i)
+                            rangeStart.push_back(byteData.at(cmdRangeBytePos + i));
+                        for (; i < cmdRangeByteCount; ++i)
+                            rangeEnd.push_back(byteData.at(cmdRangeBytePos + i));
+
+                        m_commandRange.setStart(rangeStart);
+                        m_commandRange.setEnd(rangeEnd);
+
+                        return true;
+                    }
+                }
+
+            }
         }
-        else if (rangeDataLength == 0)
+        else
         {
             return true;
         }

@@ -45,6 +45,8 @@ public:
 	bool operator>(const MidiCommandRangeAssignment& rhs) const;
     MidiCommandRangeAssignment& operator=(const MidiCommandRangeAssignment& rhs);
 
+    static std::uint64_t getAsValue(const std::vector<std::uint8_t>& data);
+
     bool isNoteOnCommand() const;
     bool isNoteOffCommand() const;
     bool isProgramChangeCommand() const;
@@ -64,7 +66,8 @@ public:
     CommandType getCommandType() const;
     static CommandType getCommandType(const juce::MidiMessage& m);
     static CommandType getCommandType(const std::vector<std::uint8_t>& commandData);
-
+    bool isMatchingCommandType(const juce::MidiMessage& m) const;
+    bool isMatchingCommandType(const std::vector<std::uint8_t>& commandData) const;
 
     juce::String getCommandDescription() const;
     static juce::String getCommandDescription(const std::vector<std::uint8_t>& commandData);
@@ -89,6 +92,7 @@ public:
     bool isMatchingValueRange(int v) const;
     bool isMatchingValueRange(const juce::MidiMessage& m) const;
 
+    int getCommandValue() const;
     static int getCommandValue(const juce::MidiMessage& m);
     static int getCommandValue(const std::vector<std::uint8_t>& commandData);
 
