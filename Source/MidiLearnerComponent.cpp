@@ -102,12 +102,16 @@ void MidiLearnerComponent::handleMessage(const Message& msg)
 {
     if (auto* callbackMessage = dynamic_cast<const CallbackMidiMessage*> (&msg))
     {
+        auto& midiMessage = callbackMessage->_message;
+
+        DBG(String(__FUNCTION__) + " MIDI received: " + midiMessage.getDescription());
+
         // sanity check if the incoming message comes from the device we want to listen to
         if (m_deviceIdentifier.isEmpty() || (m_deviceIdentifier != callbackMessage->_source->getDeviceInfo().identifier))
             return;
 
         // start handling of the incoming data
-        auto commandRangeAssi = JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment(callbackMessage->_message);
+        auto commandRangeAssi = JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment(midiMessage);
         auto commandType = commandRangeAssi.getCommandType();
         auto& commandData = commandRangeAssi.getCommandData();
 
@@ -117,7 +121,7 @@ void MidiLearnerComponent::handleMessage(const Message& msg)
             auto directAssisKeyIndex = -1;
             if (m_learnedDirectAssis.count(commandType) > 0)
                 for (auto& learnedAssiKV : m_learnedDirectAssis.at(commandType))
-                    if (learnedAssiKV.second.getCommandData() == commandData && learnedAssiKV.second.isMatchingValueRange(callbackMessage->_message))
+                    if (learnedAssiKV.second.getCommandData() == commandData && learnedAssiKV.second.isMatchingValueRange(midiMessage))
                         directAssisKeyIndex = learnedAssiKV.first;
 
             // if the command data/type is not yet represented, create new entries for it
@@ -138,7 +142,7 @@ void MidiLearnerComponent::handleMessage(const Message& msg)
                 {
                     if (learnedAssiKV.second.getCommandData() == commandData)
                     {
-                        learnedAssiKV.second.extendValueRange(callbackMessage->_message);
+                        learnedAssiKV.second.extendValueRange(midiMessage);
                         commandAssisKeyIndex = learnedAssiKV.first;
                     }
                 }
@@ -161,8 +165,8 @@ void MidiLearnerComponent::handleMessage(const Message& msg)
                 jassert(m_learnedCommandAndValueRangeAssis.at(commandType).size() == 1);
                 auto learnedAssiKV = m_learnedCommandAndValueRangeAssis.at(commandType).begin();
                 
-                learnedAssiKV->second.extendCommandRange(callbackMessage->_message);
-                learnedAssiKV->second.extendValueRange(callbackMessage->_message);
+                learnedAssiKV->second.extendCommandRange(midiMessage);
+                learnedAssiKV->second.extendValueRange(midiMessage);
                 commandAndValueAssisKeyIndex = learnedAssiKV->first;
             }
 

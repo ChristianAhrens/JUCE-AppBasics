@@ -27,6 +27,7 @@ MidiCommandRangeAssignment::MidiCommandRangeAssignment(const std::vector<std::ui
 
 MidiCommandRangeAssignment::MidiCommandRangeAssignment(const juce::MidiMessage& m)
 {
+    setCommandData(m);
     extendValueRange(m);
 }
 
@@ -179,7 +180,10 @@ bool MidiCommandRangeAssignment::isNoteOnCommand(const std::vector<std::uint8_t>
     if (commandData.empty())
         return false;
 
-    return ((commandData[0] & 0xf0) == 0x90);
+    if (((commandData[0] & 0xf0) == 0x90) && ((commandData.size() > 2) && (commandData[2] != 0)))
+        return true;
+    else
+        return false;
 }
 
 bool MidiCommandRangeAssignment::isNoteOffCommand(const std::vector<std::uint8_t>& commandData)
@@ -187,7 +191,12 @@ bool MidiCommandRangeAssignment::isNoteOffCommand(const std::vector<std::uint8_t
     if (commandData.empty())
         return false;
 
-    return ((commandData[0] & 0xf0) == 0x80);
+    if ((commandData[0] & 0xf0) == 0x80)
+        return true;
+    else if (((commandData[0] & 0xf0) == 0x90) && ((commandData.size() > 2) && (commandData[2] == 0)))
+        return true;
+    else
+        return false;
 }
 
 bool MidiCommandRangeAssignment::isProgramChangeCommand(const std::vector<std::uint8_t>& commandData)
@@ -254,7 +263,24 @@ MidiCommandRangeAssignment::CommandType MidiCommandRangeAssignment::getCommandTy
 
 MidiCommandRangeAssignment::CommandType MidiCommandRangeAssignment::getCommandType(const juce::MidiMessage& m)
 {
-    return MidiCommandRangeAssignment(m).getCommandType();
+    auto commandType = CT_Invalid;
+
+    if (m.isNoteOn())
+        commandType = CT_NoteOn;
+    else if (m.isNoteOff())
+        commandType = CT_NoteOff;
+    else if (m.isProgramChange())
+        commandType = CT_ProgramChange;
+    else if (m.isPitchWheel())
+        commandType = CT_Pitch;
+    else if (m.isAftertouch())
+        commandType = CT_Aftertouch;
+    else if (m.isController())
+        commandType = CT_Controller;
+    else if (m.isChannelPressure())
+        commandType = CT_ChannelPressure;
+
+    return commandType;
 }
 
 MidiCommandRangeAssignment::CommandType MidiCommandRangeAssignment::getCommandType(const std::vector<std::uint8_t>& commandData)
@@ -393,12 +419,14 @@ std::vector<std::uint8_t> MidiCommandRangeAssignment::getCommandData(const juce:
     auto dataBytes = m.getRawData();
     auto dataBytesLength = m.getRawDataSize();
     auto commandData = std::vector<std::uint8_t>();
-    auto commandDataExpectedBytesLength = getCommandDataExpectedBytes(m);
+    auto commandDataExpectedByteCount = getCommandDataExpectedBytes(m);
+
+    commandData.reserve(commandDataExpectedByteCount);
     
-    if (commandDataExpectedBytesLength > dataBytesLength)
+    if (commandDataExpectedByteCount > dataBytesLength)
         return commandData;
     
-    for (int i = 0; i < commandDataExpectedBytesLength; ++i)
+    for (int i = 0; i < commandDataExpectedByteCount; ++i)
         commandData.push_back(dataBytes[i]);
 
     return commandData;
@@ -407,8 +435,11 @@ std::vector<std::uint8_t> MidiCommandRangeAssignment::getCommandData(const juce:
 int MidiCommandRangeAssignment::getCommandDataExpectedBytes() const
 {
     if (isNoteOnCommand()
-        || isNoteOffCommand()
-        || isProgramChangeCommand()
+        || isNoteOffCommand())
+    {
+        return 3;
+    }
+    else if (isProgramChangeCommand()
         || isAftertouchCommand()
         || isControllerCommand())
     {
@@ -428,8 +459,11 @@ int MidiCommandRangeAssignment::getCommandDataExpectedBytes() const
 int MidiCommandRangeAssignment::getCommandDataExpectedBytes(const juce::MidiMessage& m)
 {
     if (m.isNoteOn()
-        || m.isNoteOff()
-        || m.isProgramChange()
+        || m.isNoteOff())
+    {
+        return 3;
+    }
+    else if (m.isProgramChange()
         || m.isAftertouch()
         || m.isController())
     {
