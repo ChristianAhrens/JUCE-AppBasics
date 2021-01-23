@@ -592,7 +592,11 @@ bool MidiCommandRangeAssignment::extendCommandRange(const std::vector<std::uint8
     }
     else
     {
-        setCommandRange(juce::Range<std::vector<std::uint8_t>>(c, c));
+        setCommandRange(juce::Range<std::vector<std::uint8_t>>(c, c)); 
+        
+        if (!m_commandData.empty())
+            extendCommandRange(m_commandData);
+        
         return true;
     }
 }
