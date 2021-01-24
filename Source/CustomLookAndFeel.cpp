@@ -70,6 +70,14 @@ CustomLookAndFeel::CustomLookAndFeel()
 	setColour(CodeEditorComponent::ColourIds::highlightColourId, Colours::lightgrey);
 	setColour(CodeEditorComponent::ColourIds::lineNumberBackgroundId, Colours::grey);
 	setColour(CodeEditorComponent::ColourIds::lineNumberTextId, Colours::white);
+    
+    setColour(Slider::backgroundColourId, Colours::darkgrey.darker());
+    setColour(Slider::textBoxBackgroundColourId, Colours::darkgrey);
+    setColour(Slider::textBoxHighlightColourId, Colours::dimgrey);
+    setColour(Slider::textBoxOutlineColourId, Colours::lightgrey);
+    setColour(Slider::textBoxTextColourId, Colours::white);
+    setColour(Slider::thumbColourId, Colours::grey);
+    setColour(Slider::trackColourId, Colours::grey);
 }
 
 CustomLookAndFeel::~CustomLookAndFeel()
