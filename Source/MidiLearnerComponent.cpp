@@ -376,20 +376,27 @@ void MidiLearnerComponent::handlePopupResult(int resultingAssiIdx)
     }
 }
 
-void MidiLearnerComponent::setSelectedDeviceIdx(int deviceIdx)
+void MidiLearnerComponent::setSelectedDeviceIdentifier(const String& deviceIdentifier)
 {
     // a new deviceIdx cancels all ongoing action
     deactivateMidiInputCallback();
     m_popup.dismissAllActiveMenus();
 
     // sanity check of incoming deviceIdx
-    auto list = juce::MidiInput::getAvailableDevices();
-    if (list.size() > deviceIdx)
+    auto midiDevicesInfos = juce::MidiInput::getAvailableDevices();
+    bool newMidiDeviceFound = false;
+    for (auto const& midiDeviceInfo : midiDevicesInfos)
     {
-        m_deviceIdentifier = list[deviceIdx].identifier;
-        m_deviceName = list[deviceIdx].name;
+        if (midiDeviceInfo.identifier == deviceIdentifier)
+        {
+            newMidiDeviceFound = true;
+            m_deviceIdentifier = midiDeviceInfo.identifier;
+            m_deviceName = midiDeviceInfo.name;
+            break;
+        }
     }
-    else
+
+    if (!newMidiDeviceFound)
     {
         m_deviceIdentifier.clear();
         m_deviceName.clear();

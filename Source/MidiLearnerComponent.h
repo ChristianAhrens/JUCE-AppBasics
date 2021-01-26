@@ -57,7 +57,7 @@ public:
     std::function<void(Component*, JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment)> onMidiAssiSet;
     
     //==============================================================================
-    void setSelectedDeviceIdx(int deviceIdx);
+    void setSelectedDeviceIdentifier(const String& deviceIdentifier);
     void setCurrentMidiAssi(const JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment& currentAssi);
 
     void setReferredId(std::int16_t refId);
