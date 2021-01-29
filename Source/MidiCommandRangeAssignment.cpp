@@ -379,6 +379,26 @@ int MidiCommandRangeAssignment::getCommandValue(const std::vector<std::uint8_t>&
     }
 }
 
+int MidiCommandRangeAssignment::getCommandChannel() const
+{
+    if (m_commandData.size() < 1)
+        return 0;
+    else if ((m_commandData.at(0) & 0xf0) != 0xf0)
+        return (m_commandData.at(0) & 0xf) + 1;
+    else
+        return -1;
+}
+
+int MidiCommandRangeAssignment::getCommandChannel(const std::vector<std::uint8_t>& commandData)
+{
+    if (commandData.size() < 1)
+        return 0;
+    else if ((commandData.at(0) & 0xf0) != 0xf0)
+        return (commandData.at(0) & 0xf) + 1;
+    else
+        return -1;
+}
+
 juce::String MidiCommandRangeAssignment::getValueRangeDescription() const
 {
     if (m_valueRange.isEmpty())

@@ -94,6 +94,9 @@ public:
     static int getCommandValue(const juce::MidiMessage& m);
     static int getCommandValue(const std::vector<std::uint8_t>& commandData);
 
+    int getCommandChannel() const;
+    static int getCommandChannel(const std::vector<std::uint8_t>& commandData);
+
     const juce::Range<std::vector<std::uint8_t>>& getCommandRange() const;
     void setCommandRange(const juce::Range<std::vector<std::uint8_t>>& cr);
     bool extendCommandRange(const std::vector<std::uint8_t>& c);
