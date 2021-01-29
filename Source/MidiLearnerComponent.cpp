@@ -111,7 +111,7 @@ void MidiLearnerComponent::handleMessage(const Message& msg)
             return;
 
         // start handling of the incoming data
-        auto commandRangeAssi = JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment(midiMessage);
+        auto commandRangeAssi = JUCEAppBasics::MidiCommandRangeAssignment(midiMessage);
         auto commandType = commandRangeAssi.getCommandType();
         auto& commandData = commandRangeAssi.getCommandData();
 
@@ -322,7 +322,7 @@ void MidiLearnerComponent::handlePopupResult(int resultingAssiIdx)
     if (isPopupResultMuted())
         return;
 
-    auto resultingAssi = JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment();
+    auto resultingAssi = JUCEAppBasics::MidiCommandRangeAssignment();
     auto resultingAssiFound = false;
 
     for (auto const& commandTypeKV : m_learnedDirectAssis)
@@ -403,7 +403,7 @@ void MidiLearnerComponent::setSelectedDeviceIdentifier(const String& deviceIdent
     }
 }
 
-void MidiLearnerComponent::setCurrentMidiAssi(const JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment& currentAssi)
+void MidiLearnerComponent::setCurrentMidiAssi(const JUCEAppBasics::MidiCommandRangeAssignment& currentAssi)
 {
     m_currentMidiAssi = currentAssi;
     

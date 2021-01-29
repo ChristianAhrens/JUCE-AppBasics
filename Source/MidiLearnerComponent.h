@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 
-#include "../submodules/JUCE-AppBasics/Source/Midi_utils.h"
+#include "../submodules/JUCE-AppBasics/Source/MidiCommandRangeAssignment.h"
 
 namespace JUCEAppBasics
 {
@@ -54,11 +54,11 @@ public:
     void lookAndFeelChanged() override;
 
     //==============================================================================
-    std::function<void(Component*, JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment)> onMidiAssiSet;
+    std::function<void(Component*, JUCEAppBasics::MidiCommandRangeAssignment)> onMidiAssiSet;
     
     //==============================================================================
     void setSelectedDeviceIdentifier(const String& deviceIdentifier);
-    void setCurrentMidiAssi(const JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment& currentAssi);
+    void setCurrentMidiAssi(const JUCEAppBasics::MidiCommandRangeAssignment& currentAssi);
 
     void setReferredId(std::int16_t refId);
     std::int16_t getReferredId() const;
@@ -90,11 +90,11 @@ private:
     String                                                                  m_deviceIdentifier;
     String                                                                  m_deviceName;
     PopupMenu                                                               m_popup;
-    std::map<JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment>>    m_learnedDirectAssis;
-    std::map<JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment>>    m_learnedValueRangeAssis;
-    std::map<JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment>>    m_learnedCommandAndValueRangeAssis;
+    std::map<JUCEAppBasics::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::MidiCommandRangeAssignment>>    m_learnedDirectAssis;
+    std::map<JUCEAppBasics::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::MidiCommandRangeAssignment>>    m_learnedValueRangeAssis;
+    std::map<JUCEAppBasics::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::MidiCommandRangeAssignment>>    m_learnedCommandAndValueRangeAssis;
     std::unique_ptr<AudioDeviceManager>                                     m_deviceManager;
-    JUCEAppBasics::Midi_utils::MidiCommandRangeAssignment                   m_currentMidiAssi;
+    JUCEAppBasics::MidiCommandRangeAssignment                   m_currentMidiAssi;
     std::int16_t                                                            m_referredId{ -1 };
     int                                                                     m_popupItemIndexCounter{ 0 };
     AssignmentType                                                          m_assignmentTypesToBeLearned{ AT_Invalid };

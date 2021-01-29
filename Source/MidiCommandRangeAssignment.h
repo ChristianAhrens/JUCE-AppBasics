@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    Midi_utils.h
+    MidiCommandRangeAssignment.h
     Created: 15 Jan 2021 1:15:57pm
     Author:  Christian Ahrens
 
@@ -14,9 +14,7 @@
 
 namespace JUCEAppBasics
 {
-    
-namespace Midi_utils
-{
+
     
 class MidiCommandRangeAssignment
 {
@@ -116,7 +114,6 @@ private:
 
     JUCE_LEAK_DETECTOR(MidiCommandRangeAssignment)
 };
-    
-}
+
 
 }

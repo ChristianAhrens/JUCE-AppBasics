@@ -1,20 +1,18 @@
 /*
   ==============================================================================
 
-    Midi_utils.cpp
+    MidiCommandRangeAssignment.cpp
     Created: 15 Jan 2021 1:15:57pm
     Author:  Christian Ahrens
 
   ==============================================================================
 */
 
-#include "Midi_utils.h"
+#include "MidiCommandRangeAssignment.h"
 
 namespace JUCEAppBasics
 {
-    
-namespace Midi_utils
-{
+
     
 MidiCommandRangeAssignment::MidiCommandRangeAssignment()
 {
@@ -788,7 +786,5 @@ bool MidiCommandRangeAssignment::deserializeFromHexString(const juce::String& se
     return false;
 }
 
-    
-} // namespace JUCEAppBasics
 
-} // namespace Midi_utils
+} // namespace JUCEAppBasics
