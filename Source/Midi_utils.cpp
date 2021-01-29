@@ -571,18 +571,19 @@ bool MidiCommandRangeAssignment::extendCommandRange(const std::vector<std::uint8
     if (isMatchingCommandRange(c))
         return false;
 
+    auto newCommandValue = getCommandValue(c);
+
     if (isCommandRangeAssignment())
     {
-        auto commandValue = getCommandValue(c);
         auto commandRangeLowerValue = getCommandValue(m_commandRange.getStart());
         auto commandRangeUpperValue = getCommandValue(m_commandRange.getEnd());
 
-        if (commandRangeLowerValue > commandValue)
+        if (commandRangeLowerValue > newCommandValue)
         {
             m_commandRange.setStart(c);
             return true;
         }
-        if (commandRangeUpperValue < commandValue)
+        if (commandRangeUpperValue < newCommandValue)
         {
             m_commandRange.setEnd(c);
             return true;
@@ -592,10 +593,18 @@ bool MidiCommandRangeAssignment::extendCommandRange(const std::vector<std::uint8
     }
     else
     {
-        setCommandRange(juce::Range<std::vector<std::uint8_t>>(c, c)); 
-        
         if (!m_commandData.empty())
-            extendCommandRange(m_commandData);
+        {
+            auto commandValue = getCommandValue();
+            if (commandValue > newCommandValue)
+                setCommandRange(juce::Range<std::vector<std::uint8_t>>(c, m_commandData));
+            else if (commandValue < newCommandValue)
+                setCommandRange(juce::Range<std::vector<std::uint8_t>>(m_commandData, c));
+            else
+                return false;
+        }
+        else
+            setCommandRange(juce::Range<std::vector<std::uint8_t>>(c, c));
         
         return true;
     }
@@ -608,7 +617,7 @@ bool MidiCommandRangeAssignment::extendCommandRange(const juce::MidiMessage& m)
 
 bool MidiCommandRangeAssignment::isCommandRangeAssignment() const
 {
-    return (!m_commandRange.getStart().empty() && !m_commandRange.getEnd().empty());
+    return (!m_commandRange.getStart().empty() && !m_commandRange.getEnd().empty() && !m_commandRange.isEmpty());
 }
 
 bool MidiCommandRangeAssignment::isMatchingCommand(const juce::MidiMessage& m) const
