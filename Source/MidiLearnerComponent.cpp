@@ -421,4 +421,37 @@ std::int16_t MidiLearnerComponent::getReferredId() const
     return m_referredId;
 }
 
+bool MidiLearnerComponent::isTimerUpdatingPopup()
+{
+    return m_timerUpdatingPopup;
+}
+
+void MidiLearnerComponent::startTimerUpdatingPopup()
+{
+    m_timerUpdatingPopup = true;
+}
+
+void MidiLearnerComponent::stopTimerUpdatingPopup()
+{
+    m_timerUpdatingPopup = false;
+}
+
+bool MidiLearnerComponent::isPopupResultMuted(bool clear)
+{
+    if (m_popupResultMutedCount > 0) {
+        if (clear)
+            m_popupResultMutedCount = 0;
+        else
+            m_popupResultMutedCount--;
+        return true;
+    }
+    else
+        return false;
+}
+
+void MidiLearnerComponent::addPopupResultMutedOnce()
+{
+    m_popupResultMutedCount++;
+}
+
 }

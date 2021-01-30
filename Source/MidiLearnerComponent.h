@@ -100,32 +100,14 @@ private:
     AssignmentType                                                          m_assignmentTypesToBeLearned{ AT_Invalid };
 
     //==============================================================================
-    bool isTimerUpdatingPopup() { 
-        return m_timerUpdatingPopup; 
-    };
-    void startTimerUpdatingPopup() { 
-        m_timerUpdatingPopup = true; 
-    };
-    void stopTimerUpdatingPopup() { 
-        m_timerUpdatingPopup = false; 
-    };
+    bool isTimerUpdatingPopup();
+    void startTimerUpdatingPopup();
+    void stopTimerUpdatingPopup();
     bool m_timerUpdatingPopup{ false };
 
     //==============================================================================
-    bool isPopupResultMuted(bool clear = true) { 
-        if (m_popupResultMutedCount > 0) {
-            if (clear)
-                m_popupResultMutedCount = 0;
-            else
-                m_popupResultMutedCount--; 
-            return true;
-        } 
-        else 
-            return false; 
-    };
-    void addPopupResultMutedOnce() { 
-        m_popupResultMutedCount++; 
-    };
+    bool isPopupResultMuted(bool clear = true);
+    void addPopupResultMutedOnce();
     std::uint32_t m_popupResultMutedCount{ 0 };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiLearnerComponent)
