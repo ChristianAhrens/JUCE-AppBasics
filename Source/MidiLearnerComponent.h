@@ -82,8 +82,8 @@ private:
     void triggerLearning();
     void updatePopupMenu();
     void handlePopupResult(int resultingAssiIdx);
-    void activateMidiInputCallback();
-    void deactivateMidiInputCallback();
+    void activateMidiInput();
+    void deactivateMidiInput();
 
     std::unique_ptr<TextEditor>                 m_currentMidiAssiEdit;
     std::unique_ptr<DrawableButton>             m_learnButton;

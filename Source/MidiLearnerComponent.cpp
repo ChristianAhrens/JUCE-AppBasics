@@ -62,31 +62,35 @@ void MidiLearnerComponent::timerCallback()
         updatePopupMenu();
 }
 
-void MidiLearnerComponent::activateMidiInputCallback()
+void MidiLearnerComponent::activateMidiInput()
 {
     if (m_deviceIdentifier.isNotEmpty())
     {
         if (m_midiInput && m_midiInput->getDeviceInfo().identifier != m_deviceIdentifier)
         {
+            DBG(String(__FUNCTION__) + " Deactivating old MIDI input " + m_midiInput->getName() + +" (" + m_midiInput->getIdentifier() + ")");
             m_midiInput->stop();
             m_midiInput.reset();
         }
-        else if (m_midiInput && m_midiInput->getDeviceInfo().identifier == m_deviceIdentifier)
+        
+        if (m_midiInput && m_midiInput->getDeviceInfo().identifier == m_deviceIdentifier)
         {
-            DBG("Midi input " + m_deviceIdentifier + " is already active.");
+            DBG(String(__FUNCTION__) + " MIDI input " + m_midiInput->getName() + +" (" + m_midiInput->getIdentifier() + ") is already active.");
         }
         else
         {
             m_midiInput = juce::MidiInput::openDevice(m_deviceIdentifier, this);
             m_midiInput->start();
+            DBG(String(__FUNCTION__) + " Activated MIDI input " + m_midiInput->getName() + +" (" + m_midiInput->getIdentifier() + ")");
         }
     }
 }
 
-void MidiLearnerComponent::deactivateMidiInputCallback()
+void MidiLearnerComponent::deactivateMidiInput()
 {
     if (m_midiInput)
     {
+        DBG(String(__FUNCTION__) + " Deactivating MIDI input " + m_midiInput->getName() + +" (" + m_midiInput->getIdentifier() + ")");
         m_midiInput->stop();
         m_midiInput.reset();
     }
@@ -318,17 +322,15 @@ void MidiLearnerComponent::triggerLearning()
     m_learnedCommandAndValueRangeAssis.clear();
     m_popup.clear();
 
-    activateMidiInputCallback();
+    activateMidiInput();
 
     updatePopupMenu();
 }
 
 void MidiLearnerComponent::handlePopupResult(int resultingAssiIdx)
 {
-    DBG(String(__FUNCTION__));
     if (isPopupResultMuted())
         return;
-    DBG(String(__FUNCTION__) + " not muted");
 
     auto resultingAssi = JUCEAppBasics::MidiCommandRangeAssignment();
     auto resultingAssiFound = false;
@@ -373,21 +375,21 @@ void MidiLearnerComponent::handlePopupResult(int resultingAssiIdx)
 
         if (onMidiAssiSet)
             onMidiAssiSet(this, resultingAssi);
-
-        deactivateMidiInputCallback();
-
-        m_learnedDirectAssis.clear();
-        m_learnedValueRangeAssis.clear();
-        m_learnedCommandAndValueRangeAssis.clear();
-        m_popup.clear();
-        m_popupItemIndexCounter = 0;
     }
+    
+    deactivateMidiInput();
+
+    m_learnedDirectAssis.clear();
+    m_learnedValueRangeAssis.clear();
+    m_learnedCommandAndValueRangeAssis.clear();
+    m_popup.clear();
+    m_popupItemIndexCounter = 0;
 }
 
 void MidiLearnerComponent::setSelectedDeviceIdentifier(const String& deviceIdentifier)
 {
     // a new deviceIdx cancels all ongoing action
-    deactivateMidiInputCallback();
+    deactivateMidiInput();
     m_popup.dismissAllActiveMenus();
 
     // sanity check of incoming deviceIdx
