@@ -31,8 +31,6 @@ MidiLearnerComponent::MidiLearnerComponent(std::int16_t refId, AssignmentType as
 	addAndMakeVisible(m_learnButton.get());
     lookAndFeelChanged();
     
-    m_deviceManager = std::make_unique<AudioDeviceManager>();
-    
     startTimer(200);
 }
 
@@ -68,21 +66,29 @@ void MidiLearnerComponent::activateMidiInputCallback()
 {
     if (m_deviceIdentifier.isNotEmpty())
     {
-        if (!m_deviceManager->isMidiInputDeviceEnabled(m_deviceIdentifier))
-            m_deviceManager->setMidiInputDeviceEnabled(m_deviceIdentifier, true);
-
-        m_deviceManager->addMidiInputDeviceCallback(m_deviceIdentifier, this);
+        if (m_midiInput && m_midiInput->getDeviceInfo().identifier != m_deviceIdentifier)
+        {
+            m_midiInput->stop();
+            m_midiInput.reset();
+        }
+        else if (m_midiInput && m_midiInput->getDeviceInfo().identifier == m_deviceIdentifier)
+        {
+            DBG("Midi input " + m_deviceIdentifier + " is already active.");
+        }
+        else
+        {
+            m_midiInput = juce::MidiInput::openDevice(m_deviceIdentifier, this);
+            m_midiInput->start();
+        }
     }
 }
 
 void MidiLearnerComponent::deactivateMidiInputCallback()
 {
-    if (m_deviceIdentifier.isNotEmpty())
+    if (m_midiInput)
     {
-        if (m_deviceManager->isMidiInputDeviceEnabled(m_deviceIdentifier))
-            m_deviceManager->setMidiInputDeviceEnabled(m_deviceIdentifier, false);
-
-        m_deviceManager->removeMidiInputCallback(m_deviceIdentifier, this);
+        m_midiInput->stop();
+        m_midiInput.reset();
     }
 }
 
@@ -319,8 +325,10 @@ void MidiLearnerComponent::triggerLearning()
 
 void MidiLearnerComponent::handlePopupResult(int resultingAssiIdx)
 {
+    DBG(String(__FUNCTION__));
     if (isPopupResultMuted())
         return;
+    DBG(String(__FUNCTION__) + " not muted");
 
     auto resultingAssi = JUCEAppBasics::MidiCommandRangeAssignment();
     auto resultingAssiFound = false;

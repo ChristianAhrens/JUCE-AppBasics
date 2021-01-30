@@ -85,19 +85,20 @@ private:
     void activateMidiInputCallback();
     void deactivateMidiInputCallback();
 
-    std::unique_ptr<TextEditor>                                             m_currentMidiAssiEdit;
-    std::unique_ptr<DrawableButton>                                         m_learnButton;
-    String                                                                  m_deviceIdentifier;
-    String                                                                  m_deviceName;
-    PopupMenu                                                               m_popup;
+    std::unique_ptr<TextEditor>                 m_currentMidiAssiEdit;
+    std::unique_ptr<DrawableButton>             m_learnButton;
+    String                                      m_deviceIdentifier;
+    String                                      m_deviceName;
+    PopupMenu                                   m_popup;
     std::map<JUCEAppBasics::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::MidiCommandRangeAssignment>>    m_learnedDirectAssis;
     std::map<JUCEAppBasics::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::MidiCommandRangeAssignment>>    m_learnedValueRangeAssis;
     std::map<JUCEAppBasics::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::MidiCommandRangeAssignment>>    m_learnedCommandAndValueRangeAssis;
-    std::unique_ptr<AudioDeviceManager>                                     m_deviceManager;
-    JUCEAppBasics::MidiCommandRangeAssignment                   m_currentMidiAssi;
-    std::int16_t                                                            m_referredId{ -1 };
-    int                                                                     m_popupItemIndexCounter{ 0 };
-    AssignmentType                                                          m_assignmentTypesToBeLearned{ AT_Invalid };
+    
+    std::unique_ptr<MidiInput>                  m_midiInput;
+    JUCEAppBasics::MidiCommandRangeAssignment   m_currentMidiAssi;
+    std::int16_t                                m_referredId{ -1 };
+    int                                         m_popupItemIndexCounter{ 0 };
+    AssignmentType                              m_assignmentTypesToBeLearned{ AT_Invalid };
 
     //==============================================================================
     bool isTimerUpdatingPopup();
