@@ -16,6 +16,7 @@
 #include "AppConfig.h"
 
 #include "../../Source/ZeroconfDiscoverComponent.h"
+#include "../../Source/MidiLearnerComponent.h"
 
 #include "../../Source/CustomLookAndFeel.h"
 #include "../../Source/SplitButtonComponent.h"
@@ -80,6 +81,7 @@ private:
     std::unique_ptr<DemoHeaderFooterComponent>                  m_header;
     std::unique_ptr<DemoBodyComponent>                          m_body;
     std::unique_ptr<JUCEAppBasics::ZeroconfDiscoverComponent>   m_zeroconf;
+    std::unique_ptr<JUCEAppBasics::MidiLearnerComponent>        m_midiLearner;
     std::unique_ptr<DemoOverlayComponent>                       m_overlay;
     std::unique_ptr<DemoHeaderFooterComponent>                  m_footer;
 

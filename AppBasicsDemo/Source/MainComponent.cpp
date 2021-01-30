@@ -21,17 +21,24 @@ MainComponent::MainComponent()
 {
 	m_header = std::make_unique<DemoHeaderFooterComponent>();
 	addAndMakeVisible(m_header.get());
+
 	m_body = std::make_unique<DemoBodyComponent>();
 	addAndMakeVisible(m_body.get());
+
     m_zeroconf = std::make_unique<JUCEAppBasics::ZeroconfDiscoverComponent>(true, true);
     m_zeroconf->addDiscoverService(JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType::ZST_OSC, 50013);
     m_zeroconf->addDiscoverService(JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType::ZST_OCA, 50014);
     m_zeroconf->onServiceSelected = [=](JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType type, JUCEAppBasics::ZeroconfDiscoverComponent::ServiceInfo* info) { handleServiceSelected(type, info); };
     addAndMakeVisible(m_zeroconf.get());
+
+    m_midiLearner = std::make_unique<JUCEAppBasics::MidiLearnerComponent>();
+    addAndMakeVisible(m_midiLearner.get());
+
     m_overlay = std::make_unique<DemoOverlayComponent>();
     m_overlay->addOverlayParent(this);
     m_overlay->parentResize = [this] { resized(); };
     addAndMakeVisible(m_overlay.get());
+
 	m_footer = std::make_unique<DemoHeaderFooterComponent>();
 	addAndMakeVisible(m_footer.get());
 
@@ -63,6 +70,7 @@ MainComponent::MainComponent()
         {BinaryData::play_arrow24px_svg},
         {BinaryData::radio_button_checked24px_svg},
         {BinaryData::radio_button_unchecked24px_svg},
+        {BinaryData::school24px_svg},
         {BinaryData::settings24px_svg},
         {BinaryData::show_chart24px_svg},
         {BinaryData::skip_next24px_svg},
@@ -105,7 +113,7 @@ void MainComponent::paint (Graphics& g)
 
 void MainComponent::resized()
 {
-	auto panelDefaultSize = 40.0f;
+	auto panelDefaultSize = 45.0f;
 
     auto safety = JUCEAppBasics::iOS_utils::getDeviceSafetyMargins();
 
@@ -127,6 +135,7 @@ void MainComponent::resized()
             FlexItem(*m_splitButton.get())  .withFlex(1).withMargin(juce::FlexItem::Margin(1, 1, 1, 1)),
             FlexItem(*m_body.get())         .withFlex(5),
             FlexItem(*m_zeroconf.get())     .withFlex(1),
+            FlexItem(*m_midiLearner.get())  .withFlex(1),
             FlexItem(*m_overlay.get())      .withFlex(1).withMargin(juce::FlexItem::Margin(10, 10, 10, 10)),
             FlexItem(*m_footer.get())       .withFlex(1).withMaxHeight(panelDefaultSize + safety._bottom) });
 
@@ -134,7 +143,7 @@ void MainComponent::resized()
 
         Grid buttonGrid;
         buttonGrid.templateRows = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
-        buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
+        buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
         for (auto const& button : m_buttons)
         {
             buttonGrid.items.add(GridItem(button.get()).withMargin(juce::GridItem::Margin(1, 1, 1, 1)));
