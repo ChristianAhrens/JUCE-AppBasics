@@ -113,6 +113,10 @@
         <FILE id="rPtR5y" name="Image_utils.h" compile="0" resource="0" file="../Source/Image_utils.h"/>
         <FILE id="SzhlUq" name="iOS_utils.cpp" compile="1" resource="0" file="../Source/iOS_utils.cpp"/>
         <FILE id="fjHBgW" name="iOS_utils.h" compile="0" resource="0" file="../Source/iOS_utils.h"/>
+        <FILE id="c4J3Z2" name="MidiCommandRangeAssignment.cpp" compile="1"
+              resource="0" file="../Source/MidiCommandRangeAssignment.cpp"/>
+        <FILE id="DaZa96" name="MidiCommandRangeAssignment.h" compile="0" resource="0"
+              file="../Source/MidiCommandRangeAssignment.h"/>
         <FILE id="zmmu3l" name="MidiLearnerComponent.cpp" compile="1" resource="0"
               file="../Source/MidiLearnerComponent.cpp"/>
         <FILE id="EhebS5" name="MidiLearnerComponent.h" compile="0" resource="0"

@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 
-#include "../submodules/JUCE-AppBasics/Source/MidiCommandRangeAssignment.h"
+#include "MidiCommandRangeAssignment.h"
 
 namespace JUCEAppBasics
 {
