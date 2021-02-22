@@ -62,6 +62,7 @@ MainComponent::MainComponent()
         {BinaryData::grid_on24px_svg},
         {BinaryData::help24px_svg},
         {BinaryData::input24px_svg},
+        {BinaryData::insert_chart_outlined24px_svg},
         {BinaryData::mediation24px_svg},
         {BinaryData::mobiledata_off24px_svg},
         {BinaryData::open_in_full24px_svg},
@@ -78,6 +79,7 @@ MainComponent::MainComponent()
         {BinaryData::skip_previous24px_svg},
         {BinaryData::stop24px_svg},
         {BinaryData::track_changes24px_svg},
+        {BinaryData::tune24px_svg},
         {BinaryData::vertical_split24px_svg},
         {BinaryData::volume_off24px_svg},
         {BinaryData::waves24px_svg}, };

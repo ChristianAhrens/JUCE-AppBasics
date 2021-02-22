@@ -65,6 +65,8 @@
               file="../Resources/Images/grid_on-24px.svg"/>
         <FILE id="OiZdyH" name="help-24px.svg" compile="0" resource="1" file="../Resources/Images/help-24px.svg"/>
         <FILE id="HWJuZT" name="input-24px.svg" compile="0" resource="1" file="../Resources/Images/input-24px.svg"/>
+        <FILE id="aSUmm9" name="insert_chart_outlined-24px.svg" compile="0"
+              resource="1" file="../Resources/Images/insert_chart_outlined-24px.svg"/>
         <FILE id="O2Ct6t" name="mediation-24px.svg" compile="0" resource="1"
               file="../Resources/Images/mediation-24px.svg"/>
         <FILE id="cz4E15" name="mobiledata_off-24px.svg" compile="0" resource="1"
@@ -94,6 +96,7 @@
         <FILE id="pwwmby" name="stop-24px.svg" compile="0" resource="1" file="../Resources/Images/stop-24px.svg"/>
         <FILE id="bc6RJW" name="track_changes-24px.svg" compile="0" resource="1"
               file="../Resources/Images/track_changes-24px.svg"/>
+        <FILE id="G0d5Pl" name="tune-24px.svg" compile="0" resource="1" file="../Resources/Images/tune-24px.svg"/>
         <FILE id="gEjTUS" name="vertical_split-24px.svg" compile="0" resource="1"
               file="../Resources/Images/vertical_split-24px.svg"/>
         <FILE id="CSHQVX" name="volume_off-24px.svg" compile="0" resource="1"
