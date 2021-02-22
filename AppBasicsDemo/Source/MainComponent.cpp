@@ -63,6 +63,7 @@ MainComponent::MainComponent()
         {BinaryData::help24px_svg},
         {BinaryData::input24px_svg},
         {BinaryData::mediation24px_svg},
+        {BinaryData::mobiledata_off24px_svg},
         {BinaryData::open_in_full24px_svg},
         {BinaryData::open_in_new24px_svg},
         {BinaryData::outbond24px_svg},
