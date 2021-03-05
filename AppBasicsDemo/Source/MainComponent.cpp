@@ -48,6 +48,7 @@ MainComponent::MainComponent()
     addAndMakeVisible(m_splitButton.get());
 
     std::vector<String> svgImages{
+        {BinaryData::add24px_svg},
         {BinaryData::add_circle24px_svg},
         {BinaryData::add_circle_outline24px_svg},
         {BinaryData::call_made24px_svg},
@@ -75,6 +76,7 @@ MainComponent::MainComponent()
         {BinaryData::play_arrow24px_svg},
         {BinaryData::radio_button_checked24px_svg},
         {BinaryData::radio_button_unchecked24px_svg},
+        {BinaryData::remove24px_svg},
         {BinaryData::remove_circle24px_svg},
         {BinaryData::remove_circle_outline24px_svg},
         {BinaryData::school24px_svg},
