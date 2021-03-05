@@ -41,11 +41,16 @@
     </GROUP>
     <GROUP id="{3482B756-6423-A110-A5E5-7E6AADE98E41}" name="Resources">
       <GROUP id="{E6327702-ADFE-25DB-51B3-D943A20FA2E6}" name="Images">
+        <FILE id="O71pUQ" name="add_circle-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/add_circle-24px.svg"/>
+        <FILE id="E7q72Q" name="add_circle_outline-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/add_circle_outline-24px.svg"/>
         <FILE id="ANlbjk" name="call_made-24px.svg" compile="0" resource="1"
               file="../Resources/Images/call_made-24px.svg"/>
         <FILE id="W0Dvu6" name="call_received-24px.svg" compile="0" resource="1"
               file="../Resources/Images/call_received-24px.svg"/>
         <FILE id="ovhgPb" name="cancel-24px.svg" compile="0" resource="1" file="../Resources/Images/cancel-24px.svg"/>
+        <FILE id="B8HneQ" name="cast-24px.svg" compile="0" resource="1" file="../Resources/Images/cast-24px.svg"/>
         <FILE id="LgCA5K" name="close_fullscreen-24px.svg" compile="0" resource="1"
               file="../Resources/Images/close_fullscreen-24px.svg"/>
         <FILE id="D3tjjx" name="equalizer-24px.svg" compile="0" resource="1"
@@ -84,6 +89,10 @@
               resource="1" file="../Resources/Images/radio_button_checked-24px.svg"/>
         <FILE id="irfWUb" name="radio_button_unchecked-24px.svg" compile="0"
               resource="1" file="../Resources/Images/radio_button_unchecked-24px.svg"/>
+        <FILE id="pnS8R8" name="remove_circle-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/remove_circle-24px.svg"/>
+        <FILE id="nTaubi" name="remove_circle_outline-24px.svg" compile="0"
+              resource="1" file="../Resources/Images/remove_circle_outline-24px.svg"/>
         <FILE id="jKCn1H" name="school-24px.svg" compile="0" resource="1" file="../Resources/Images/school-24px.svg"/>
         <FILE id="oO4uO2" name="settings-24px.svg" compile="0" resource="1"
               file="../Resources/Images/settings-24px.svg"/>

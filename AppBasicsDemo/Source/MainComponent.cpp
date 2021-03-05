@@ -48,9 +48,12 @@ MainComponent::MainComponent()
     addAndMakeVisible(m_splitButton.get());
 
     std::vector<String> svgImages{
+        {BinaryData::add_circle24px_svg},
+        {BinaryData::add_circle_outline24px_svg},
         {BinaryData::call_made24px_svg},
         {BinaryData::call_received24px_svg},
         {BinaryData::cancel24px_svg},
+        {BinaryData::cast24px_svg},
         {BinaryData::close_fullscreen24px_svg},
         {BinaryData::equalizer24px_svg},
         {BinaryData::fast_forward24px_svg},
@@ -72,6 +75,8 @@ MainComponent::MainComponent()
         {BinaryData::play_arrow24px_svg},
         {BinaryData::radio_button_checked24px_svg},
         {BinaryData::radio_button_unchecked24px_svg},
+        {BinaryData::remove_circle24px_svg},
+        {BinaryData::remove_circle_outline24px_svg},
         {BinaryData::school24px_svg},
         {BinaryData::settings24px_svg},
         {BinaryData::show_chart24px_svg},
@@ -146,7 +151,7 @@ void MainComponent::resized()
 
         Grid buttonGrid;
         buttonGrid.templateRows = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
-        buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
+        buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
         for (auto const& button : m_buttons)
         {
             buttonGrid.items.add(GridItem(button.get()).withMargin(juce::GridItem::Margin(1, 1, 1, 1)));
