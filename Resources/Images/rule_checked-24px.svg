@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+	<g>
+	    <rect
+	       fill="none"
+	       height="24"
+	       width="24"
+	       id="rect1" />
+	    <path
+	       name="firstline"
+	       d="M 11,7 H 2 v 2 h 9 V 7 z"
+	       id="path2" />
+	    <path
+	       name="secondline"
+	       d="M 11,15 H 2 v 2 h 9 V 15 z"
+	       id="path3" />
+	    <path
+	       name="checkmark"
+	       d="M 16.54,11 L 13,7.46 l 1.41,-1.41 2.12,2.12 4.24,-4.24 1.41,1.41 L 16.54,11 z"
+	       id="path4" />
+	    <path
+	       name="checkmark2"
+		   d="M 16.54,19 L 13,15.46 l 1.41,-1.41 2.12,2.12 4.24,-4.24 1.41,1.41 z"
+	       id="path5" />
+	</g>
+</svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+	<g>
+	    <rect
+	       fill="none"
+	       height="24"
+	       width="24"
+	       id="rect1" />
+	    <path
+	       name="firstline"
+	       d="M 11,7 H 2 v 2 h 9 V 7 z"
+	       id="path2" />
+	    <path
+	       name="secondline"
+	       d="M 11,15 H 2 v 2 h 9 V 15 z"
+	       id="path3" />
+	    <path
+	       name="cross1"
+	       d="M 21,5.41 L 19.59,4 L 17,6.59 L 14.41,4 L 13,5.41 L 15.59,8 L 13,10.59 L 14.41,12 L 17,9.41 L 19.59,12 L 21,10.59 L 18.41,8 Z"
+	       id="path4" />
+		<path
+		   name="cross2"
+		   d="M 21,13.41 L 19.59,12 L 17,14.59 L 14.41,12 L 13,13.41 L 15.59,16 L 13,18.59 L 14.41,20 L 17,17.41 L 19.59,20 L 21,18.59 L 18.41,16 L 21,13.41 z"
+		   id="path5"/>
+	</g>
+</svg>

@@ -69,6 +69,7 @@
               file="../Resources/Images/graphic_eq-24px.svg"/>
         <FILE id="phRJfY" name="grid_on-24px.svg" compile="0" resource="1"
               file="../Resources/Images/grid_on-24px.svg"/>
+        <FILE id="kDUOiz" name="height-24px.svg" compile="0" resource="1" file="../Resources/Images/height-24px.svg"/>
         <FILE id="OiZdyH" name="help-24px.svg" compile="0" resource="1" file="../Resources/Images/help-24px.svg"/>
         <FILE id="HWJuZT" name="input-24px.svg" compile="0" resource="1" file="../Resources/Images/input-24px.svg"/>
         <FILE id="aSUmm9" name="insert_chart_outlined-24px.svg" compile="0"
@@ -95,7 +96,14 @@
               file="../Resources/Images/remove_circle-24px.svg"/>
         <FILE id="nTaubi" name="remove_circle_outline-24px.svg" compile="0"
               resource="1" file="../Resources/Images/remove_circle_outline-24px.svg"/>
+        <FILE id="Ea92oG" name="rule-24px.svg" compile="0" resource="1" file="../Resources/Images/rule-24px.svg"/>
+        <FILE id="jcrJw3" name="rule_checked-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/rule_checked-24px.svg"/>
+        <FILE id="MQxYqe" name="rule_unchecked-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/rule_unchecked-24px.svg"/>
         <FILE id="jKCn1H" name="school-24px.svg" compile="0" resource="1" file="../Resources/Images/school-24px.svg"/>
+        <FILE id="kiUDmN" name="select_all-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/select_all-24px.svg"/>
         <FILE id="oO4uO2" name="settings-24px.svg" compile="0" resource="1"
               file="../Resources/Images/settings-24px.svg"/>
         <FILE id="oUZt9y" name="show_chart-24px.svg" compile="0" resource="1"

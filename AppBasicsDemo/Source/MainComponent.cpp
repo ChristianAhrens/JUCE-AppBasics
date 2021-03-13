@@ -64,6 +64,7 @@ MainComponent::MainComponent()
         {BinaryData::grain24px_svg},
         {BinaryData::graphic_eq24px_svg},
         {BinaryData::grid_on24px_svg},
+        {BinaryData::height24px_svg},
         {BinaryData::help24px_svg},
         {BinaryData::input24px_svg},
         {BinaryData::insert_chart_outlined24px_svg},
@@ -79,7 +80,11 @@ MainComponent::MainComponent()
         {BinaryData::remove24px_svg},
         {BinaryData::remove_circle24px_svg},
         {BinaryData::remove_circle_outline24px_svg},
+        {BinaryData::rule24px_svg},
+        {BinaryData::rule_checked24px_svg},
+        {BinaryData::rule_unchecked24px_svg},
         {BinaryData::school24px_svg},
+        {BinaryData::select_all24px_svg},
         {BinaryData::settings24px_svg},
         {BinaryData::show_chart24px_svg},
         {BinaryData::skip_next24px_svg},
@@ -152,7 +157,7 @@ void MainComponent::resized()
         fb.performLayout(getLocalBounds().toFloat());
 
         Grid buttonGrid;
-        buttonGrid.templateRows = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
+        buttonGrid.templateRows = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
         buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
         for (auto const& button : m_buttons)
         {
