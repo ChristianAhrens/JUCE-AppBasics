@@ -74,6 +74,14 @@
         <FILE id="HWJuZT" name="input-24px.svg" compile="0" resource="1" file="../Resources/Images/input-24px.svg"/>
         <FILE id="aSUmm9" name="insert_chart_outlined-24px.svg" compile="0"
               resource="1" file="../Resources/Images/insert_chart_outlined-24px.svg"/>
+        <FILE id="JeNx3Y" name="keyboard_arrow_down-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/keyboard_arrow_down-24px.svg"/>
+        <FILE id="sROf4o" name="keyboard_arrow_left-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/keyboard_arrow_left-24px.svg"/>
+        <FILE id="qM4HTa" name="keyboard_arrow_right-24px.svg" compile="0"
+              resource="1" file="../Resources/Images/keyboard_arrow_right-24px.svg"/>
+        <FILE id="RGP2yo" name="keyboard_arrow_up-24px.svg" compile="0" resource="1"
+              file="../Resources/Images/keyboard_arrow_up-24px.svg"/>
         <FILE id="O2Ct6t" name="mediation-24px.svg" compile="0" resource="1"
               file="../Resources/Images/mediation-24px.svg"/>
         <FILE id="cz4E15" name="mobiledata_off-24px.svg" compile="0" resource="1"

@@ -68,6 +68,10 @@ MainComponent::MainComponent()
         {BinaryData::help24px_svg},
         {BinaryData::input24px_svg},
         {BinaryData::insert_chart_outlined24px_svg},
+        {BinaryData::keyboard_arrow_down24px_svg},
+        {BinaryData::keyboard_arrow_left24px_svg},
+        {BinaryData::keyboard_arrow_right24px_svg},
+        {BinaryData::keyboard_arrow_up24px_svg},
         {BinaryData::mediation24px_svg},
         {BinaryData::mobiledata_off24px_svg},
         {BinaryData::open_in_full24px_svg},
@@ -158,7 +162,7 @@ void MainComponent::resized()
 
         Grid buttonGrid;
         buttonGrid.templateRows = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
-        buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
+        buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
         for (auto const& button : m_buttons)
         {
             buttonGrid.items.add(GridItem(button.get()).withMargin(juce::GridItem::Margin(1, 1, 1, 1)));
