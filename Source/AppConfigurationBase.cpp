@@ -214,35 +214,35 @@ void AppConfigurationBase::debugPrintXmlTree()
 	DBG("###### saving xml tree to file ######");
 	DBG("#####################################");
 	DBG(m_xml->getTagName());
-	forEachXmlChildElement(*m_xml, childElement)
+    for (auto childElement : m_xml->getChildIterator())
 	{
 		auto childDbgString = String("- " + childElement->getTagName());
 		for (int i = 0; i < childElement->getNumAttributes(); ++i)
 			childDbgString += " " + childElement->getAttributeName(i) + "=" + childElement->getAttributeValue(i);
 		DBG(childDbgString);
 
-		forEachXmlChildElement(*childElement, childchildElement)
+        for (auto childchildElement : childElement->getChildIterator())
 		{
 			auto childchildDbgString = String("-- " + childchildElement->getTagName());
 			for (int i = 0; i < childchildElement->getNumAttributes(); ++i)
 				childchildDbgString += " " + childchildElement->getAttributeName(i) + "=" + childchildElement->getAttributeValue(i);
 			DBG(childchildDbgString);
 
-			forEachXmlChildElement(*childchildElement, childchildchildElement)
+            for (auto childchildchildElement : childchildElement->getChildIterator())
 			{
 				auto childchildchildDbgString = String("--- " + childchildchildElement->getTagName());
 				for (int i = 0; i < childchildchildElement->getNumAttributes(); ++i)
 					childchildchildDbgString += " " + childchildchildElement->getAttributeName(i) + "=" + childchildchildElement->getAttributeValue(i);
 				DBG(childchildchildDbgString);
 
-				forEachXmlChildElement(*childchildchildElement, childchildchildchildElement)
+                for (auto childchildchildchildElement : childchildchildElement->getChildIterator())
 				{
 					auto childchildchildchildDbgString = String("---- " + childchildchildchildElement->getTagName());
 					for (int i = 0; i < childchildchildchildElement->getNumAttributes(); ++i)
 						childchildchildchildDbgString += " " + childchildchildchildElement->getAttributeName(i) + "=" + childchildchildchildElement->getAttributeValue(i);
 					DBG(childchildchildchildDbgString);
 
-					forEachXmlChildElement(*childchildchildchildElement, childchildchildchildchildElement)
+                    for (auto childchildchildchildchildElement : childchildchildchildElement->getChildIterator())
 					{
 						auto childchildchildchildchildDbgString = String("----- " + childchildchildchildchildElement->getTagName());
 						for (int i = 0; i < childchildchildchildchildElement->getNumAttributes(); ++i)
