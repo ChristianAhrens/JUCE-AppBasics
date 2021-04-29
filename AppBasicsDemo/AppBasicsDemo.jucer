@@ -46,6 +46,8 @@
               file="../Resources/Images/add_circle-24px.svg"/>
         <FILE id="E7q72Q" name="add_circle_outline-24px.svg" compile="0" resource="1"
               file="../Resources/Images/add_circle_outline-24px.svg"/>
+        <FILE id="WW50IN" name="art_track_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/art_track_black_24dp.svg"/>
         <FILE id="ANlbjk" name="call_made-24px.svg" compile="0" resource="1"
               file="../Resources/Images/call_made-24px.svg"/>
         <FILE id="W0Dvu6" name="call_received-24px.svg" compile="0" resource="1"
@@ -112,6 +114,8 @@
         <FILE id="jKCn1H" name="school-24px.svg" compile="0" resource="1" file="../Resources/Images/school-24px.svg"/>
         <FILE id="kiUDmN" name="select_all-24px.svg" compile="0" resource="1"
               file="../Resources/Images/select_all-24px.svg"/>
+        <FILE id="i8p62k" name="sensors_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/sensors_black_24dp.svg"/>
         <FILE id="oO4uO2" name="settings-24px.svg" compile="0" resource="1"
               file="../Resources/Images/settings-24px.svg"/>
         <FILE id="oUZt9y" name="show_chart-24px.svg" compile="0" resource="1"
@@ -120,12 +124,16 @@
               file="../Resources/Images/skip_next-24px.svg"/>
         <FILE id="KwdX9w" name="skip_previous-24px.svg" compile="0" resource="1"
               file="../Resources/Images/skip_previous-24px.svg"/>
+        <FILE id="pSI6By" name="slideshow_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/slideshow_black_24dp.svg"/>
         <FILE id="pwwmby" name="stop-24px.svg" compile="0" resource="1" file="../Resources/Images/stop-24px.svg"/>
         <FILE id="bc6RJW" name="track_changes-24px.svg" compile="0" resource="1"
               file="../Resources/Images/track_changes-24px.svg"/>
         <FILE id="G0d5Pl" name="tune-24px.svg" compile="0" resource="1" file="../Resources/Images/tune-24px.svg"/>
         <FILE id="gEjTUS" name="vertical_split-24px.svg" compile="0" resource="1"
               file="../Resources/Images/vertical_split-24px.svg"/>
+        <FILE id="r676S7" name="video_library_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/video_library_black_24dp.svg"/>
         <FILE id="CSHQVX" name="volume_off-24px.svg" compile="0" resource="1"
               file="../Resources/Images/volume_off-24px.svg"/>
         <FILE id="ypSyIz" name="waves-24px.svg" compile="0" resource="1" file="../Resources/Images/waves-24px.svg"/>
