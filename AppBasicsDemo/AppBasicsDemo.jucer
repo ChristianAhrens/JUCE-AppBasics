@@ -54,8 +54,12 @@
               file="../Resources/Images/call_received-24px.svg"/>
         <FILE id="ovhgPb" name="cancel-24px.svg" compile="0" resource="1" file="../Resources/Images/cancel-24px.svg"/>
         <FILE id="B8HneQ" name="cast-24px.svg" compile="0" resource="1" file="../Resources/Images/cast-24px.svg"/>
+        <FILE id="AbevsC" name="clear_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/clear_black_24dp.svg"/>
         <FILE id="LgCA5K" name="close_fullscreen-24px.svg" compile="0" resource="1"
               file="../Resources/Images/close_fullscreen-24px.svg"/>
+        <FILE id="C75T2Y" name="download_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/download_black_24dp.svg"/>
         <FILE id="D3tjjx" name="equalizer-24px.svg" compile="0" resource="1"
               file="../Resources/Images/equalizer-24px.svg"/>
         <FILE id="cGlvGX" name="fast_forward-24px.svg" compile="0" resource="1"
@@ -97,6 +101,8 @@
         <FILE id="gDRh21" name="pause-24px.svg" compile="0" resource="1" file="../Resources/Images/pause-24px.svg"/>
         <FILE id="Bl75my" name="play_arrow-24px.svg" compile="0" resource="1"
               file="../Resources/Images/play_arrow-24px.svg"/>
+        <FILE id="Iai7Fd" name="push_pin_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/push_pin_black_24dp.svg"/>
         <FILE id="yARLnD" name="radio_button_checked-24px.svg" compile="0"
               resource="1" file="../Resources/Images/radio_button_checked-24px.svg"/>
         <FILE id="irfWUb" name="radio_button_unchecked-24px.svg" compile="0"

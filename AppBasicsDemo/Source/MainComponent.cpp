@@ -56,7 +56,9 @@ MainComponent::MainComponent()
         {BinaryData::call_received24px_svg},
         {BinaryData::cancel24px_svg},
         {BinaryData::cast24px_svg},
+        {BinaryData::clear_black_24dp_svg},
         {BinaryData::close_fullscreen24px_svg},
+        {BinaryData::download_black_24dp_svg},
         {BinaryData::equalizer24px_svg},
         {BinaryData::fast_forward24px_svg},
         {BinaryData::fast_rewind24px_svg},
@@ -80,6 +82,7 @@ MainComponent::MainComponent()
         {BinaryData::outbond24px_svg},
         {BinaryData::pause24px_svg},
         {BinaryData::play_arrow24px_svg},
+        {BinaryData::push_pin_black_24dp_svg},
         {BinaryData::radio_button_checked24px_svg},
         {BinaryData::radio_button_unchecked24px_svg},
         {BinaryData::remove24px_svg},
@@ -165,7 +168,7 @@ void MainComponent::resized()
         fb.performLayout(getLocalBounds().toFloat());
 
         Grid buttonGrid;
-        buttonGrid.templateRows = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
+        buttonGrid.templateRows = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
         buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
         for (auto const& button : m_buttons)
         {
