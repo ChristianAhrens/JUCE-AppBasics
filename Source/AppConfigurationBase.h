@@ -65,7 +65,7 @@ public:
 	void triggerConfigurationDump(bool includeWatcherUpdate = true);
 	void clearDumpers();
 
-	void addWatcher(AppConfigurationBase::Watcher* w);
+	void addWatcher(AppConfigurationBase::Watcher* w, bool initialUpdate = false);
 	void triggerWatcherUpdate();
 	void clearWatchers();
 

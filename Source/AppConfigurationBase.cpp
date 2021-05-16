@@ -138,8 +138,11 @@ void AppConfigurationBase::clearDumpers()
 	m_dumpers.clear();
 }
 
-void AppConfigurationBase::addWatcher(AppConfigurationBase::Watcher* w)
+void AppConfigurationBase::addWatcher(AppConfigurationBase::Watcher* w, bool initialUpdate)
 {
+	if (initialUpdate)
+		w->onConfigUpdated();
+
 	m_watchers.push_back(w);
 }
 
