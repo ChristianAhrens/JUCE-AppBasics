@@ -42,6 +42,8 @@
     <GROUP id="{3482B756-6423-A110-A5E5-7E6AADE98E41}" name="Resources">
       <GROUP id="{E6327702-ADFE-25DB-51B3-D943A20FA2E6}" name="Images">
         <FILE id="HPZTnD" name="add-24px.svg" compile="0" resource="1" file="../Resources/Images/add-24px.svg"/>
+        <FILE id="IWSOk5" name="add_batch-24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/add_batch-24dp.svg"/>
         <FILE id="O71pUQ" name="add_circle-24px.svg" compile="0" resource="1"
               file="../Resources/Images/add_circle-24px.svg"/>
         <FILE id="E7q72Q" name="add_circle_outline-24px.svg" compile="0" resource="1"

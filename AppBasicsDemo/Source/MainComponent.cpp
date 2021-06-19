@@ -48,6 +48,7 @@ MainComponent::MainComponent()
     addAndMakeVisible(m_splitButton.get());
 
     std::vector<String> svgImages{
+        {BinaryData::add_batch24dp_svg},
         {BinaryData::add24px_svg},
         {BinaryData::add_circle24px_svg},
         {BinaryData::add_circle_outline24px_svg},
