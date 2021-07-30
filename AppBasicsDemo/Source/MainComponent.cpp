@@ -52,6 +52,7 @@ MainComponent::MainComponent()
         {BinaryData::add24px_svg},
         {BinaryData::add_circle24px_svg},
         {BinaryData::add_circle_outline24px_svg},
+        {BinaryData::adjust_black_24dp_svg},
         {BinaryData::art_track_black_24dp_svg},
         {BinaryData::call_made24px_svg},
         {BinaryData::call_received24px_svg},
