@@ -106,6 +106,14 @@ bool AppConfigurationBase::flush(bool includeWatcherUpdate)
 	if (!m_xml)
 		return false;
 
+	if (GetFlushAndUpdateDisabled().first) // check if config flushing to disk is globally disabled
+	{
+#ifdef DEBUG
+		DBG(String(__FUNCTION__) + " config flushing to disk is globally disabled");
+#endif
+		return true;
+	}
+
 //#ifdef DEBUG
 //	debugPrintXmlTree();
 //#endif
@@ -148,6 +156,14 @@ void AppConfigurationBase::addWatcher(AppConfigurationBase::Watcher* w, bool ini
 
 void AppConfigurationBase::triggerWatcherUpdate()
 {
+	if (GetFlushAndUpdateDisabled().second) // check if watcher updating is globally disabled
+	{
+#ifdef DEBUG
+		DBG(String(__FUNCTION__) + " config watcher updating is globally disabled");
+#endif
+		return;
+	}
+
 	for (auto w : m_watchers)
 		w->onConfigUpdated();
 }
@@ -211,6 +227,26 @@ bool AppConfigurationBase::resetConfigState(std::unique_ptr<XmlElement> fullStat
 	return true;
 }
 
+const std::pair<bool, bool>& AppConfigurationBase::GetFlushAndUpdateDisabled() const
+{
+	return m_flushAndUpdateDisabled;
+}
+
+void AppConfigurationBase::SetFlushAndUpdateDisabled(bool disableFlush, bool disableUpdate)
+{
+	m_flushAndUpdateDisabled.first = disableFlush;
+	m_flushAndUpdateDisabled.second = disableUpdate;
+}
+
+void AppConfigurationBase::ResetFlushAndUpdateDisabled(bool flushAndUpdateNow)
+{
+	SetFlushAndUpdateDisabled(false, false);
+
+	if (flushAndUpdateNow)
+		flush(true);
+}
+
+#ifdef DEBUG
 void AppConfigurationBase::debugPrintXmlTree()
 {
 	DBG("#####################################");
@@ -258,5 +294,6 @@ void AppConfigurationBase::debugPrintXmlTree()
 	}
 	DBG("#####################################\n");
 }
+#endif
 
 }

@@ -73,6 +73,10 @@ public:
 	bool setConfigState(std::unique_ptr<XmlElement> stateXml, StringRef attributeName = StringRef());
 	bool resetConfigState(std::unique_ptr<XmlElement> fullStateXml);
 
+	const std::pair<bool, bool>& GetFlushAndUpdateDisabled() const;
+	void SetFlushAndUpdateDisabled(bool disableFlush = true, bool disableUpdate = true);
+	void ResetFlushAndUpdateDisabled(bool flushAndUpdateNow = true);
+
 protected:
 	std::unique_ptr<File>		m_file;
 	std::unique_ptr<XmlElement>	m_xml{ nullptr };
@@ -82,10 +86,15 @@ private:
 	bool exists();
 	bool create();
 	bool flush(bool includeWatcherUpdate);
+
+#ifdef DEBUG
 	void debugPrintXmlTree();
+#endif
 
 	std::vector<Dumper*>		m_dumpers;
 	std::vector<Watcher*>		m_watchers;
+
+	std::pair<bool, bool>		m_flushAndUpdateDisabled{ false, false };
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AppConfigurationBase)
 };
