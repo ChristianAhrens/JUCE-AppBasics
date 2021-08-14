@@ -227,6 +227,11 @@ bool AppConfigurationBase::resetConfigState(std::unique_ptr<XmlElement> fullStat
 	return true;
 }
 
+bool AppConfigurationBase::IsFlushAndUpdateDisabled() const
+{
+	return m_flushAndUpdateDisabled.first && m_flushAndUpdateDisabled.second;
+}
+
 const std::pair<bool, bool>& AppConfigurationBase::GetFlushAndUpdateDisabled() const
 {
 	return m_flushAndUpdateDisabled;
