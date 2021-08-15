@@ -21,6 +21,36 @@ public:
 	class XmlConfigurableElement
 	{
 	public:
+		class ScopedXmlChangeLock
+		{
+		public:
+			inline explicit ScopedXmlChangeLock(bool& locked, bool acquireLockOnInitialisation = true) noexcept
+				: m_locked(locked), m_lockWasSuccessful(acquireLockOnInitialisation && !locked)
+			{
+				if (m_lockWasSuccessful)
+					m_locked = true;
+			}
+
+			inline ~ScopedXmlChangeLock() noexcept
+			{
+				if (m_lockWasSuccessful)
+					m_locked = false;
+			}
+
+			bool isLocked() const noexcept
+			{
+				return m_lockWasSuccessful;
+			}
+
+		private:
+			//==============================================================================
+			bool& m_locked;
+			bool m_lockWasSuccessful;
+
+			JUCE_DECLARE_NON_COPYABLE(ScopedXmlChangeLock)
+		};
+
+	public:
         virtual ~XmlConfigurableElement(){};
         
 		virtual std::unique_ptr<XmlElement> createStateXml() = 0;
@@ -32,6 +62,14 @@ public:
 			if (config != nullptr)
 				config->triggerConfigurationDump(includeWatcherUpdate);
 		};
+
+		bool& IsXmlChangeLocked()
+		{
+			return m_lockState;
+		};
+
+	private:
+		bool m_lockState{ false };
 	};
 
 	class Dumper
