@@ -129,72 +129,75 @@ ZeroconfDiscoverComponent::ZeroconfSearcher * ZeroconfDiscoverComponent::getSear
 	return nullptr;
 }
 
-ZeroconfDiscoverComponent::ServiceInfo* ZeroconfDiscoverComponent::showMenuAndGetService()
+void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& serviceName)
 {
-	if (m_searchers.isEmpty())
-	{
-		DBG("No searcher found");
-		return nullptr;
-	}
+	m_currentServiceBrowsingPopup.clear();
 
-	PopupMenu p;
-	std::vector<ServiceInfo*> serviceList;
-	for (auto& searcher : m_searchers)
+	if (serviceName.isEmpty())
 	{
-		for (auto& service : searcher->m_services)
+		if (m_searchers.isEmpty())
 		{
-			serviceList.push_back(service);
-			p.addItem(static_cast<int>(serviceList.size()), service->name + " on " + service->host + " (" + service->ip + ":" + String(service->port) + ")");
+			DBG("No searcher found");
+			return;
 		}
-	}
 
-	if(p.getNumItems() == 0)
-	{
-		p.addItem(-1, "No service found", false);
-	}
-
-	int result = p.show();
-
-	if (result <= 0)
-		return nullptr;
-
-	return serviceList[result - 1];
-}
-
-ZeroconfDiscoverComponent::ServiceInfo * ZeroconfDiscoverComponent::showMenuAndGetService(StringRef searcherName)
-{
-	auto searcher = getSearcher(searcherName);
-
-	if (searcher == nullptr)
-	{
-		DBG("No searcher found for service " << searcherName);
-		return nullptr;
-	}
-
-	PopupMenu p;
-	if (searcher->m_services.isEmpty())
-	{
-		p.addItem(-1, "No service found", false);
+		for (auto& searcher : m_searchers)
+		{
+			for (auto& service : searcher->m_services)
+			{
+				m_currentServiceBrowsingList.push_back(service);
+				String serviceItemString = service->name + " on " + (service->host.isEmpty() ? service->ip : service->host);
+#ifdef DEBUG
+				serviceItemString += " (" + service->ip + ":" + String(service->port) + ")";
+#endif
+				m_currentServiceBrowsingPopup.addItem(static_cast<int>(m_currentServiceBrowsingList.size()), serviceItemString);
+			}
+		}
 	}
 	else
 	{
-		for (int i = 0; i < searcher->m_services.size(); ++i)
+		auto searcher = getSearcher(serviceName);
+
+		if (searcher == nullptr)
 		{
-			auto info = searcher->m_services[i];
-            String serviceItemString = info->name + " on " + (info->host.isEmpty() ? info->ip : info->host);
+			DBG("No searcher found for service " << serviceName);
+			return;
+		}
+
+		for (auto& service : searcher->m_services)
+		{
+			m_currentServiceBrowsingList.push_back(service);
+			String serviceItemString = service->name + " on " + (service->host.isEmpty() ? service->ip : service->host);
 #ifdef DEBUG
-            serviceItemString += " (" + info->ip + ":" + String(info->port) + ")";
+			serviceItemString += " (" + service->ip + ":" + String(service->port) + ")";
 #endif
-			p.addItem(1 + i, serviceItemString);
+			m_currentServiceBrowsingPopup.addItem(static_cast<int>(m_currentServiceBrowsingList.size()), serviceItemString);
 		}
 	}
 
-	int result = p.show();
+	if (m_currentServiceBrowsingList.empty())
+	{
+		m_currentServiceBrowsingPopup.addItem(-1, "No service found", false);
+	}
 
-	if (result <= 0)
-		return nullptr;
-	
-	return searcher->m_services[result - 1];
+	m_currentServiceBrowsingPopup.showMenuAsync(juce::PopupMenu::Options(), [this](int result)
+		{
+			if (result > 0)
+			{
+				if (onServiceSelected)
+				{
+					auto serviceIndex = result - 1;
+					auto service = (m_currentServiceBrowsingList.size() >= serviceIndex) ? m_currentServiceBrowsingList.at(serviceIndex) : static_cast<ServiceInfo*>(nullptr);
+
+					if (service)
+						onServiceSelected(getServiceType(service->name), service);
+					else
+						onServiceSelected(ZST_Unkown, nullptr);
+				}
+			}
+
+			m_currentServiceBrowsingList.clear();
+		});
 }
 
 void ZeroconfDiscoverComponent::search()
@@ -428,29 +431,11 @@ void ZeroconfDiscoverComponent::buttonClicked(Button* button)
 {
     for (auto const& buttonKV : m_discoveryButtons)
     {
-		if (!m_useSeparateServiceSearchers)
-		{
-			ZeroconfDiscoverComponent::ServiceInfo* selectedService = showMenuAndGetService();
-
-			if (onServiceSelected)
-			{
-				if (selectedService)
-					onServiceSelected(getServiceType(selectedService->name), selectedService);
-				else
-					onServiceSelected(ZST_Unkown, nullptr);
-			}
-
-			return;
-		}
-        else if (button == buttonKV.second.get())
-        {
-            ZeroconfDiscoverComponent::ServiceInfo* selectedService = showMenuAndGetService(buttonKV.first);
-            
-            if (onServiceSelected)
-                onServiceSelected(getServiceType(buttonKV.first), selectedService);
-
-			return;
-        }
+		juce::String selectedServiceName;
+		if (m_useSeparateServiceSearchers && button == buttonKV.second.get())
+			selectedServiceName = buttonKV.first;
+		
+		showMenuAndGetService(selectedServiceName);
     }
 }
 

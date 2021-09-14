@@ -95,8 +95,7 @@ public:
 private:
     ZeroconfSearcher * getSearcher(StringRef name);
 
-    ServiceInfo * showMenuAndGetService();
-    ServiceInfo * showMenuAndGetService(StringRef service);
+    void showMenuAndGetService(const juce::String& serviceName);
     
     void search();
 
@@ -108,6 +107,9 @@ private:
     
     std::map<String, std::unique_ptr<DrawableButton>>   m_discoveryButtons;
     std::map<String, std::unique_ptr<Label>>            m_serviceNameLabels;
+
+    std::vector<ServiceInfo*>                           m_currentServiceBrowsingList;   /**< Flat list of services currently available for selection. Only valid while popup menu is shown!. */
+    PopupMenu                                           m_currentServiceBrowsingPopup;
     
     bool m_showServiceNameLabels { false };
 
