@@ -52,6 +52,8 @@
               file="../Resources/Images/adjust_black_24dp.svg"/>
         <FILE id="WW50IN" name="art_track_black_24dp.svg" compile="0" resource="1"
               file="../Resources/Images/art_track_black_24dp.svg"/>
+        <FILE id="Hk3Pyn" name="brush_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/brush_black_24dp.svg"/>
         <FILE id="ANlbjk" name="call_made-24px.svg" compile="0" resource="1"
               file="../Resources/Images/call_made-24px.svg"/>
         <FILE id="W0Dvu6" name="call_received-24px.svg" compile="0" resource="1"
@@ -62,6 +64,10 @@
               file="../Resources/Images/clear_black_24dp.svg"/>
         <FILE id="LgCA5K" name="close_fullscreen-24px.svg" compile="0" resource="1"
               file="../Resources/Images/close_fullscreen-24px.svg"/>
+        <FILE id="GxF6bw" name="color_lens_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/color_lens_black_24dp.svg"/>
+        <FILE id="bk9qdG" name="colorize_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/colorize_black_24dp.svg"/>
         <FILE id="C75T2Y" name="download_black_24dp.svg" compile="0" resource="1"
               file="../Resources/Images/download_black_24dp.svg"/>
         <FILE id="D3tjjx" name="equalizer-24px.svg" compile="0" resource="1"
@@ -155,6 +161,10 @@
               file="../Source/AppConfigurationBase.cpp"/>
         <FILE id="bM2wOQ" name="AppConfigurationBase.h" compile="0" resource="0"
               file="../Source/AppConfigurationBase.h"/>
+        <FILE id="Q6NJ95" name="ColourAndSizePickerComponent.cpp" compile="1"
+              resource="0" file="../Source/ColourAndSizePickerComponent.cpp"/>
+        <FILE id="ehme2N" name="ColourAndSizePickerComponent.h" compile="0"
+              resource="0" file="../Source/ColourAndSizePickerComponent.h"/>
         <FILE id="KFF65F" name="CustomLookAndFeel.cpp" compile="1" resource="0"
               file="../Source/CustomLookAndFeel.cpp"/>
         <FILE id="WDdQfY" name="CustomLookAndFeel.h" compile="0" resource="0"

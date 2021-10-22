@@ -34,6 +34,14 @@ MainComponent::MainComponent()
     m_midiLearner = std::make_unique<JUCEAppBasics::MidiLearnerComponent>();
     addAndMakeVisible(m_midiLearner.get());
 
+    m_colourAndSizePicker = std::make_unique<JUCEAppBasics::ColourAndSizePickerComponent>();
+    int randNr = std::rand();
+    m_colourAndSizePicker->setCurrentColourAndSize(juce::Colour(juce::uint8(randNr * 111), juce::uint8(randNr * 222), juce::uint8(randNr * 333)), 0.5f);
+    m_colourAndSizePicker->onColourAndSizeSet = [=](const juce::Colour& colour, double size) {
+        DBG("Colour and size picker selected c:" + colour.toDisplayString(true) + " s:" + String(size));
+    };
+    addAndMakeVisible(m_colourAndSizePicker.get());
+
     m_overlay = std::make_unique<DemoOverlayComponent>();
     m_overlay->addOverlayParent(this);
     m_overlay->parentResize = [this] { resized(); };
@@ -54,12 +62,15 @@ MainComponent::MainComponent()
         {BinaryData::add_circle_outline24px_svg},
         {BinaryData::adjust_black_24dp_svg},
         {BinaryData::art_track_black_24dp_svg},
+        {BinaryData::brush_black_24dp_svg},
         {BinaryData::call_made24px_svg},
         {BinaryData::call_received24px_svg},
         {BinaryData::cancel24px_svg},
         {BinaryData::cast24px_svg},
         {BinaryData::clear_black_24dp_svg},
         {BinaryData::close_fullscreen24px_svg},
+        {BinaryData::color_lens_black_24dp_svg},
+        {BinaryData::colorize_black_24dp_svg},
         {BinaryData::download_black_24dp_svg},
         {BinaryData::equalizer24px_svg},
         {BinaryData::fast_forward24px_svg},
@@ -125,7 +136,7 @@ MainComponent::MainComponent()
     m_config = std::make_unique<AppConfig>(AppConfig::getDefaultConfigFilePath());
     m_config->triggerWatcherUpdate();
 
-	setSize(300, 420);
+	setSize(300, 440);
 }
 
 MainComponent::~MainComponent()
@@ -159,13 +170,14 @@ void MainComponent::resized()
         FlexBox fb;
         fb.flexDirection = FlexBox::Direction::column;
         fb.items.addArray({
-            FlexItem(*m_header.get())       .withFlex(1).withMaxHeight(panelDefaultSize + safety._top),
-            FlexItem(*m_splitButton.get())  .withFlex(1).withMargin(juce::FlexItem::Margin(1, 1, 1, 1)),
-            FlexItem(*m_body.get())         .withFlex(5),
-            FlexItem(*m_zeroconf.get())     .withFlex(1),
-            FlexItem(*m_midiLearner.get())  .withFlex(1),
-            FlexItem(*m_overlay.get())      .withFlex(1).withMargin(juce::FlexItem::Margin(10, 10, 10, 10)),
-            FlexItem(*m_footer.get())       .withFlex(1).withMaxHeight(panelDefaultSize + safety._bottom) });
+            FlexItem(*m_header.get())               .withFlex(1).withMaxHeight(panelDefaultSize + safety._top),
+            FlexItem(*m_splitButton.get())          .withFlex(1).withMargin(juce::FlexItem::Margin(1, 1, 1, 1)),
+            FlexItem(*m_body.get())                 .withFlex(5),
+            FlexItem(*m_zeroconf.get())             .withFlex(1),
+            FlexItem(*m_midiLearner.get())          .withFlex(1),
+            FlexItem(*m_colourAndSizePicker.get())  .withFlex(1),
+            FlexItem(*m_overlay.get())              .withFlex(1).withMargin(juce::FlexItem::Margin(10, 10, 10, 10)),
+            FlexItem(*m_footer.get())               .withFlex(1).withMaxHeight(panelDefaultSize + safety._bottom) });
 
         fb.performLayout(getLocalBounds().toFloat());
 

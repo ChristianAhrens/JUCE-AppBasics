@@ -71,13 +71,16 @@ CustomLookAndFeel::CustomLookAndFeel()
 	setColour(CodeEditorComponent::ColourIds::lineNumberBackgroundId, Colours::grey);
 	setColour(CodeEditorComponent::ColourIds::lineNumberTextId, Colours::white);
     
-    setColour(Slider::backgroundColourId, Colours::darkgrey.darker());
-    setColour(Slider::textBoxBackgroundColourId, Colours::darkgrey);
-    setColour(Slider::textBoxHighlightColourId, Colours::dimgrey);
-    setColour(Slider::textBoxOutlineColourId, Colours::lightgrey);
-    setColour(Slider::textBoxTextColourId, Colours::white);
-    setColour(Slider::thumbColourId, Colours::grey);
-    setColour(Slider::trackColourId, Colours::grey);
+    setColour(Slider::ColourIds::backgroundColourId, Colours::darkgrey.darker());
+    setColour(Slider::ColourIds::textBoxBackgroundColourId, Colours::darkgrey);
+    setColour(Slider::ColourIds::textBoxHighlightColourId, Colours::dimgrey);
+    setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::lightgrey);
+    setColour(Slider::ColourIds::textBoxTextColourId, Colours::white);
+    setColour(Slider::ColourIds::thumbColourId, Colours::grey);
+    setColour(Slider::ColourIds::trackColourId, Colours::grey);
+
+    setColour(ColourSelector::ColourIds::backgroundColourId, Colours::darkgrey);
+    setColour(ColourSelector::ColourIds::labelTextColourId, Colours::white);
 }
 
 CustomLookAndFeel::~CustomLookAndFeel()
