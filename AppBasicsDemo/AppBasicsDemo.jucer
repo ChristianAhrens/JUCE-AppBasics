@@ -48,6 +48,8 @@
               file="../Resources/Images/add_circle-24px.svg"/>
         <FILE id="E7q72Q" name="add_circle_outline-24px.svg" compile="0" resource="1"
               file="../Resources/Images/add_circle_outline-24px.svg"/>
+        <FILE id="iWx6Px" name="add_photo_alternate_black_24dp.svg" compile="0"
+              resource="1" file="../Resources/Images/add_photo_alternate_black_24dp.svg"/>
         <FILE id="Vl4q3D" name="adjust_black_24dp.svg" compile="0" resource="1"
               file="../Resources/Images/adjust_black_24dp.svg"/>
         <FILE id="WW50IN" name="art_track_black_24dp.svg" compile="0" resource="1"
@@ -87,6 +89,10 @@
               file="../Resources/Images/grid_on-24px.svg"/>
         <FILE id="kDUOiz" name="height-24px.svg" compile="0" resource="1" file="../Resources/Images/height-24px.svg"/>
         <FILE id="OiZdyH" name="help-24px.svg" compile="0" resource="1" file="../Resources/Images/help-24px.svg"/>
+        <FILE id="DdP5tj" name="hide_image_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/hide_image_black_24dp.svg"/>
+        <FILE id="ZNfyJe" name="image_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/image_black_24dp.svg"/>
         <FILE id="HWJuZT" name="input-24px.svg" compile="0" resource="1" file="../Resources/Images/input-24px.svg"/>
         <FILE id="aSUmm9" name="insert_chart_outlined-24px.svg" compile="0"
               resource="1" file="../Resources/Images/insert_chart_outlined-24px.svg"/>
