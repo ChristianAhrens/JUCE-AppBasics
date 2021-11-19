@@ -72,11 +72,13 @@ MainComponent::MainComponent()
         {BinaryData::close_fullscreen24px_svg},
         {BinaryData::color_lens_black_24dp_svg},
         {BinaryData::colorize_black_24dp_svg},
+        {BinaryData::compare_black_24dp_svg},
         {BinaryData::download_black_24dp_svg},
         {BinaryData::equalizer24px_svg},
         {BinaryData::fast_forward24px_svg},
         {BinaryData::fast_rewind24px_svg},
         {BinaryData::find_replace24px_svg},
+        {BinaryData::flip_black_24dp_svg},
         {BinaryData::folder_open24px_svg},
         {BinaryData::grain24px_svg},
         {BinaryData::graphic_eq24px_svg},
@@ -185,8 +187,8 @@ void MainComponent::resized()
         fb.performLayout(getLocalBounds().toFloat());
 
         Grid buttonGrid;
-        buttonGrid.templateRows = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
-        buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
+        buttonGrid.templateRows = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
+        buttonGrid.templateColumns = { Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr), Grid::TrackInfo(1_fr) };
         for (auto const& button : m_buttons)
         {
             buttonGrid.items.add(GridItem(button.get()).withMargin(juce::GridItem::Margin(1, 1, 1, 1)));

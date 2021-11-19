@@ -70,6 +70,8 @@
               file="../Resources/Images/color_lens_black_24dp.svg"/>
         <FILE id="bk9qdG" name="colorize_black_24dp.svg" compile="0" resource="1"
               file="../Resources/Images/colorize_black_24dp.svg"/>
+        <FILE id="YaRpRL" name="compare_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/compare_black_24dp.svg"/>
         <FILE id="C75T2Y" name="download_black_24dp.svg" compile="0" resource="1"
               file="../Resources/Images/download_black_24dp.svg"/>
         <FILE id="D3tjjx" name="equalizer-24px.svg" compile="0" resource="1"
@@ -80,6 +82,8 @@
               file="../Resources/Images/fast_rewind-24px.svg"/>
         <FILE id="AK1exp" name="find_replace-24px.svg" compile="0" resource="1"
               file="../Resources/Images/find_replace-24px.svg"/>
+        <FILE id="ZBqURs" name="flip_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/flip_black_24dp.svg"/>
         <FILE id="LFfIsO" name="folder_open-24px.svg" compile="0" resource="1"
               file="../Resources/Images/folder_open-24px.svg"/>
         <FILE id="JaXFou" name="grain-24px.svg" compile="0" resource="1" file="../Resources/Images/grain-24px.svg"/>
