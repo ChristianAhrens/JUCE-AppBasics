@@ -51,6 +51,10 @@ enum KnownDevices
     iPhone12Mini,
     iPhone12Pro,
     iPhone12ProMax,
+    iPhone13,
+    iPhone13Mini,
+    iPhone13Pro,
+    iPhone13ProMax,
     iPhoneSim_i386,
     iPhoneSim_x86_64,
     GenericiPad,
@@ -83,6 +87,7 @@ enum KnownDevices
     iPadmini3,
     iPadmini4,
     iPadmini5,
+    iPadmini6,
     iPad2017,
     iPadAir4,
     iPod1,
@@ -99,6 +104,9 @@ enum KnownDevices
     AppleWatch3,
     AppleWatch4,
     AppleWatch5,
+    AppleWatchSE,
+    AppleWatch6,
+    AppleWatch7,
     GenericAppleWatch,
 
 };

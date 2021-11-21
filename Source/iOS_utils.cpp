@@ -67,6 +67,14 @@ JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPhone(const juce::String& d
         return KnownDevices::iPhone12Pro;
     if (deviceDescription == "iPhone 12 Pro Max")
         return KnownDevices::iPhone12ProMax;
+    if (deviceDescription == "iPhone 13")
+        return KnownDevices::iPhone13;
+    if (deviceDescription == "iPhone 13 mini")
+        return KnownDevices::iPhone13Mini;
+    if (deviceDescription == "iPhone 13 Pro")
+        return KnownDevices::iPhone13Pro;
+    if (deviceDescription == "iPhone 13 Pro Max")
+        return KnownDevices::iPhone13ProMax;
     if (deviceDescription == "iPhone1,1") // iPhone
         return KnownDevices::iPhone;
     if (deviceDescription == "iPhone1,2") // iPhone 3G
@@ -140,13 +148,21 @@ JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPhone(const juce::String& d
     if (deviceDescription == "iPhone12,8") // iPhone SE 2nd Gen
         return KnownDevices::iPhoneSE2;
     if (deviceDescription == "iPhone13,1") // iPhone 12 Mini
-        return KnownDevices::iPhone12;
-    if (deviceDescription == "iPhone13,2") // iPhone 12
         return KnownDevices::iPhone12Mini;
+    if (deviceDescription == "iPhone13,2") // iPhone 12
+        return KnownDevices::iPhone12;
     if (deviceDescription == "iPhone13,3") // iPhone 12 Pro
         return KnownDevices::iPhone12Pro;
     if (deviceDescription == "iPhone13,4") // iPhone 12 Pro Max
         return KnownDevices::iPhone12ProMax;
+    if (deviceDescription == "iPhone14,4") // iPhone 13 Mini
+        return KnownDevices::iPhone13Mini;
+    if (deviceDescription == "iPhone14,5") // iPhone 13
+        return KnownDevices::iPhone13;
+    if (deviceDescription == "iPhone14,2") // iPhone 13 Pro
+        return KnownDevices::iPhone13Pro;
+    if (deviceDescription == "iPhone14,3") // iPhone 13 Pro Max
+        return KnownDevices::iPhone13ProMax;
     if (deviceDescription.contains("iPhone"))
         return KnownDevices::GenericiPhone;
     
@@ -193,6 +209,8 @@ JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPad(const juce::String& dev
         return KnownDevices::iPadmini4;
     if (deviceDescription == "iPad mini 5")
         return KnownDevices::iPadmini5;
+    if (deviceDescription == "iPad mini 6")
+        return KnownDevices::iPadmini6;
     if (deviceDescription == "iPad1,1") // iPad
         return KnownDevices::iPad;
     if (deviceDescription == "iPad1,2") // iPad 3G
@@ -313,6 +331,10 @@ JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPad(const juce::String& dev
         return KnownDevices::iPadAir4;
     if (deviceDescription == "iPad13,2") // iPad air 4th Gen(WiFi + Celular)
         return KnownDevices::iPadAir4;
+    if (deviceDescription == "iPad14,1") // iPad mini 6th Gen (WiFi)
+        return KnownDevices::iPadmini6;
+    if (deviceDescription == "iPad14,2") // iPad mini 6th Gen
+        return KnownDevices::iPadmini6;
     if (deviceDescription.contains("iPad"))
         return KnownDevices::GenericiPad;
 
@@ -383,6 +405,30 @@ JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeAppleWatch(const juce::Strin
         return KnownDevices::AppleWatch5;
     if (deviceDescription == "Watch5,4") // Apple Watch Series 5 44mm case (GPS+Cellular)
         return KnownDevices::AppleWatch5;
+    if (deviceDescription == "Watch5,9") // Apple Watch SE 40mm case (GPS)
+        return KnownDevices::AppleWatchSE;
+    if (deviceDescription == "Watch5,10") // Apple Watch SE 44mm case (GPS)
+        return KnownDevices::AppleWatchSE;
+    if (deviceDescription == "Watch5,11") // Apple Watch SE 40mm case (GPS+Cellular)
+        return KnownDevices::AppleWatchSE;
+    if (deviceDescription == "Watch5,12") // Apple Watch SE 44mm case (GPS+Cellular)
+        return KnownDevices::AppleWatchSE;
+    if (deviceDescription == "Watch6,1") // Apple Watch Series 6 40mm case (GPS)
+        return KnownDevices::AppleWatch6;
+    if (deviceDescription == "Watch6,2") // Apple Watch Series 6 44mm case (GPS)
+        return KnownDevices::AppleWatch6;
+    if (deviceDescription == "Watch6,3") // Apple Watch Series 6 40mm case (GPS+Cellular)
+        return KnownDevices::AppleWatch6;
+    if (deviceDescription == "Watch6,4") // Apple Watch Series 6 44mm case (GPS+Cellular)
+        return KnownDevices::AppleWatch6;
+    if (deviceDescription == "Watch6,6") // Apple Watch Series 7 41mm case (GPS)
+        return KnownDevices::AppleWatch7;
+    if (deviceDescription == "Watch6,7") // Apple Watch Series 7 45mm case (GPS)
+        return KnownDevices::AppleWatch7;
+    if (deviceDescription == "Watch6,8") // Apple Watch Series 7 41mm case (GPS+Cellular)
+        return KnownDevices::AppleWatch7;
+    if (deviceDescription == "Watch6,9") // Apple Watch Series 7 45mm case (GPS+Cellular)
+        return KnownDevices::AppleWatch7;
 
     return {};
 }
@@ -464,6 +510,10 @@ JUCEAppBasics::iOS_utils::KnownDevices getGenericDeviceType()
     case iPhone12Mini:
     case iPhone12Pro:
     case iPhone12ProMax:
+    case iPhone13:
+    case iPhone13Mini:
+    case iPhone13Pro:
+    case iPhone13ProMax:
         return GenericiPhone;
     case GenericiPad:
     case iPad:
@@ -494,6 +544,7 @@ JUCEAppBasics::iOS_utils::KnownDevices getGenericDeviceType()
     case iPadmini3:
     case iPadmini4:
     case iPadmini5:
+    case iPadmini6:
     case iPad2017:
         return GenericiPad;
     case AppleWatch:
@@ -502,6 +553,9 @@ JUCEAppBasics::iOS_utils::KnownDevices getGenericDeviceType()
     case AppleWatch3:
     case AppleWatch4:
     case AppleWatch5:
+    case AppleWatchSE:
+    case AppleWatch6:
+    case AppleWatch7:
         return GenericAppleWatch;
     default:
         return InvalidDevice;
@@ -544,6 +598,10 @@ int getDeviceDisplayNotchIndent()
     case iPhone12Mini:
     case iPhone12Pro:
     case iPhone12ProMax:
+    case iPhone13:
+    case iPhone13Mini:
+    case iPhone13Pro:
+    case iPhone13ProMax:
     case GenericiPhone:
         displayNotchIndent = 35;
         break;
@@ -566,6 +624,7 @@ int getDeviceDisplayNotchIndent()
     case iPadmini3:
     case iPadmini4:
     case iPadmini5:
+    case iPadmini6:
     case iPadAir4:
     case GenericiPad:
         displayNotchIndent = 0;
@@ -618,6 +677,10 @@ int getDeviceDisplaySlideBarIndent()
     case iPhone12Mini:
     case iPhone12Pro:
     case iPhone12ProMax:
+    case iPhone13:
+    case iPhone13Mini:
+    case iPhone13Pro:
+    case iPhone13ProMax:
         slideBarIndent = 20;
         break;
     case iPad:
@@ -639,6 +702,7 @@ int getDeviceDisplaySlideBarIndent()
     case iPadmini3:
     case iPadmini4:
     case iPadmini5:
+    case iPadmini6:
     case GenericiPad:
     case GenericMac:
     case GenericPC:
