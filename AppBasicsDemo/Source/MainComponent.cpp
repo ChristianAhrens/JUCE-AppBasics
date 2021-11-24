@@ -118,6 +118,7 @@ MainComponent::MainComponent()
         {BinaryData::skip_previous24px_svg},
         {BinaryData::slideshow_black_24dp_svg},
         {BinaryData::stop24px_svg},
+        {BinaryData::text_fields_black_24dp_svg},
         {BinaryData::track_changes24px_svg},
         {BinaryData::tune24px_svg},
         {BinaryData::vertical_split24px_svg},

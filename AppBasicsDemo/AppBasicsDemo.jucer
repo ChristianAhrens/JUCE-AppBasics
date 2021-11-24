@@ -153,6 +153,8 @@
         <FILE id="pSI6By" name="slideshow_black_24dp.svg" compile="0" resource="1"
               file="../Resources/Images/slideshow_black_24dp.svg"/>
         <FILE id="pwwmby" name="stop-24px.svg" compile="0" resource="1" file="../Resources/Images/stop-24px.svg"/>
+        <FILE id="TyTzgA" name="text_fields_black_24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/text_fields_black_24dp.svg"/>
         <FILE id="bc6RJW" name="track_changes-24px.svg" compile="0" resource="1"
               file="../Resources/Images/track_changes-24px.svg"/>
         <FILE id="G0d5Pl" name="tune-24px.svg" compile="0" resource="1" file="../Resources/Images/tune-24px.svg"/>
