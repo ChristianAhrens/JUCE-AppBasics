@@ -2,10 +2,13 @@
 
 <JUCERPROJECT id="t0S85N" name="AppBasicsDemo" projectType="guiapp" version="0.1.0"
               companyName="Christian Ahrens" companyEmail="christianahrens@me.com"
-              companyCopyright="2020" jucerFormatVersion="1" defines="SERVUS_STATIC">
+              companyCopyright="2020" jucerFormatVersion="1" defines="SERVUS_STATIC&#10;SERVUS_USE_WINDNS">
   <MAINGROUP id="wsXNhp" name="AppBasicsDemo">
     <GROUP id="{A7277E36-AB94-4408-FC2B-39F558038811}" name="submodules">
       <GROUP id="{660A873D-8777-01FC-D961-61E86545E85A}" name="Servus">
+        <GROUP id="{57A3A2D5-0CDA-FA06-7E72-924C8FE510BC}" name="windns">
+          <FILE id="yW4StY" name="servus.h" compile="0" resource="0" file="../submodules/Servus/servus/windns/servus.h"/>
+        </GROUP>
         <FILE id="FydoCK" name="api.h" compile="0" resource="0" file="../submodules/Servus/servus/api.h"/>
         <FILE id="I9UYHm" name="defines.h" compile="0" resource="0" file="../submodules/Servus/servus/defines.h"/>
         <FILE id="ETCZNp" name="definesDarwin.h" compile="0" resource="0" file="../submodules/Servus/servus/definesDarwin.h"/>
