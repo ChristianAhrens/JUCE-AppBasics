@@ -421,6 +421,11 @@ void MidiLearnerComponent::setCurrentMidiAssi(const JUCEAppBasics::MidiCommandRa
         m_currentMidiAssiEdit->setText(m_currentMidiAssi.getNiceDescription());
 }
 
+const JUCEAppBasics::MidiCommandRangeAssignment MidiLearnerComponent::getCurrentMidiAssi()
+{
+    return m_currentMidiAssi;
+}
+
 void MidiLearnerComponent::setReferredId(std::int16_t refId)
 {
     m_referredId = refId;

@@ -59,6 +59,7 @@ public:
     //==============================================================================
     void setSelectedDeviceIdentifier(const String& deviceIdentifier);
     void setCurrentMidiAssi(const JUCEAppBasics::MidiCommandRangeAssignment& currentAssi);
+    const JUCEAppBasics::MidiCommandRangeAssignment getCurrentMidiAssi();
 
     void setReferredId(std::int16_t refId);
     std::int16_t getReferredId() const;
