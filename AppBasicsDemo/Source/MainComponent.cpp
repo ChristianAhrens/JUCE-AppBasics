@@ -26,9 +26,9 @@ MainComponent::MainComponent()
 	addAndMakeVisible(m_body.get());
 
     m_zeroconf = std::make_unique<JUCEAppBasics::ZeroconfDiscoverComponent>(true, true);
-    m_zeroconf->addDiscoverService(JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType::ZST_OSC, 50013);
-    m_zeroconf->addDiscoverService(JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType::ZST_OCA, 50014);
-    m_zeroconf->onServiceSelected = [=](JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType type, JUCEAppBasics::ZeroconfDiscoverComponent::ServiceInfo* info) { handleServiceSelected(type, info); };
+    m_zeroconf->addDiscoverService(JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType::ZST_OSC);
+    m_zeroconf->addDiscoverService(JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType::ZST_OCA);
+    m_zeroconf->onServiceSelected = [=](JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType type, JUCEAppBasics::NanoMDNSDiscoverer::ServiceDiscoverInfo* info) { handleServiceSelected(type, info); };
     addAndMakeVisible(m_zeroconf.get());
 
     m_midiLearner = std::make_unique<JUCEAppBasics::MidiLearnerComponent>();
@@ -198,16 +198,16 @@ void MainComponent::resized()
     }
 }
 
-void MainComponent::handleServiceSelected(JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType type, JUCEAppBasics::ZeroconfDiscoverComponent::ServiceInfo* info)
+void MainComponent::handleServiceSelected(JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType type, JUCEAppBasics::NanoMDNSDiscoverer::ServiceDiscoverInfo* info)
 {
     auto serviceName = JUCEAppBasics::ZeroconfDiscoverComponent::getServiceName(type);
     if (info)
     {
         DBG(serviceName + " clicked, "
-            + String(info->host) + " "
-            + String(info->ip) + " "
-            + String(info->name) + " "
-            + String(info->port) + " "
+            + String(info->GetHost()) + " "
+            + String(info->GetIPAddress()) + " "
+            + String(info->GetName()) + " "
+            + String(info->GetPort()) + " "
             + " selected.");
     }
     else

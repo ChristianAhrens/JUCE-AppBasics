@@ -12,13 +12,6 @@
 
 #include "Image_utils.h"
 
-#ifdef JUCE_WINDOWS
-#include <Winsock2.h>
-#include <Ws2tcpip.h>
-#else
-#include <netdb.h>
-#endif /* _WIN32 */
-
 
 namespace JUCEAppBasics
 {
@@ -31,7 +24,7 @@ ZeroconfDiscoverComponent::ZeroconfDiscoverComponent(bool useSeparateServiceSear
 
 	setShowServiceNameLabels(showServiceNameLabels);
 	startThread();
-	startTimer(5000); //every 5s
+	startTimer(2000); //every 2s
 }
 
 ZeroconfDiscoverComponent::~ZeroconfDiscoverComponent()
@@ -57,7 +50,7 @@ void ZeroconfDiscoverComponent::clearServices()
 		removeDiscoverService(static_cast<ZeroconfServiceType>(i));
 }
 
-void ZeroconfDiscoverComponent::addDiscoverService(ZeroconfServiceType serviceType, unsigned short announcementPort)
+void ZeroconfDiscoverComponent::addDiscoverService(ZeroconfServiceType serviceType)
 {
     auto serviceName = getServiceName(serviceType);
     auto serviceDescriptor = getServiceDescriptor(serviceType);
@@ -75,7 +68,7 @@ void ZeroconfDiscoverComponent::addDiscoverService(ZeroconfServiceType serviceTy
 		lookAndFeelChanged();
 	}
 
-    addSearcher(serviceName, serviceDescriptor, announcementPort);
+    addSearcher(serviceName, serviceDescriptor);
 }
 
 void ZeroconfDiscoverComponent::removeDiscoverService(ZeroconfServiceType serviceType)
@@ -97,14 +90,14 @@ void ZeroconfDiscoverComponent::removeDiscoverService(ZeroconfServiceType servic
 	removeSearcher(serviceName);
 }
 
-void ZeroconfDiscoverComponent::addSearcher(StringRef name, StringRef serviceName, unsigned short announcementPort)
+void ZeroconfDiscoverComponent::addSearcher(StringRef name, StringRef serviceName)
 {
 	ZeroconfSearcher * s = getSearcher(name);
 
 	if (s == nullptr)
 	{
 		m_searchers.getLock().enter();
-		m_searchers.add(new ZeroconfSearcher(name, serviceName, announcementPort));
+		m_searchers.add(new ZeroconfSearcher(name, serviceName));
 		m_searchers.getLock().exit();
 	}
 }
@@ -146,9 +139,9 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 			for (auto& service : searcher->m_services)
 			{
 				m_currentServiceBrowsingList.push_back(service);
-				String serviceItemString = service->name + " on " + (service->host.isEmpty() ? service->ip : service->host);
+				String serviceItemString = service->GetName() + " on " + (service->GetHost().isEmpty() ? service->GetIPAddress() : service->GetHost());
 #ifdef DEBUG
-				serviceItemString += " (" + service->ip + ":" + String(service->port) + ")";
+				serviceItemString += " (" + service->GetIPAddress() + ":" + String(service->GetPort()) + ")";
 #endif
 				m_currentServiceBrowsingPopup.addItem(static_cast<int>(m_currentServiceBrowsingList.size()), serviceItemString);
 			}
@@ -167,9 +160,9 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 		for (auto& service : searcher->m_services)
 		{
 			m_currentServiceBrowsingList.push_back(service);
-			String serviceItemString = service->name + " on " + (service->host.isEmpty() ? service->ip : service->host);
+			String serviceItemString = service->GetName() + " on " + (service->GetHost().isEmpty() ? service->GetIPAddress() : service->GetHost());
 #ifdef DEBUG
-			serviceItemString += " (" + service->ip + ":" + String(service->port) + ")";
+			serviceItemString += " (" + service->GetIPAddress() + ":" + String(service->GetPort()) + ")";
 #endif
 			m_currentServiceBrowsingPopup.addItem(static_cast<int>(m_currentServiceBrowsingList.size()), serviceItemString);
 		}
@@ -187,10 +180,10 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 				if (onServiceSelected)
 				{
 					auto serviceIndex = result - 1;
-					auto service = (m_currentServiceBrowsingList.size() >= serviceIndex) ? m_currentServiceBrowsingList.at(serviceIndex) : static_cast<ServiceInfo*>(nullptr);
+					auto service = (m_currentServiceBrowsingList.size() >= serviceIndex) ? m_currentServiceBrowsingList.at(serviceIndex) : static_cast<NanoMDNSDiscoverer::ServiceDiscoverInfo*>(nullptr);
 
 					if (service)
-						onServiceSelected(getServiceType(service->name), service);
+						onServiceSelected(getServiceType(service->GetName()), service);
 					else
 						onServiceSelected(ZST_Unkown, nullptr);
 				}
@@ -210,7 +203,6 @@ void ZeroconfDiscoverComponent::timerCallback()
 	search();
 }
 
-
 void ZeroconfDiscoverComponent::run()
 {
 	sleep(300);
@@ -219,50 +211,61 @@ void ZeroconfDiscoverComponent::run()
 
 	m_searchers.getLock().enter();
 	for (auto & se : m_searchers)
-		changed |= se->search();
+		changed |= se->processDiscovery();
 	m_searchers.getLock().exit();
 }
 
-ZeroconfDiscoverComponent::ZeroconfSearcher::ZeroconfSearcher(StringRef name, StringRef serviceName, unsigned short announcementPort) :
+ZeroconfDiscoverComponent::ZeroconfSearcher::ZeroconfSearcher(StringRef name, StringRef serviceName) :
 	m_name(name),
 	m_serviceName(serviceName),
-	m_servus(String(serviceName).toStdString())
+	m_mDNSDiscoverer(serviceName)
 {
-    if (announcementPort != 0)
-        m_servus.announce(announcementPort, JUCEApplication::getInstance()->getApplicationName().toStdString());
+	m_mDNSDiscoverer.addListener(this);
+
+	if (!m_mDNSDiscoverer.start())
+	{
+		DBG(String(__FUNCTION__) + String(" failed to start mDNS discovery"));
+	}
 }
 
 ZeroconfDiscoverComponent::ZeroconfSearcher::~ZeroconfSearcher()
 {
+	m_mDNSDiscoverer.stop();
+
 	m_services.clear();
 }
 
-bool ZeroconfDiscoverComponent::ZeroconfSearcher::search()
+void ZeroconfDiscoverComponent::ZeroconfSearcher::ServiceDiscovered(const NanoMDNSDiscoverer::ServiceDiscoverInfo& service)
+{
+	m_services.add(std::make_unique<NanoMDNSDiscoverer::ServiceDiscoverInfo>(service));
+}
+
+bool ZeroconfDiscoverComponent::ZeroconfSearcher::processDiscovery()
 {
 	if (Thread::getCurrentThread()->threadShouldExit())
 		return false;
 
-	servus::Strings instances = m_servus.discover(servus::Servus::Interface::IF_ALL, 200);
+	//servus::Strings instances = m_servus.discover(servus::Servus::Interface::IF_ALL, 200);
 
 	bool changed = false;
 
 	StringArray servicesArray;
-	for (auto &s : instances)
-		servicesArray.add(s);
+	//for (auto &s : instances)
+	//	servicesArray.add(s);
 
-	Array<ServiceInfo *> servicesToRemove;
+	Array<NanoMDNSDiscoverer::ServiceDiscoverInfo*> servicesToRemove;
 
 	for (auto &ss : m_services)
 	{
-		if (servicesArray.contains(ss->name))
+		if (servicesArray.contains(ss->GetName()))
 		{
-			String host = m_servus.get(ss->name.toStdString(), "servus_host");
-			if (host.endsWithChar('.'))
-				host = host.substring(0, host.length() - 1);
-			int port = String(m_servus.get(ss->name.toStdString(), "servus_port")).getIntValue();
-
-			if (ss->host != host || ss->port != port)
-				servicesToRemove.add(ss);
+			//String host = m_servus.get(ss->name.toStdString(), "servus_host");
+			//if (host.endsWithChar('.'))
+			//	host = host.substring(0, host.length() - 1);
+			//int port = String(m_servus.get(ss->name.toStdString(), "servus_port")).getIntValue();
+			//
+			//if (ss->host != host || ss->port != port)
+			//	servicesToRemove.add(ss);
 		}
 		else
 		{
@@ -273,48 +276,48 @@ bool ZeroconfDiscoverComponent::ZeroconfSearcher::search()
 	for (auto &ss : servicesToRemove)
 		removeService(ss);
 
-	for (auto &s : servicesArray)
-	{
-        if (Thread::getCurrentThread()->threadShouldExit())
-			return false;
-        
-        String host = m_servus.get(s.toStdString(), "servus_host");
-		if (host.endsWithChar('.'))
-			host = host.substring(0, host.length() - 1);
-
-		int port = String(m_servus.get(s.toStdString(), "servus_port")).getIntValue();
-		String ip = getIPForHostAndPort(host, port);
-
-		bool isLocal = false;
-		if (ip.isNotEmpty())
-		{
-			Array<IPAddress> localIps;
-			IPAddress::findAllAddresses(localIps);
-			for (auto &lip : localIps)
-			{
-				if (ip == lip.toString())
-				{
-					isLocal = true;
-					break;
-				}
-			}
-		}
-
-		if (isLocal)
-			ip = IPAddress::local().toString();
-
-		ServiceInfo * info = getService(s, host, port);
-		if (info == nullptr)
-		{
-			changed = true;
-			addService(s, host, ip, port);
-		}
-		else if (info->host != host || info->port != port || info->ip != ip)
-		{
-			changed = true;
-			updateService(info, host, ip, port);
-		}
-	}
+	//for (auto &s : servicesArray)
+	//{
+    //    if (Thread::getCurrentThread()->threadShouldExit())
+	//		return false;
+    //    
+    //    String host = m_servus.get(s.toStdString(), "servus_host");
+	//	if (host.endsWithChar('.'))
+	//		host = host.substring(0, host.length() - 1);
+	//	
+	//	int port = String(m_servus.get(s.toStdString(), "servus_port")).getIntValue();
+	//	String ip = getIPForHostAndPort(host, port);
+	//	
+	//	bool isLocal = false;
+	//	if (ip.isNotEmpty())
+	//	{
+	//		Array<IPAddress> localIps;
+	//		IPAddress::findAllAddresses(localIps);
+	//		for (auto &lip : localIps)
+	//		{
+	//			if (ip == lip.toString())
+	//			{
+	//				isLocal = true;
+	//				break;
+	//			}
+	//		}
+	//	}
+	//	
+	//	if (isLocal)
+	//		ip = IPAddress::local().toString();
+	//	
+	//	ServiceInfo * info = getService(s, host, port);
+	//	if (info == nullptr)
+	//	{
+	//		changed = true;
+	//		addService(s, host, ip, port);
+	//	}
+	//	else if (info->host != host || info->port != port || info->ip != ip)
+	//	{
+	//		changed = true;
+	//		updateService(info, host, ip, port);
+	//	}
+	//}
 
 	return changed;
 }
@@ -324,62 +327,63 @@ String ZeroconfDiscoverComponent::ZeroconfSearcher::getIPForHostAndPort(String h
 {
 	String ip;
 
-	struct addrinfo hints = { 0 };
-	hints.ai_family = AF_INET;
-
-	struct addrinfo* info = nullptr;
-	getaddrinfo(host.toRawUTF8(), String(port).toRawUTF8(), &hints, &info);
-	if (info == nullptr)
-	{
-		DBG("Should not be null !");
-		return "";
-	}
-
-	char * ipData = info->ai_addr->sa_data;
-	if (info != nullptr)
-		ip = String((uint8)ipData[2]) + "." + String((uint8)ipData[3]) + "." + String((uint8)ipData[4]) + "." + String((uint8)ipData[5]);
-	
-	freeaddrinfo(info);
+	//struct addrinfo hints = { 0 };
+	//hints.ai_family = AF_INET;
+	//
+	//struct addrinfo* info = nullptr;
+	//getaddrinfo(host.toRawUTF8(), String(port).toRawUTF8(), &hints, &info);
+	//if (info == nullptr)
+	//{
+	//	DBG("Should not be null !");
+	//	return "";
+	//}
+	//
+	//char * ipData = info->ai_addr->sa_data;
+	//if (info != nullptr)
+	//	ip = String((uint8)ipData[2]) + "." + String((uint8)ipData[3]) + "." + String((uint8)ipData[4]) + "." + String((uint8)ipData[5]);
+	//
+	//freeaddrinfo(info);
 
 	return ip;
 }
 
-ZeroconfDiscoverComponent::ServiceInfo * ZeroconfDiscoverComponent::ZeroconfSearcher::getService(StringRef sName, StringRef host, int port)
+NanoMDNSDiscoverer::ServiceDiscoverInfo* ZeroconfDiscoverComponent::ZeroconfSearcher::getService(StringRef sName, StringRef host, StringRef ip, int port)
 {
 	for (auto &i : m_services)
 	{
 		if (Thread::getCurrentThread()->threadShouldExit())
 			return nullptr;
-		if (i->name == sName && i->host == host && i->port == port)
+		if (i->GetName() == sName && i->GetHost() == host && i->GetIPAddress() == ip && i->GetPort() == port)
 			return i;
 	}
 	return nullptr;
 }
 
-void ZeroconfDiscoverComponent::ZeroconfSearcher::addService(StringRef sName, StringRef host, StringRef ip, int port)
+void ZeroconfDiscoverComponent::ZeroconfSearcher::addService(StringRef name, StringRef host, StringRef ip, int port)
 {
 	if (Thread::getCurrentThread()->threadShouldExit())
 		return;
 	//NLOG("Zeroconf", "New " << name << " service discovered : " << sName << " on " << host << ", " << ip << ":" << port);
-	jassert(getService(sName, host, port) == nullptr);
-	m_services.add(new ServiceInfo{ sName, host, ip, port });
+	jassert(getService(name, host, ip, port) == nullptr);
+	m_services.add(new NanoMDNSDiscoverer::ServiceDiscoverInfo{ /*sName, host,*/ ip, port});
 
 }
 
-void ZeroconfDiscoverComponent::ZeroconfSearcher::removeService(ServiceInfo * s)
+void ZeroconfDiscoverComponent::ZeroconfSearcher::removeService(NanoMDNSDiscoverer::ServiceDiscoverInfo* s)
 {
 	jassert(s != nullptr);
 	//NLOG("Zeroconf", name << " service removed : " << s->name);
 	m_services.removeObject(s);
 }
 
-void ZeroconfDiscoverComponent::ZeroconfSearcher::updateService(ServiceInfo * service, StringRef host, StringRef ip, int port)
+void ZeroconfDiscoverComponent::ZeroconfSearcher::updateService(NanoMDNSDiscoverer::ServiceDiscoverInfo* service, StringRef name, StringRef host, StringRef ip, int port)
 {
 	jassert(service != nullptr);
 	//NLOG("Zeroconf", name << "service updated changed : " << name << " : " << host << ", " << ip << ":" << port);
-	service->host = host;
-	service->ip = ip;
-	service->port = port;
+	service->SetName(name);
+	service->SetHost(host);
+	service->SetIPAddress(ip);
+	service->SetPort(port);
 }
 
 void ZeroconfDiscoverComponent::resized()

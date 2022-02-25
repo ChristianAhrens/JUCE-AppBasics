@@ -4,41 +4,7 @@
               companyName="Christian Ahrens" companyEmail="christianahrens@me.com"
               companyCopyright="2020" jucerFormatVersion="1" defines="SERVUS_STATIC">
   <MAINGROUP id="wsXNhp" name="AppBasicsDemo">
-    <GROUP id="{A7277E36-AB94-4408-FC2B-39F558038811}" name="submodules">
-      <GROUP id="{660A873D-8777-01FC-D961-61E86545E85A}" name="Servus">
-        <FILE id="FydoCK" name="api.h" compile="0" resource="0" file="../submodules/Servus/servus/api.h"/>
-        <FILE id="I9UYHm" name="defines.h" compile="0" resource="0" file="../submodules/Servus/servus/defines.h"/>
-        <FILE id="ETCZNp" name="definesDarwin.h" compile="0" resource="0" file="../submodules/Servus/servus/definesDarwin.h"/>
-        <FILE id="AfkKIr" name="definesWin32.h" compile="0" resource="0" file="../submodules/Servus/servus/definesWin32.h"/>
-        <FILE id="dgvfes" name="listener.h" compile="0" resource="0" file="../submodules/Servus/servus/listener.h"/>
-        <FILE id="XtJv9U" name="result.h" compile="0" resource="0" file="../submodules/Servus/servus/result.h"/>
-        <FILE id="DDIPDD" name="serializable.cpp" compile="1" resource="0"
-              file="../submodules/Servus/servus/serializable.cpp"/>
-        <FILE id="xoQTMs" name="serializable.h" compile="0" resource="0" file="../submodules/Servus/servus/serializable.h"/>
-        <FILE id="VAjMJ6" name="servus.cpp" compile="1" resource="0" file="../submodules/Servus/servus/servus.cpp"/>
-        <FILE id="aI0xat" name="servus.h" compile="0" resource="0" file="../submodules/Servus/servus/servus.h"/>
-        <FILE id="KeICZK" name="types.h" compile="0" resource="0" file="../submodules/Servus/servus/types.h"/>
-        <FILE id="Of9H6b" name="uint128_t.cpp" compile="1" resource="0" file="../submodules/Servus/servus/uint128_t.cpp"/>
-        <FILE id="Nq8dZU" name="uint128_t.h" compile="0" resource="0" file="../submodules/Servus/servus/uint128_t.h"/>
-        <FILE id="YmtwCj" name="uri.cpp" compile="1" resource="0" file="../submodules/Servus/servus/uri.cpp"/>
-        <FILE id="bgwGPp" name="uri.h" compile="0" resource="0" file="../submodules/Servus/servus/uri.h"/>
-        <FILE id="i0A2Dl" name="version.cpp" compile="1" resource="0" file="../submodules/Servus/servus/version.cpp"/>
-        <FILE id="lkBzYb" name="version.h" compile="0" resource="0" file="../submodules/Servus/servus/version.h"/>
-        <GROUP id="{234E1B5B-BD5D-3280-E846-9860066AA879}" name="none">
-          <FILE id="PSJteE" name="servus.h" compile="0" resource="0" file="../submodules/Servus/servus/none/servus.h"/>
-        </GROUP>
-        <GROUP id="{DF248749-A70C-0C59-9E71-55EC0C1CDEFF}" name="md5">
-          <FILE id="Qh1F19" name="md5.cc" compile="1" resource="0" file="../submodules/Servus/servus/md5/md5.cc"/>
-          <FILE id="YlIMgc" name="md5.hh" compile="0" resource="0" file="../submodules/Servus/servus/md5/md5.hh"/>
-        </GROUP>
-        <GROUP id="{62780484-E23F-FB31-3ADC-7DAAB6063000}" name="dnssd">
-          <FILE id="AoWtpi" name="servus.h" compile="0" resource="0" file="../submodules/Servus/servus/dnssd/servus.h"/>
-        </GROUP>
-        <GROUP id="{443DF99C-C0C5-0237-E858-369842D38ACA}" name="avahi">
-          <FILE id="X1J7YR" name="servus.h" compile="0" resource="0" file="../submodules/Servus/servus/avahi/servus.h"/>
-        </GROUP>
-      </GROUP>
-    </GROUP>
+    <GROUP id="{A7277E36-AB94-4408-FC2B-39F558038811}" name="submodules"/>
     <GROUP id="{3482B756-6423-A110-A5E5-7E6AADE98E41}" name="Resources">
       <GROUP id="{E6327702-ADFE-25DB-51B3-D943A20FA2E6}" name="Images">
         <FILE id="HPZTnD" name="add-24px.svg" compile="0" resource="1" file="../Resources/Images/add-24px.svg"/>

@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 
-#include <servus/servus.h>
+#include "NanoMDNSDiscoverer.h"
 
 namespace JUCEAppBasics
 {
@@ -32,32 +32,26 @@ public:
         ZST_Max
     };
 
-	struct ServiceInfo
-	{
-		String name;
-		String host;
-		String ip;
-		int port;
-	};
-
-	class ZeroconfSearcher
+	class ZeroconfSearcher : public NanoMDNSDiscoverer::DiscoveryListener
 	{
 	public:
-		ZeroconfSearcher(StringRef name, StringRef serviceName, unsigned short announcementPort = 0);
+		ZeroconfSearcher(StringRef name, StringRef serviceName);
 		~ZeroconfSearcher();
 
 		String m_name;
 		String m_serviceName;
-		servus::Servus m_servus;
-		OwnedArray<ServiceInfo> m_services;
+        NanoMDNSDiscoverer m_mDNSDiscoverer;
+		OwnedArray<NanoMDNSDiscoverer::ServiceDiscoverInfo> m_services;
 
-		bool search();
+        void ServiceDiscovered(const NanoMDNSDiscoverer::ServiceDiscoverInfo& service) override;
+
+		bool processDiscovery();
 		String getIPForHostAndPort(String host, int port);
 
-		ServiceInfo * getService(StringRef name, StringRef host, int port);
+        NanoMDNSDiscoverer::ServiceDiscoverInfo* getService(StringRef name, StringRef host, StringRef ip, int port);
 		void addService(StringRef name, StringRef host, StringRef ip, int port);
-		void removeService(ServiceInfo * service);
-		void updateService(ServiceInfo * service, StringRef host, StringRef ip, int port);
+		void removeService(NanoMDNSDiscoverer::ServiceDiscoverInfo* service);
+		void updateService(NanoMDNSDiscoverer::ServiceDiscoverInfo* service, StringRef name, StringRef host, StringRef ip, int port);
 	};
     
 public:
@@ -65,7 +59,7 @@ public:
     ~ZeroconfDiscoverComponent();
     
     void clearServices();
-    void addDiscoverService(ZeroconfServiceType serviceType, unsigned short announcementPort = 0);
+    void addDiscoverService(ZeroconfServiceType serviceType);
     void removeDiscoverService(ZeroconfServiceType serviceType);
     void setShowServiceNameLabels(bool show);
     
@@ -90,7 +84,7 @@ public:
     static String getServiceDescriptor(ZeroconfServiceType type);
     
     //==============================================================================
-    std::function<void(ZeroconfServiceType, ServiceInfo*)> onServiceSelected;
+    std::function<void(ZeroconfServiceType, NanoMDNSDiscoverer::ServiceDiscoverInfo*)> onServiceSelected;
 
 private:
     ZeroconfSearcher * getSearcher(StringRef name);
@@ -99,17 +93,17 @@ private:
     
     void search();
 
-    void addSearcher(StringRef name, StringRef serviceName, unsigned short announcementPort = 0);
+    void addSearcher(StringRef name, StringRef serviceName);
     void removeSearcher(StringRef name);
     
-    bool                                                m_useSeparateServiceSearchers;
-    OwnedArray<ZeroconfSearcher, CriticalSection>       m_searchers;
+    bool                                                    m_useSeparateServiceSearchers;
+    OwnedArray<ZeroconfSearcher, CriticalSection>           m_searchers;
     
-    std::map<String, std::unique_ptr<DrawableButton>>   m_discoveryButtons;
-    std::map<String, std::unique_ptr<Label>>            m_serviceNameLabels;
+    std::map<String, std::unique_ptr<DrawableButton>>       m_discoveryButtons;
+    std::map<String, std::unique_ptr<Label>>                m_serviceNameLabels;
 
-    std::vector<ServiceInfo*>                           m_currentServiceBrowsingList;   /**< Flat list of services currently available for selection. Only valid while popup menu is shown!. */
-    PopupMenu                                           m_currentServiceBrowsingPopup;
+    std::vector<NanoMDNSDiscoverer::ServiceDiscoverInfo*>   m_currentServiceBrowsingList;   /**< Flat list of services currently available for selection. Only valid while popup menu is shown!. */
+    PopupMenu                                               m_currentServiceBrowsingPopup;
     
     bool m_showServiceNameLabels { false };
 
