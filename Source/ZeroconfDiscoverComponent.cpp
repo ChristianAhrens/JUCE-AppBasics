@@ -12,13 +12,6 @@
 
 #include "Image_utils.h"
 
-#ifdef JUCE_WINDOWS
-#include <Winsock2.h>
-#include <Ws2tcpip.h>
-#else
-#include <netdb.h>
-#endif /* _WIN32 */
-
 
 namespace JUCEAppBasics
 {
@@ -225,15 +218,29 @@ void ZeroconfDiscoverComponent::run()
 
 ZeroconfDiscoverComponent::ZeroconfSearcher::ZeroconfSearcher(StringRef name, StringRef serviceName, unsigned short announcementPort) :
 	m_name(name),
-	m_serviceName(serviceName),
-	m_servus(String(serviceName).toStdString())
+	m_serviceName(serviceName)
 {
-    if (announcementPort != 0)
-        m_servus.announce(announcementPort, JUCEApplication::getInstance()->getApplicationName().toStdString());
+#ifdef _WIN32
+
+	WORD versionWanted = MAKEWORD(1, 1);
+	WSADATA wsaData;
+	if (WSAStartup(versionWanted, &wsaData)) {
+		printf("Failed to initialize WinSock\n");
+	}
+#endif
+		
+	m_socketIdx = mdns_socket_open_ipv4(nullptr);
+	if (m_socketIdx < 0)
+	{
+		int error = WSAGetLastError();
+		DBG(String("mdns_socket_open_ipv4 returned error (LastError:") + String(error) + String(")"));
+	}
 }
 
 ZeroconfDiscoverComponent::ZeroconfSearcher::~ZeroconfSearcher()
 {
+	mdns_socket_close(m_socketIdx);
+
 	m_services.clear();
 }
 
@@ -242,83 +249,93 @@ bool ZeroconfDiscoverComponent::ZeroconfSearcher::search()
 	if (Thread::getCurrentThread()->threadShouldExit())
 		return false;
 
-	servus::Strings instances = m_servus.discover(servus::Servus::Interface::IF_ALL, 200);
-
+	//servus::Strings instances = m_servus.discover(servus::Servus::Interface::IF_ALL, 200);
+	
 	bool changed = false;
 
-	StringArray servicesArray;
-	for (auto &s : instances)
-		servicesArray.add(s);
+	char buffer[512];
+	int queryId = mdns_query_send(m_socketIdx, mdns_record_type_t::MDNS_RECORDTYPE_ANY, m_serviceName.toRawUTF8(), m_serviceName.length(), buffer, sizeof(buffer), 0);
+	if (queryId < 0)
+		DBG("mdns query failed");
 
-	Array<ServiceInfo *> servicesToRemove;
+	Sleep(1000);
 
-	for (auto &ss : m_services)
-	{
-		if (servicesArray.contains(ss->name))
-		{
-			String host = m_servus.get(ss->name.toStdString(), "servus_host");
-			if (host.endsWithChar('.'))
-				host = host.substring(0, host.length() - 1);
-			int port = String(m_servus.get(ss->name.toStdString(), "servus_port")).getIntValue();
-
-			if (ss->host != host || ss->port != port)
-				servicesToRemove.add(ss);
-		}
-		else
-		{
-			servicesToRemove.add(ss);
-		}
-	}
-
-	for (auto &ss : servicesToRemove)
-		removeService(ss);
-
-	for (auto &s : servicesArray)
-	{
-        if (Thread::getCurrentThread()->threadShouldExit())
-			return false;
-        
-        String host = m_servus.get(s.toStdString(), "servus_host");
-		if (host.endsWithChar('.'))
-			host = host.substring(0, host.length() - 1);
-
-		int port = String(m_servus.get(s.toStdString(), "servus_port")).getIntValue();
-		String ip = getIPForHostAndPort(host, port);
-
-		bool isLocal = false;
-		if (ip.isNotEmpty())
-		{
-			Array<IPAddress> localIps;
-			IPAddress::findAllAddresses(localIps);
-			for (auto &lip : localIps)
-			{
-				if (ip == lip.toString())
-				{
-					isLocal = true;
-					break;
-				}
-			}
-		}
-
-		if (isLocal)
-			ip = IPAddress::local().toString();
-
-		ServiceInfo * info = getService(s, host, port);
-		if (info == nullptr)
-		{
-			changed = true;
-			addService(s, host, ip, port);
-		}
-		else if (info->host != host || info->port != port || info->ip != ip)
-		{
-			changed = true;
-			updateService(info, host, ip, port);
-		}
-	}
+	char userData[512];
+	size_t responseCnt = mdns_query_recv(m_socketIdx, buffer, sizeof(buffer), reinterpret_cast<mdns_record_callback_fn>(&recvCallback), userData, queryId);
+	DBG(String("mdns got ") + String(responseCnt) + String(" responses"));
+	
+	//StringArray servicesArray;
+	//for (auto &s : instances)
+	//	servicesArray.add(s);
+	//
+	//Array<ServiceInfo *> servicesToRemove;
+	//
+	//for (auto &ss : m_services)
+	//{
+	//	if (servicesArray.contains(ss->name))
+	//	{
+	//		String host = m_servus.get(ss->name.toStdString(), "servus_host");
+	//		if (host.endsWithChar('.'))
+	//			host = host.substring(0, host.length() - 1);
+	//		int port = String(m_servus.get(ss->name.toStdString(), "servus_port")).getIntValue();
+	//
+	//		if (ss->host != host || ss->port != port)
+	//			servicesToRemove.add(ss);
+	//	}
+	//	else
+	//	{
+	//		servicesToRemove.add(ss);
+	//	}
+	//}
+	//
+	//for (auto &ss : servicesToRemove)
+	//	removeService(ss);
+	//
+	//for (auto &s : servicesArray)
+	//{
+    //    if (Thread::getCurrentThread()->threadShouldExit())
+	//		return false;
+    //    
+    //    String host = m_servus.get(s.toStdString(), "servus_host");
+	//	if (host.endsWithChar('.'))
+	//		host = host.substring(0, host.length() - 1);
+	//
+	//	int port = String(m_servus.get(s.toStdString(), "servus_port")).getIntValue();
+	//	String ip = getIPForHostAndPort(host, port);
+	//
+	//	bool isLocal = false;
+	//	if (ip.isNotEmpty())
+	//	{
+	//		Array<IPAddress> localIps;
+	//		IPAddress::findAllAddresses(localIps);
+	//		for (auto &lip : localIps)
+	//		{
+	//			if (ip == lip.toString())
+	//			{
+	//				isLocal = true;
+	//				break;
+	//			}
+	//		}
+	//	}
+	//
+	//	if (isLocal)
+	//		ip = IPAddress::local().toString();
+	//
+	//	ServiceInfo * info = getService(s, host, port);
+	//	if (info == nullptr)
+	//	{
+	//		changed = true;
+	//		addService(s, host, ip, port);
+	//	}
+	//	else if (info->host != host || info->port != port || info->ip != ip)
+	//	{
+	//		changed = true;
+	//		updateService(info, host, ip, port);
+	//	}
+	//}
 
 	return changed;
 }
-
 
 String ZeroconfDiscoverComponent::ZeroconfSearcher::getIPForHostAndPort(String host, int port)
 {

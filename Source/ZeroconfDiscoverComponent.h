@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 
-#include <servus/servus.h>
+#include "../submodules/mdns/mdns.h"
 
 namespace JUCEAppBasics
 {
@@ -46,10 +46,20 @@ public:
 		ZeroconfSearcher(StringRef name, StringRef serviceName, unsigned short announcementPort = 0);
 		~ZeroconfSearcher();
 
-		String m_name;
-		String m_serviceName;
-		servus::Servus m_servus;
+		String                  m_name;
+		String                  m_serviceName;
 		OwnedArray<ServiceInfo> m_services;
+        int                     m_socketIdx;
+
+        static int recvCallback(int sock, const struct sockaddr* from, size_t addrlen, mdns_entry_type_t entry,
+                uint16_t query_id, uint16_t rtype, uint16_t rclass, uint32_t ttl, const void* data,
+                size_t size, size_t name_offset, size_t name_length, size_t record_offset,
+            size_t record_length, void* user_data)
+        {
+
+
+            return 0;
+        };
 
 		bool search();
 		String getIPForHostAndPort(String host, int port);
@@ -101,7 +111,7 @@ private:
 
     void addSearcher(StringRef name, StringRef serviceName, unsigned short announcementPort = 0);
     void removeSearcher(StringRef name);
-    
+
     bool                                                m_useSeparateServiceSearchers;
     OwnedArray<ZeroconfSearcher, CriticalSection>       m_searchers;
     
