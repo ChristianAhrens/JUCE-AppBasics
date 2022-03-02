@@ -56,7 +56,55 @@ public:
                 size_t size, size_t name_offset, size_t name_length, size_t record_offset,
             size_t record_length, void* user_data)
         {
+            char buffer[512];
+            mdns_string_t fromaddrstr;
 
+            if (from->sa_family == AF_INET6)
+            {
+                auto addr = (const struct sockaddr_in*)from;
+
+                char host[NI_MAXHOST] = { 0 };
+                char service[NI_MAXSERV] = { 0 };
+                int ret = getnameinfo((const struct sockaddr*)from, (socklen_t)addrlen, host, NI_MAXHOST,
+                    service, NI_MAXSERV, NI_NUMERICSERV | NI_NUMERICHOST);
+                int len = 0;
+                if (ret == 0) {
+                    if (addr->sin_port != 0)
+                        len = snprintf(buffer, sizeof(buffer), "%s:%s", host, service);
+                    else
+                        len = snprintf(buffer, sizeof(buffer), "%s", host);
+                }
+                if (len >= (int)sizeof(buffer))
+                    len = (int)sizeof(buffer) - 1;
+                mdns_string_t str;
+                str.str = buffer;
+                str.length = len;
+                fromaddrstr = str;
+            }
+            else
+            {
+                auto addr = (const struct sockaddr_in6*)from;
+
+                char host[NI_MAXHOST] = { 0 };
+                char service[NI_MAXSERV] = { 0 };
+                int ret = getnameinfo((const struct sockaddr*)from, (socklen_t)addrlen, host, NI_MAXHOST,
+                    service, NI_MAXSERV, NI_NUMERICSERV | NI_NUMERICHOST);
+                int len = 0;
+                if (ret == 0) {
+                    if (addr->sin6_port != 0)
+                        len = snprintf(buffer, sizeof(buffer), "[%s]:%s", host, service);
+                    else
+                        len = snprintf(buffer, sizeof(buffer), "%s", host);
+                }
+                if (len >= (int)sizeof(buffer))
+                    len = (int)sizeof(buffer) - 1;
+                mdns_string_t str;
+                str.str = buffer;
+                str.length = len;
+                fromaddrstr = str;
+            }
+
+            DBG(String(__FUNCTION__) + String(" received answer from ") + String(fromaddrstr.str));
 
             return 0;
         };

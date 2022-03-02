@@ -221,11 +221,11 @@ ZeroconfDiscoverComponent::ZeroconfSearcher::ZeroconfSearcher(StringRef name, St
 	m_serviceName(serviceName)
 {
 #ifdef _WIN32
-
 	WORD versionWanted = MAKEWORD(1, 1);
 	WSADATA wsaData;
-	if (WSAStartup(versionWanted, &wsaData)) {
-		printf("Failed to initialize WinSock\n");
+	if (WSAStartup(versionWanted, &wsaData))
+	{
+		DBG(String("Failed to initialize WinSock"));
 	}
 #endif
 		
@@ -242,6 +242,10 @@ ZeroconfDiscoverComponent::ZeroconfSearcher::~ZeroconfSearcher()
 	mdns_socket_close(m_socketIdx);
 
 	m_services.clear();
+
+#ifdef _WIN32
+	WSACleanup();
+#endif
 }
 
 bool ZeroconfDiscoverComponent::ZeroconfSearcher::search()
@@ -253,10 +257,12 @@ bool ZeroconfDiscoverComponent::ZeroconfSearcher::search()
 	
 	bool changed = false;
 
+	String queryName = m_serviceName + ".local";
+
 	char buffer[512];
-	int queryId = mdns_query_send(m_socketIdx, mdns_record_type_t::MDNS_RECORDTYPE_ANY, m_serviceName.toRawUTF8(), m_serviceName.length(), buffer, sizeof(buffer), 0);
+	int queryId = mdns_query_send(m_socketIdx, mdns_record_type_t::MDNS_RECORDTYPE_ANY, queryName.toRawUTF8(), queryName.length(), buffer, sizeof(buffer), 0);
 	if (queryId < 0)
-		DBG("mdns query failed");
+		DBG(String("mdns query failed"));
 
 	Sleep(1000);
 
