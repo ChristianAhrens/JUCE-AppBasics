@@ -76,7 +76,7 @@ public:
     
 private:
     //==============================================================================
-    void handleServiceSelected(JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType type, JUCEAppBasics::ZeroconfDiscoverComponent::ServiceInfo* info);
+    void handleServiceSelected(JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfServiceType type, JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfSearcher::ServiceInfo* info);
     
     //==============================================================================
     std::unique_ptr<DemoHeaderFooterComponent>                      m_header;

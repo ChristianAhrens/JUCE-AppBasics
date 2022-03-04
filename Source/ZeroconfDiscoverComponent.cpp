@@ -116,7 +116,7 @@ void ZeroconfDiscoverComponent::removeSearcher(StringRef name)
 ZeroconfDiscoverComponent::ZeroconfSearcher * ZeroconfDiscoverComponent::getSearcher(StringRef name)
 {
 	for (auto &s : m_searchers)
-		if (s->m_name == name)
+		if (s->GetName() == name)
 			return s;
 
 	return nullptr;
@@ -136,7 +136,7 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 
 		for (auto& searcher : m_searchers)
 		{
-			for (auto& service : searcher->m_services)
+			for (auto& service : searcher->GetServices())
 			{
 				m_currentServiceBrowsingList.push_back(service);
 				String serviceItemString = service->name + " on " + (service->host.isEmpty() ? service->ip : service->host);
@@ -157,7 +157,7 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 			return;
 		}
 
-		for (auto& service : searcher->m_services)
+		for (auto& service : searcher->GetServices())
 		{
 			m_currentServiceBrowsingList.push_back(service);
 			String serviceItemString = service->name + " on " + (service->host.isEmpty() ? service->ip : service->host);
@@ -180,7 +180,7 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 				if (onServiceSelected)
 				{
 					auto serviceIndex = result - 1;
-					auto service = (m_currentServiceBrowsingList.size() >= serviceIndex) ? m_currentServiceBrowsingList.at(serviceIndex) : static_cast<ServiceInfo*>(nullptr);
+					auto service = (m_currentServiceBrowsingList.size() >= serviceIndex) ? m_currentServiceBrowsingList.at(serviceIndex) : static_cast<ZeroconfSearcher::ServiceInfo*>(nullptr);
 
 					if (service)
 						onServiceSelected(getServiceType(service->name), service);
@@ -203,7 +203,6 @@ void ZeroconfDiscoverComponent::timerCallback()
 	search();
 }
 
-
 void ZeroconfDiscoverComponent::run()
 {
 	sleep(300);
@@ -215,6 +214,19 @@ void ZeroconfDiscoverComponent::run()
 		changed |= se->search();
 	m_searchers.getLock().exit();
 }
+
+
+std::string                          ZeroconfDiscoverComponent::ZeroconfSearcher::s_mdnsEntry = std::string();
+std::string                          ZeroconfDiscoverComponent::ZeroconfSearcher::s_mdnsEntryPTR = std::string();
+std::string                          ZeroconfDiscoverComponent::ZeroconfSearcher::s_mdnsEntrySRVName = std::string();
+std::uint16_t                        ZeroconfDiscoverComponent::ZeroconfSearcher::s_mdnsEntrySRVPort = std::uint16_t(0);
+std::uint16_t                        ZeroconfDiscoverComponent::ZeroconfSearcher::s_mdnsEntrySRVPriority = std::uint16_t(0);
+std::uint16_t                        ZeroconfDiscoverComponent::ZeroconfSearcher::s_mdnsEntrySRVWeight = std::uint16_t(0);
+std::string                          ZeroconfDiscoverComponent::ZeroconfSearcher::s_mdnsEntryAHost = std::string();
+std::string                          ZeroconfDiscoverComponent::ZeroconfSearcher::s_mdnsEntryAService = std::string();
+std::string                          ZeroconfDiscoverComponent::ZeroconfSearcher::s_mdnsEntryAAAAHost = std::string();
+std::string                          ZeroconfDiscoverComponent::ZeroconfSearcher::s_mdnsEntryAAAAService = std::string();
+std::map<std::string, std::string>   ZeroconfDiscoverComponent::ZeroconfSearcher::s_mdnsEntryTXT = std::map<std::string, std::string>();
 
 ZeroconfDiscoverComponent::ZeroconfSearcher::ZeroconfSearcher(StringRef name, StringRef serviceName, unsigned short announcementPort) :
 	m_name(name),
@@ -241,6 +253,8 @@ ZeroconfDiscoverComponent::ZeroconfSearcher::~ZeroconfSearcher()
 {
 	mdns_socket_close(m_socketIdx);
 
+	for (auto& i : m_services)
+		delete i;
 	m_services.clear();
 
 #ifdef _WIN32
@@ -264,11 +278,38 @@ bool ZeroconfDiscoverComponent::ZeroconfSearcher::search()
 	if (queryId < 0)
 		DBG(String("mdns query failed"));
 
-	Sleep(1000);
-
 	char userData[512];
 	size_t responseCnt = mdns_query_recv(m_socketIdx, buffer, sizeof(buffer), reinterpret_cast<mdns_record_callback_fn>(&recvCallback), userData, queryId);
-	DBG(String("mdns got ") + String(responseCnt) + String(" responses"));
+
+	if (responseCnt > 0)
+	{
+		DBG(String("mdns got ") + String(responseCnt) + String(" responses for ") + String(ZeroconfSearcher::s_mdnsEntry) + String(" from ") + String(ZeroconfSearcher::s_mdnsEntrySRVName));
+
+		ServiceInfo info;
+		
+		info.ip = ZeroconfSearcher::s_mdnsEntryAHost;
+		info.port = ZeroconfSearcher::s_mdnsEntrySRVPort;
+		info.host = ZeroconfSearcher::s_mdnsEntrySRVName;
+		info.name = ZeroconfSearcher::s_mdnsEntryPTR;
+
+		auto it = std::find_if(m_services.begin(), m_services.end(), [info](ServiceInfo* i_ptr) { return (info.name == i_ptr->name && info.host == i_ptr->host && info.ip == i_ptr->ip && info.port == i_ptr->port); });
+		if (it != m_services.end())
+			UpdateService(*it, info.host, info.ip, info.port);
+		else
+			AddService(info.name, info.host, info.ip, info.port);
+	}
+
+	ZeroconfSearcher::s_mdnsEntry				= std::string();
+	ZeroconfSearcher::s_mdnsEntryPTR			= std::string();
+	ZeroconfSearcher::s_mdnsEntrySRVName		= std::string();
+	ZeroconfSearcher::s_mdnsEntrySRVPort		= std::uint16_t(0);
+	ZeroconfSearcher::s_mdnsEntrySRVPriority	= std::uint16_t(0);
+	ZeroconfSearcher::s_mdnsEntrySRVWeight		= std::uint16_t(0);
+	ZeroconfSearcher::s_mdnsEntryAHost			= std::string();
+	ZeroconfSearcher::s_mdnsEntryAService		= std::string();
+	ZeroconfSearcher::s_mdnsEntryAAAAHost		= std::string();
+	ZeroconfSearcher::s_mdnsEntryAAAAService	= std::string();
+	ZeroconfSearcher::s_mdnsEntryTXT			= std::map<std::string, std::string>();
 	
 	//StringArray servicesArray;
 	//for (auto &s : instances)
@@ -367,7 +408,7 @@ String ZeroconfDiscoverComponent::ZeroconfSearcher::getIPForHostAndPort(String h
 	return ip;
 }
 
-ZeroconfDiscoverComponent::ServiceInfo * ZeroconfDiscoverComponent::ZeroconfSearcher::getService(StringRef sName, StringRef host, int port)
+ZeroconfDiscoverComponent::ZeroconfSearcher::ServiceInfo * ZeroconfDiscoverComponent::ZeroconfSearcher::GetService(StringRef sName, StringRef host, int port)
 {
 	for (auto &i : m_services)
 	{
@@ -379,30 +420,56 @@ ZeroconfDiscoverComponent::ServiceInfo * ZeroconfDiscoverComponent::ZeroconfSear
 	return nullptr;
 }
 
-void ZeroconfDiscoverComponent::ZeroconfSearcher::addService(StringRef sName, StringRef host, StringRef ip, int port)
+void ZeroconfDiscoverComponent::ZeroconfSearcher::AddService(StringRef sName, StringRef host, StringRef ip, int port)
 {
 	if (Thread::getCurrentThread()->threadShouldExit())
 		return;
 	//NLOG("Zeroconf", "New " << name << " service discovered : " << sName << " on " << host << ", " << ip << ":" << port);
-	jassert(getService(sName, host, port) == nullptr);
-	m_services.add(new ServiceInfo{ sName, host, ip, port });
+	jassert(GetService(sName, host, port) == nullptr);
+	m_services.push_back(new ServiceInfo{ sName, host, ip, port });
 
 }
 
-void ZeroconfDiscoverComponent::ZeroconfSearcher::removeService(ServiceInfo * s)
+void ZeroconfDiscoverComponent::ZeroconfSearcher::RemoveService(ServiceInfo * s)
 {
 	jassert(s != nullptr);
 	//NLOG("Zeroconf", name << " service removed : " << s->name);
-	m_services.removeObject(s);
+	auto sit = std::find(m_services.begin(), m_services.end(), s);
+	if (sit != m_services.end())
+	{
+		delete* sit;
+		m_services.erase(sit);
+	}
 }
 
-void ZeroconfDiscoverComponent::ZeroconfSearcher::updateService(ServiceInfo * service, StringRef host, StringRef ip, int port)
+void ZeroconfDiscoverComponent::ZeroconfSearcher::UpdateService(ServiceInfo * service, StringRef host, StringRef ip, int port)
 {
 	jassert(service != nullptr);
 	//NLOG("Zeroconf", name << "service updated changed : " << name << " : " << host << ", " << ip << ":" << port);
 	service->host = host;
 	service->ip = ip;
 	service->port = port;
+}
+
+
+const std::string& ZeroconfDiscoverComponent::ZeroconfSearcher::GetName()
+{
+	return m_name;
+}
+
+const std::string& ZeroconfDiscoverComponent::ZeroconfSearcher::GetServiceName()
+{
+	return m_serviceName;
+}
+
+const std::vector<JUCEAppBasics::ZeroconfDiscoverComponent::ZeroconfSearcher::ServiceInfo*>& ZeroconfDiscoverComponent::ZeroconfSearcher::GetServices()
+{
+	return m_services;
+}
+
+int ZeroconfDiscoverComponent::ZeroconfSearcher::GetSocketIdx()
+{
+	return m_socketIdx;
 }
 
 void ZeroconfDiscoverComponent::resized()
