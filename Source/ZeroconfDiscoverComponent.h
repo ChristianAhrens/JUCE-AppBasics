@@ -62,7 +62,8 @@ public:
     std::function<void(ZeroconfServiceType, ZeroconfSearcher::ZeroconfSearcher::ServiceInfo*)> onServiceSelected;
 
 private:
-    ZeroconfSearcher::ZeroconfSearcher * getSearcher(StringRef name);
+    ZeroconfSearcher::ZeroconfSearcher * getSearcherByName(const juce::String& name);
+    ZeroconfSearcher::ZeroconfSearcher* getSearcherByServiceName(const juce::String& serviceName);
 
     void showMenuAndGetService(const juce::String& serviceName);
 

@@ -93,7 +93,7 @@ void ZeroconfDiscoverComponent::removeDiscoverService(ZeroconfServiceType servic
 
 void ZeroconfDiscoverComponent::addSearcher(String name, String serviceName)
 {
-	ZeroconfSearcher::ZeroconfSearcher * s = getSearcher(name);
+	ZeroconfSearcher::ZeroconfSearcher * s = getSearcherByName(name);
 
 	if (s == nullptr)
 	{
@@ -105,7 +105,7 @@ void ZeroconfDiscoverComponent::addSearcher(String name, String serviceName)
 
 void ZeroconfDiscoverComponent::removeSearcher(String name)
 {
-	ZeroconfSearcher::ZeroconfSearcher * s = getSearcher(name);
+	ZeroconfSearcher::ZeroconfSearcher * s = getSearcherByName(name);
 	if (s == nullptr)
 	{
 		m_searchers.getLock().enter();
@@ -114,10 +114,19 @@ void ZeroconfDiscoverComponent::removeSearcher(String name)
 	}
 }
 
-ZeroconfSearcher::ZeroconfSearcher * ZeroconfDiscoverComponent::getSearcher(StringRef name)
+ZeroconfSearcher::ZeroconfSearcher * ZeroconfDiscoverComponent::getSearcherByName(const juce::String& name)
 {
 	for (auto &s : m_searchers)
-		if (s->GetName() == name)
+		if (name.contains(s->GetName()))
+			return s;
+
+	return nullptr;
+}
+
+ZeroconfSearcher::ZeroconfSearcher* ZeroconfDiscoverComponent::getSearcherByServiceName(const juce::String& serviceName)
+{
+	for (auto& s : m_searchers)
+		if (serviceName.contains(s->GetServiceName()))
 			return s;
 
 	return nullptr;
@@ -150,7 +159,7 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 	}
 	else
 	{
-		auto searcher = getSearcher(serviceName);
+		auto searcher = getSearcherByServiceName(serviceName);
 
 		if (searcher == nullptr)
 		{
@@ -183,8 +192,15 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 					auto serviceIndex = result - 1;
 					auto service = (m_currentServiceBrowsingList.size() >= serviceIndex) ? m_currentServiceBrowsingList.at(serviceIndex) : static_cast<ZeroconfSearcher::ZeroconfSearcher::ServiceInfo*>(nullptr);
 
-					if (service)
-						onServiceSelected(getServiceType(service->name), service);
+					if (service != nullptr)
+					{
+						auto searcher = getSearcherByServiceName(service->name);
+
+						if (searcher != nullptr)
+							onServiceSelected(getServiceType(searcher->GetName()), service);
+						else
+							onServiceSelected(ZST_Unkown, nullptr);
+					}
 					else
 						onServiceSelected(ZST_Unkown, nullptr);
 				}
@@ -258,9 +274,9 @@ void ZeroconfDiscoverComponent::handleServicesChanged()
 
 ZeroconfDiscoverComponent::ZeroconfServiceType ZeroconfDiscoverComponent::getServiceType(String name)
 {
-    if (name == getServiceName(ZST_OSC))
+    if (name.contains(getServiceName(ZST_OSC)))
         return ZST_OSC;
-    else if (name == getServiceName(ZST_OCA))
+    else if (name.contains(getServiceName(ZST_OCA)))
         return ZST_OCA;
     else
         return ZST_Unkown;
