@@ -93,41 +93,42 @@ void ZeroconfDiscoverComponent::removeDiscoverService(ZeroconfServiceType servic
 
 void ZeroconfDiscoverComponent::addSearcher(String name, String serviceName)
 {
-	ZeroconfSearcher::ZeroconfSearcher * s = getSearcherByName(name);
+	ZeroconfSearcher::ZeroconfSearcher * searcher = getSearcherByName(name);
 
-	if (s == nullptr)
+	if (searcher == nullptr)
 	{
-		m_searchers.getLock().enter();
-		m_searchers.add(new ZeroconfSearcher::ZeroconfSearcher(name.toStdString(), serviceName.toStdString()));
-		m_searchers.getLock().exit();
+		m_searchers.push_back(std::make_unique<ZeroconfSearcher::ZeroconfSearcher>(name.toStdString(), serviceName.toStdString()));
 	}
 }
 
 void ZeroconfDiscoverComponent::removeSearcher(String name)
 {
 	ZeroconfSearcher::ZeroconfSearcher * s = getSearcherByName(name);
-	if (s == nullptr)
-	{
-		m_searchers.getLock().enter();
-		m_searchers.removeObject(s);
-		m_searchers.getLock().exit();
-	}
+	auto const zsit = std::find_if(m_searchers.begin(), m_searchers.end(), [&](const auto& val) { return val.get() == s; });
+	if (zsit != m_searchers.end())
+		m_searchers.erase(zsit);
 }
 
 ZeroconfSearcher::ZeroconfSearcher * ZeroconfDiscoverComponent::getSearcherByName(const juce::String& name)
 {
-	for (auto &s : m_searchers)
-		if (name.contains(s->GetName()))
-			return s;
-
+	for (auto const& searcher : m_searchers)
+	{
+		if (searcher)
+			if (name.contains(searcher->GetName()))
+				return searcher.get();
+	}
+	
 	return nullptr;
 }
 
 ZeroconfSearcher::ZeroconfSearcher* ZeroconfDiscoverComponent::getSearcherByServiceName(const juce::String& serviceName)
 {
-	for (auto& s : m_searchers)
-		if (serviceName.contains(s->GetServiceName()))
-			return s;
+	for (auto const& searcher : m_searchers)
+	{
+		if (searcher)
+			if (serviceName.contains(searcher->GetServiceName()))
+				return searcher.get();
+	}
 
 	return nullptr;
 }
@@ -138,7 +139,7 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 
 	if (serviceName.isEmpty())
 	{
-		if (m_searchers.isEmpty())
+		if (m_searchers.empty())
 		{
 			DBG("No searcher found");
 			return;
@@ -146,14 +147,20 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 
 		for (auto& searcher : m_searchers)
 		{
-			for (auto& service : searcher->GetServices())
+			if (searcher)
 			{
-				m_currentServiceBrowsingList.push_back(service);
-				String serviceItemString = service->name + " on " + (service->host.empty() ? service->ip : service->host);
+				for (auto& service : searcher->GetServices())
+				{
+					if (service)
+					{
+						m_currentServiceBrowsingList.push_back(service);
+						String serviceItemString = service->name + " on " + (service->host.empty() ? service->ip : service->host);
 #ifdef DEBUG
-				serviceItemString += " (" + String(service->ip) + ":" + String(service->port) + ")";
+						serviceItemString += " (" + String(service->ip) + ":" + String(service->port) + ")";
 #endif
-				m_currentServiceBrowsingPopup.addItem(static_cast<int>(m_currentServiceBrowsingList.size()), serviceItemString);
+						m_currentServiceBrowsingPopup.addItem(static_cast<int>(m_currentServiceBrowsingList.size()), serviceItemString);
+					}
+				}
 			}
 		}
 	}

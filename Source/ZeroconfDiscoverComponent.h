@@ -70,14 +70,14 @@ private:
     void addSearcher(String name, String serviceName);
     void removeSearcher(String name);
     
-    bool                                                            m_useSeparateServiceSearchers;
-    OwnedArray<ZeroconfSearcher::ZeroconfSearcher, CriticalSection> m_searchers;
+    bool                                                                m_useSeparateServiceSearchers;
+    std::vector<std::unique_ptr<ZeroconfSearcher::ZeroconfSearcher>>    m_searchers;
     
-    std::map<String, std::unique_ptr<DrawableButton>>               m_discoveryButtons;
-    std::map<String, std::unique_ptr<Label>>                        m_serviceNameLabels;
+    std::map<String, std::unique_ptr<DrawableButton>>                   m_discoveryButtons;
+    std::map<String, std::unique_ptr<Label>>                            m_serviceNameLabels;
 
-    std::vector<ZeroconfSearcher::ZeroconfSearcher::ServiceInfo*>   m_currentServiceBrowsingList;   /**< Flat list of services currently available for selection. Only valid while popup menu is shown!. */
-    PopupMenu                                                       m_currentServiceBrowsingPopup;
+    std::vector<ZeroconfSearcher::ZeroconfSearcher::ServiceInfo*>       m_currentServiceBrowsingList;   /**< Flat list of services currently available for selection. Only valid while popup menu is shown!. */
+    PopupMenu                                                           m_currentServiceBrowsingPopup;
     
     bool m_showServiceNameLabels { false };
 
