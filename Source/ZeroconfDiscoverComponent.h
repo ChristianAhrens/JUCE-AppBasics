@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 
-#include <servus/servus.h>
+#include "../submodules/ZeroconfSearcher/Source/ZeroconfSearcher.h"
 
 namespace JUCEAppBasics
 {
@@ -20,8 +20,7 @@ namespace JUCEAppBasics
 class ZeroconfDiscoverComponent :
     public Component,
     public Button::Listener,
-	public Thread,
-	public Timer
+    public ZeroconfSearcher::ZeroconfSearcher::ZeroconfSearcherListener
 {
 public:
     enum ZeroconfServiceType
@@ -32,48 +31,15 @@ public:
         ZST_Max
     };
 
-	struct ServiceInfo
-	{
-		String name;
-		String host;
-		String ip;
-		int port;
-	};
 
-	class ZeroconfSearcher
-	{
-	public:
-		ZeroconfSearcher(StringRef name, StringRef serviceName, unsigned short announcementPort = 0);
-		~ZeroconfSearcher();
-
-		String m_name;
-		String m_serviceName;
-		servus::Servus m_servus;
-		OwnedArray<ServiceInfo> m_services;
-
-		bool search();
-		String getIPForHostAndPort(String host, int port);
-
-		ServiceInfo * getService(StringRef name, StringRef host, int port);
-		void addService(StringRef name, StringRef host, StringRef ip, int port);
-		void removeService(ServiceInfo * service);
-		void updateService(ServiceInfo * service, StringRef host, StringRef ip, int port);
-	};
-    
 public:
     ZeroconfDiscoverComponent(bool useSeparateServiceSearchers, bool showServiceNameLabels = true);
     ~ZeroconfDiscoverComponent();
     
     void clearServices();
-    void addDiscoverService(ZeroconfServiceType serviceType, unsigned short announcementPort = 0);
+    void addDiscoverService(ZeroconfServiceType serviceType);
     void removeDiscoverService(ZeroconfServiceType serviceType);
     void setShowServiceNameLabels(bool show);
-    
-    //==============================================================================
-    void timerCallback() override;
-    
-    //==============================================================================
-    void run() override;
     
     //==============================================================================
     void buttonClicked(Button*) override;
@@ -83,6 +49,9 @@ public:
 
     //==============================================================================
     void lookAndFeelChanged() override;
+
+    //==============================================================================
+    void handleServicesChanged() override;
     
     //==============================================================================
     static String getServiceName(ZeroconfServiceType type);
@@ -90,26 +59,24 @@ public:
     static String getServiceDescriptor(ZeroconfServiceType type);
     
     //==============================================================================
-    std::function<void(ZeroconfServiceType, ServiceInfo*)> onServiceSelected;
+    std::function<void(ZeroconfServiceType, ZeroconfSearcher::ZeroconfSearcher::ServiceInfo*)> onServiceSelected;
 
 private:
-    ZeroconfSearcher * getSearcher(StringRef name);
+    ZeroconfSearcher::ZeroconfSearcher * getSearcher(StringRef name);
 
     void showMenuAndGetService(const juce::String& serviceName);
-    
-    void search();
 
-    void addSearcher(StringRef name, StringRef serviceName, unsigned short announcementPort = 0);
-    void removeSearcher(StringRef name);
+    void addSearcher(String name, String serviceName);
+    void removeSearcher(String name);
     
-    bool                                                m_useSeparateServiceSearchers;
-    OwnedArray<ZeroconfSearcher, CriticalSection>       m_searchers;
+    bool                                                            m_useSeparateServiceSearchers;
+    OwnedArray<ZeroconfSearcher::ZeroconfSearcher, CriticalSection> m_searchers;
     
-    std::map<String, std::unique_ptr<DrawableButton>>   m_discoveryButtons;
-    std::map<String, std::unique_ptr<Label>>            m_serviceNameLabels;
+    std::map<String, std::unique_ptr<DrawableButton>>               m_discoveryButtons;
+    std::map<String, std::unique_ptr<Label>>                        m_serviceNameLabels;
 
-    std::vector<ServiceInfo*>                           m_currentServiceBrowsingList;   /**< Flat list of services currently available for selection. Only valid while popup menu is shown!. */
-    PopupMenu                                           m_currentServiceBrowsingPopup;
+    std::vector<ZeroconfSearcher::ZeroconfSearcher::ServiceInfo*>   m_currentServiceBrowsingList;   /**< Flat list of services currently available for selection. Only valid while popup menu is shown!. */
+    PopupMenu                                                       m_currentServiceBrowsingPopup;
     
     bool m_showServiceNameLabels { false };
 
