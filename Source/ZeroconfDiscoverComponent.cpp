@@ -266,11 +266,14 @@ void ZeroconfDiscoverComponent::buttonClicked(Button* button)
 {
     for (auto const& buttonKV : m_discoveryButtons)
     {
-		juce::String selectedServiceName;
-		if (m_useSeparateServiceSearchers && button == buttonKV.second.get())
-			selectedServiceName = buttonKV.first;
-		
-		showMenuAndGetService(selectedServiceName);
+		if (button == buttonKV.second.get())
+		{
+			auto searcherName = buttonKV.first;
+			auto searcher = getSearcherByName(searcherName);
+			if(searcher)
+				showMenuAndGetService(searcher->GetServiceName());
+			return;
+		}
     }
 }
 
