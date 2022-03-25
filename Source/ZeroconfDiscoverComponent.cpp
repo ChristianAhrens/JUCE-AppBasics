@@ -177,10 +177,12 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 		for (auto& service : searcher->GetServices())
 		{
 			m_currentServiceBrowsingList.push_back(service);
-			String serviceItemString = service->name + " on " + (service->host.empty() ? service->ip : service->host);
-#ifdef DEBUG
-			serviceItemString += " (" + String(service->ip) + ":" + String(service->port) + ")";
-#endif
+
+			String serviceItemString;
+			//serviceItemString = String(service->name) + " on " + (service->host.empty() ? service->ip : service->host) + " (" + String(service->ip) + ":" + String(service->port) + ")";
+			auto name = String(service->name).upToFirstOccurrenceOf(String("." + searcher->GetServiceName()), false, true);
+			serviceItemString = name + " (" + String(service->ip) + ")";
+
 			m_currentServiceBrowsingPopup.addItem(static_cast<int>(m_currentServiceBrowsingList.size()), serviceItemString);
 		}
 	}
