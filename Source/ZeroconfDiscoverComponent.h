@@ -20,7 +20,8 @@ namespace JUCEAppBasics
 class ZeroconfDiscoverComponent :
     public Component,
     public Button::Listener,
-    public ZeroconfSearcher::ZeroconfSearcher::ZeroconfSearcherListener
+    public ZeroconfSearcher::ZeroconfSearcher::ZeroconfSearcherListener,
+    public MessageListener
 {
 public:
     enum ZeroconfServiceType
@@ -31,6 +32,16 @@ public:
         ZST_Max
     };
 
+    class ServiceChangedMessage : public Message
+    {
+    public:
+        ServiceChangedMessage(String serviceName) { m_serviceName = serviceName; };
+
+        String GetServiceName() const { return m_serviceName; };
+
+    private:
+        String m_serviceName;
+    };
 
 public:
     ZeroconfDiscoverComponent(bool useSeparateServiceSearchers, bool showServiceNameLabels = true);
@@ -40,6 +51,7 @@ public:
     void addDiscoverService(ZeroconfServiceType serviceType);
     void removeDiscoverService(ZeroconfServiceType serviceType);
     void setShowServiceNameLabels(bool show);
+    void handlePopupResult(int result);
     
     //==============================================================================
     void buttonClicked(Button*) override;
@@ -51,7 +63,10 @@ public:
     void lookAndFeelChanged() override;
 
     //==============================================================================
-    void handleServicesChanged() override;
+    void handleServicesChanged(std::string serviceName) override;
+
+    //==============================================================================
+    void handleMessage(const Message& message) override;
     
     //==============================================================================
     static String getServiceName(ZeroconfServiceType type);
@@ -70,14 +85,19 @@ private:
     void addSearcher(String name, String serviceName);
     void removeSearcher(String name);
     
-    bool                                                                m_useSeparateServiceSearchers;
-    std::vector<std::unique_ptr<ZeroconfSearcher::ZeroconfSearcher>>    m_searchers;
+    bool                                                                                    m_useSeparateServiceSearchers;
+    std::vector<std::unique_ptr<ZeroconfSearcher::ZeroconfSearcher>>                        m_searchers;
     
-    std::map<String, std::unique_ptr<DrawableButton>>                   m_discoveryButtons;
-    std::map<String, std::unique_ptr<Label>>                            m_serviceNameLabels;
+    std::map<String, std::unique_ptr<DrawableButton>>                                       m_discoveryButtons;
+    std::map<String, std::unique_ptr<Label>>                                                m_serviceNameLabels;
 
-    std::vector<ZeroconfSearcher::ZeroconfSearcher::ServiceInfo*>       m_currentServiceBrowsingList;   /**< Flat list of services currently available for selection. Only valid while popup menu is shown!. */
-    PopupMenu                                                           m_currentServiceBrowsingPopup;
+    std::vector<std::tuple<std::string, ZeroconfSearcher::ZeroconfSearcher::ServiceInfo*>>  m_currentServiceBrowsingList;
+    PopupMenu                                                                               m_currentServiceBrowsingPopup;
+
+    bool isListeningForPopupResults() { return m_listeningForPopupResults; };
+    void setListeningForPopupResults(bool listening) { m_listeningForPopupResults = listening; };
+    bool m_listeningForPopupResults { false };
+    int m_ignorePopupResultCount{ 0 };
     
     bool m_showServiceNameLabels { false };
 
