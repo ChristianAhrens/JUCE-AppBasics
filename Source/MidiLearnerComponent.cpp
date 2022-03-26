@@ -421,7 +421,7 @@ void MidiLearnerComponent::setCurrentMidiAssi(const JUCEAppBasics::MidiCommandRa
         m_currentMidiAssiEdit->setText(m_currentMidiAssi.getNiceDescription());
 }
 
-const JUCEAppBasics::MidiCommandRangeAssignment MidiLearnerComponent::getCurrentMidiAssi()
+const JUCEAppBasics::MidiCommandRangeAssignment& MidiLearnerComponent::getCurrentMidiAssi()
 {
     return m_currentMidiAssi;
 }
