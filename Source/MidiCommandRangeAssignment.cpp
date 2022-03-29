@@ -54,18 +54,24 @@ bool MidiCommandRangeAssignment::operator>(const MidiCommandRangeAssignment& rhs
         return true;
 
     auto valueRangeGreaterThanRhs = false;
-    if (m_valueRange.intersects(rhs.m_valueRange))
-        valueRangeGreaterThanRhs = m_valueRange.getLength() > rhs.m_valueRange.getLength();
-    else
-        valueRangeGreaterThanRhs = m_valueRange.getStart() > rhs.m_valueRange.getStart();
+    if (!m_valueRange.isEmpty() && !rhs.m_valueRange.isEmpty())
+    {
+        if (m_valueRange.intersects(rhs.m_valueRange))
+            valueRangeGreaterThanRhs = m_valueRange.getLength() > rhs.m_valueRange.getLength();
+        else
+            valueRangeGreaterThanRhs = m_valueRange.getStart() > rhs.m_valueRange.getStart();
+    }
 
     auto commandRangeGreaterThanRhs = false;
-    auto commandRangeV = juce::Range<std::uint64_t>(getAsValue(m_commandRange.getStart()), getAsValue(m_commandRange.getEnd()));
-    auto rhsCommandRangeV = juce::Range<std::uint64_t>(getAsValue(rhs.m_commandRange.getStart()), getAsValue(rhs.m_commandRange.getEnd()));
-    if (commandRangeV.intersects(rhsCommandRangeV))
-        commandRangeGreaterThanRhs = commandRangeV.getLength() > rhsCommandRangeV.getLength();
-    else
-        commandRangeGreaterThanRhs = commandRangeV.getStart() > rhsCommandRangeV.getStart();
+    if (!m_commandRange.isEmpty() && !rhs.m_commandRange.isEmpty())
+    {
+        auto commandRangeV = juce::Range<std::uint64_t>(getAsValue(m_commandRange.getStart()), getAsValue(m_commandRange.getEnd()));
+        auto rhsCommandRangeV = juce::Range<std::uint64_t>(getAsValue(rhs.m_commandRange.getStart()), getAsValue(rhs.m_commandRange.getEnd()));
+        if (commandRangeV.intersects(rhsCommandRangeV))
+            commandRangeGreaterThanRhs = commandRangeV.getLength() > rhsCommandRangeV.getLength();
+        else
+            commandRangeGreaterThanRhs = commandRangeV.getStart() > rhsCommandRangeV.getStart();
+    }
 
     return ((m_commandData == rhs.m_commandData) && (valueRangeGreaterThanRhs || commandRangeGreaterThanRhs));
 }
@@ -84,18 +90,24 @@ MidiCommandRangeAssignment& MidiCommandRangeAssignment::operator=(const MidiComm
 
 std::uint64_t MidiCommandRangeAssignment::getAsValue(const std::vector<std::uint8_t>& data)
 {
-    jassert(data.size() <= 8); // more than 8 bytes won't fit into a uint64
-
-    auto retVal = std::uint64_t();
-
-    auto shiftMask = 0;
-    for (auto iter = data.end() - 1; iter > data.begin(); iter--)
+    if (data.size() <= 8 && data.size() > 0) // more than 8 bytes won't fit into a uint64
     {
-        retVal += (*iter << shiftMask);
-        shiftMask += 8;
-    }
+        auto retVal = std::uint64_t(0);
 
-    return retVal;
+        auto shiftMask = 0;
+        for (auto iter = data.end() - 1; iter > data.begin(); iter--)
+        {
+            retVal += (*iter << shiftMask);
+            shiftMask += 8;
+        }
+
+        return retVal;
+    }
+    else
+    {
+        jassertfalse;
+        return 0;
+    }
 }
 
 juce::String MidiCommandRangeAssignment::getCommandDescription() const
