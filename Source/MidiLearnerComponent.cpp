@@ -16,9 +16,10 @@ namespace JUCEAppBasics
 {
 
 //==============================================================================
-MidiLearnerComponent::MidiLearnerComponent(std::int16_t refId, AssignmentType assignmentTypesToBeLearned)
+MidiLearnerComponent::MidiLearnerComponent(std::int16_t refId, AssignmentType assignmentTypesToBeLearned, bool showClearButton)
 {
     m_assignmentTypesToBeLearned = assignmentTypesToBeLearned;
+    m_showClearButton = showClearButton;
 
     setReferredId(refId);
 
@@ -27,8 +28,16 @@ MidiLearnerComponent::MidiLearnerComponent(std::int16_t refId, AssignmentType as
 	addAndMakeVisible(m_currentMidiAssiEdit.get());
 
 	m_learnButton = std::make_unique<DrawableButton>("Learn MIDI command", DrawableButton::ButtonStyle::ImageOnButtonBackground);
-	m_learnButton->addListener(this);
+    m_learnButton->onClick = [this] { triggerLearning(); };
 	addAndMakeVisible(m_learnButton.get());
+
+    if (m_showClearButton)
+    {
+        m_clearButton = std::make_unique<DrawableButton>("Clear MIDI command", DrawableButton::ButtonStyle::ImageOnButtonBackground);
+        m_clearButton->onClick = [this] { clearCurrentMidiAssi(); };
+        addAndMakeVisible(m_clearButton.get());
+    }
+
     lookAndFeelChanged();
     
     startTimer(200);
@@ -42,18 +51,15 @@ MidiLearnerComponent::~MidiLearnerComponent()
 void MidiLearnerComponent::resized()
 {
 	auto bounds = getLocalBounds();
-
+    
+    if (m_showClearButton)
+    {
+        m_clearButton->setBounds(bounds.removeFromRight(bounds.getHeight()));
+        bounds.removeFromRight(4);
+    }
 	m_learnButton->setBounds(bounds.removeFromRight(bounds.getHeight()));
 	bounds.removeFromRight(4);
 	m_currentMidiAssiEdit->setBounds(bounds);
-}
-
-void MidiLearnerComponent::buttonClicked(Button* button)
-{
-	if (button == m_learnButton.get())
-	{
-        triggerLearning();
-	}
 }
 
 void MidiLearnerComponent::timerCallback()
@@ -205,10 +211,17 @@ void MidiLearnerComponent::lookAndFeelChanged()
     auto colourOff = getLookAndFeel().findColour(TextButton::ColourIds::textColourOffId);
 
     std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
+
     JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::school24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage,
         colourOn, colourOff, colourOff, colourOff, colourOn, colourOn, colourOn, colourOn);
-
     m_learnButton->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
+    
+    if (m_showClearButton)
+    {
+        JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::clear_black_24dp_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage,
+            colourOn, colourOff, colourOff, colourOff, colourOn, colourOn, colourOn, colourOn);
+        m_clearButton->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
+    }
 }
 
 void MidiLearnerComponent::updatePopupMenu()
@@ -419,6 +432,17 @@ void MidiLearnerComponent::setCurrentMidiAssi(const JUCEAppBasics::MidiCommandRa
     
     if (m_currentMidiAssiEdit)
         m_currentMidiAssiEdit->setText(m_currentMidiAssi.getNiceDescription());
+}
+
+void MidiLearnerComponent::clearCurrentMidiAssi()
+{
+    m_currentMidiAssi = JUCEAppBasics::MidiCommandRangeAssignment();
+
+    if (m_currentMidiAssiEdit)
+        m_currentMidiAssiEdit->setText(m_currentMidiAssi.getNiceDescription());
+
+    if (onMidiAssiSet)
+        onMidiAssiSet(this, m_currentMidiAssi);
 }
 
 const JUCEAppBasics::MidiCommandRangeAssignment& MidiLearnerComponent::getCurrentMidiAssi()

@@ -19,7 +19,6 @@ namespace JUCEAppBasics
 
 class MidiLearnerComponent :
     public Component,
-    public Button::Listener,
     public Timer,
     private MidiInputCallback,
     private MessageListener
@@ -32,14 +31,11 @@ public:
     static constexpr AssignmentType AT_CommandRange = 0x04;
 
 public:
-    MidiLearnerComponent(std::int16_t refId = -1, AssignmentType assignmentTypesToBeLearned = AT_Trigger|AT_ValueRange|AT_CommandRange);
+    MidiLearnerComponent(std::int16_t refId = -1, AssignmentType assignmentTypesToBeLearned = AT_Trigger|AT_ValueRange|AT_CommandRange, bool showClearButton = true);
     ~MidiLearnerComponent();
 	
     //==============================================================================
     void resized() override;
-
-    //==============================================================================
-    void buttonClicked(Button*) override;
     
     //==============================================================================
     void timerCallback() override;
@@ -59,6 +55,7 @@ public:
     //==============================================================================
     void setSelectedDeviceIdentifier(const String& deviceIdentifier);
     void setCurrentMidiAssi(const JUCEAppBasics::MidiCommandRangeAssignment& currentAssi);
+    void clearCurrentMidiAssi();
     const JUCEAppBasics::MidiCommandRangeAssignment& getCurrentMidiAssi();
 
     void setReferredId(std::int16_t refId);
@@ -86,11 +83,13 @@ private:
     void activateMidiInput();
     void deactivateMidiInput();
 
-    std::unique_ptr<TextEditor>                 m_currentMidiAssiEdit;
-    std::unique_ptr<DrawableButton>             m_learnButton;
-    String                                      m_deviceIdentifier;
-    String                                      m_deviceName;
-    PopupMenu                                   m_popup;
+    std::unique_ptr<TextEditor>     m_currentMidiAssiEdit;
+    std::unique_ptr<DrawableButton> m_learnButton;
+    std::unique_ptr<DrawableButton> m_clearButton;
+    bool                            m_showClearButton;
+    String                          m_deviceIdentifier;
+    String                          m_deviceName;
+    PopupMenu                       m_popup;
     std::map<JUCEAppBasics::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::MidiCommandRangeAssignment>>    m_learnedDirectAssis;
     std::map<JUCEAppBasics::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::MidiCommandRangeAssignment>>    m_learnedValueRangeAssis;
     std::map<JUCEAppBasics::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::MidiCommandRangeAssignment>>    m_learnedCommandAndValueRangeAssis;
