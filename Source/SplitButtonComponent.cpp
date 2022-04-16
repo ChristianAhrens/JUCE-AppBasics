@@ -32,7 +32,7 @@ void SplitButtonComponent::addListener(Listener *l)
 }
 
 
-uint64 SplitButtonComponent::addButton(const String& buttonText)
+std::uint64_t SplitButtonComponent::addButton(const String& buttonText)
 {
     std::uint64_t buttonID = getNextButtonID();
 
@@ -50,7 +50,7 @@ void SplitButtonComponent::addButtons(const StringArray& buttonTexts)
         addButton(buttonText);
 }
 
-void SplitButtonComponent::setButtonDown(const uint64 buttonId)
+void SplitButtonComponent::setButtonDown(const std::uint64_t buttonId)
 {
     for (auto const& p : m_buttons)
     {
@@ -66,7 +66,7 @@ void SplitButtonComponent::setButtonDown(const String& buttonText)
     }
 }
 
-const uint64 SplitButtonComponent::getButtonDown()
+const std::uint64_t SplitButtonComponent::getButtonDown()
 {
     for (auto const& p : m_buttons)
     {
