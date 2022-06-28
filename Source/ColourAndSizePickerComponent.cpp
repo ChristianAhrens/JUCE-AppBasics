@@ -28,6 +28,8 @@ DrawableButtonWithColourIndicator::~DrawableButtonWithColourIndicator()
 void DrawableButtonWithColourIndicator::setIndicatorColour(const juce::Colour& indicatorColour)
 {
     m_indicatorColour = indicatorColour;
+
+    repaint();
 }
 
 void DrawableButtonWithColourIndicator::paint(Graphics& g)
