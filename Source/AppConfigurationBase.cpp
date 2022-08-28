@@ -11,6 +11,7 @@
 #include "AppConfigurationBase.h"
 
 #include <mutex>
+#include <thread>
 
 namespace JUCEAppBasics
 {
