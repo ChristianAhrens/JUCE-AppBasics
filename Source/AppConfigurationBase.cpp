@@ -10,6 +10,8 @@
 
 #include "AppConfigurationBase.h"
 
+#include <mutex>
+
 namespace JUCEAppBasics
 {
 
@@ -27,10 +29,41 @@ AppConfigurationBase::AppConfigurationBase(const File& file)
 		jassertfalse;
 
 	initializeFromDisk();
+
+	SetupFileFlushThread();
 }
 
 AppConfigurationBase::~AppConfigurationBase()
 {
+	TeardownFileFlushThread();
+}
+
+void AppConfigurationBase::SetupFileFlushThread()
+{
+	m_fileFlushThreadActive.store(true);
+	m_fileFlushThread = std::make_unique<std::thread>([this]()
+		{
+			std::unique_lock<std::mutex> fileflushlock(m_fileFlushCVMutex);
+			while (m_fileFlushThreadActive.load())
+			{
+				m_fileFlushCV.wait(fileflushlock);
+
+				std::lock_guard<std::mutex> xmlaccesslock(m_xmlCopyAccessMutex);
+				if (!m_xmlFileFlushCopy->writeTo(*m_file.get()))
+					jassertfalse;
+			}
+		});
+}
+
+void AppConfigurationBase::TeardownFileFlushThread()
+{
+	{
+		std::lock_guard<std::mutex> fileflushlock(m_fileFlushCVMutex);
+		m_fileFlushThreadActive.store(false);
+	}
+	m_fileFlushCV.notify_all();
+	if (m_fileFlushThread)
+		m_fileFlushThread->join();
 }
 
 AppConfigurationBase* AppConfigurationBase::getInstance() noexcept
@@ -118,8 +151,11 @@ bool AppConfigurationBase::flush(bool includeWatcherUpdate)
 //	debugPrintXmlTree();
 //#endif
 
-	if (!m_xml->writeTo(*m_file.get()))
-		jassertfalse;
+	{
+		std::lock_guard<std::mutex> l(m_xmlCopyAccessMutex);
+		m_xmlFileFlushCopy = std::make_unique<XmlElement>(*m_xml);
+	}
+	m_fileFlushCV.notify_all();
 
 	if (includeWatcherUpdate)
 		triggerWatcherUpdate();

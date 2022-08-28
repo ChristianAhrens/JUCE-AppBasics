@@ -117,8 +117,19 @@ public:
 	void ResetFlushAndUpdateDisabled(bool flushAndUpdateNow = true);
 
 protected:
-	std::unique_ptr<File>		m_file;
-	std::unique_ptr<XmlElement>	m_xml{ nullptr };
+	std::unique_ptr<XmlElement>		m_xml{ nullptr };
+	std::unique_ptr<XmlElement>		m_xmlFileFlushCopy{ nullptr };
+	std::mutex						m_xmlCopyAccessMutex;
+	
+	std::unique_ptr<File>			m_file{ nullptr };
+	std::unique_ptr<std::thread>	m_fileFlushThread;
+	std::atomic<bool>				m_fileFlushThreadActive;
+	std::condition_variable			m_fileFlushCV;
+	std::mutex						m_fileFlushCVMutex;
+
+private:
+	void SetupFileFlushThread();
+	void TeardownFileFlushThread();
 
 private:
 	bool initializeFromDisk();
