@@ -74,7 +74,8 @@ void DualPointMultitouchCatcherComponent::mouseDown(const MouseEvent& e)
 
     ProcessMultitouchState();
 
-    Component::mouseDown(e);
+    if (GetActiveMouseInputSources().size() == 1 || !IsFilteringMouseDragsWhileActive())
+        Component::mouseDown(e);
 }
 
 /**
@@ -101,7 +102,8 @@ void DualPointMultitouchCatcherComponent::mouseDrag(const MouseEvent& e)
 
     ProcessMultitouchState();
 
-    Component::mouseDrag(e);
+    if(iter == GetActiveMouseInputSources().begin() || !IsFilteringMouseDragsWhileActive())
+        Component::mouseDrag(e);
 }
 
 /**

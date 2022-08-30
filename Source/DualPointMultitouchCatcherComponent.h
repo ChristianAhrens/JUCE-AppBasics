@@ -40,17 +40,17 @@ public:
     DualPointMultitouchCatcherComponent(bool filterMouseDragsWhileActive = true);
     ~DualPointMultitouchCatcherComponent() override;
 
-    virtual void dualPointMultitouchStarted(Point<int> p1, Point<int> p2) = 0;
-    virtual void dualPointMultitouchUpdated(Point<int> p1, Point<int> p2) = 0;
+    virtual void dualPointMultitouchStarted(const Point<int>& p1, const Point<int>& p2) = 0;
+    virtual void dualPointMultitouchUpdated(const Point<int>& p1, const Point<int>& p2) = 0;
     virtual void dualPointMultitouchFinished() = 0;
 
 protected:
     void paint(Graphics&) override;
     void resized() override;
     
-    void mouseDown(const MouseEvent&) override;
-    void mouseDrag(const MouseEvent&) override;
-    void mouseUp(const MouseEvent&) override;
+    virtual void mouseDown(const MouseEvent&) override;
+    virtual void mouseDrag(const MouseEvent&) override;
+    virtual void mouseUp(const MouseEvent&) override;
 
     bool IsFilteringMouseDragsWhileActive();
     std::map<int, Point<int>>& GetActiveMouseInputSources();
