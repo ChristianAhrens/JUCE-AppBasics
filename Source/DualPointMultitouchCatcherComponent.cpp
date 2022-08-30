@@ -88,7 +88,7 @@ void DualPointMultitouchCatcherComponent::mouseDrag(const MouseEvent& e)
 
     auto iter = std::find_if(GetActiveMouseInputSources().begin(), GetActiveMouseInputSources().end(), [&](const auto& val) { return val.first == e.source.getIndex(); });
     if (iter != GetActiveMouseInputSources().end())
-        iter->second = e.getMouseDownPosition();
+        iter->second = e.getPosition();
     else
         jassertfalse;   // A mouseDrag for a not already known (mouseDown) inputIndex does not make sense. What went wrong?
 
