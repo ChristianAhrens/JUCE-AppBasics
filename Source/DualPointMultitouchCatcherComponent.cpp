@@ -17,9 +17,8 @@ namespace JUCEAppBasics
 /**
  *
  */
-DualPointMultitouchCatcherComponent::DualPointMultitouchCatcherComponent(bool filterMouseDragsWhileActive)
-	:   Component(),
-        m_filterMouseDragsWhileActive(filterMouseDragsWhileActive)
+DualPointMultitouchCatcherComponent::DualPointMultitouchCatcherComponent()
+	:   Component()
 {
 }
 
@@ -74,8 +73,7 @@ void DualPointMultitouchCatcherComponent::mouseDown(const MouseEvent& e)
 
     ProcessMultitouchState();
 
-    if (GetActiveMouseInputSources().size() == 1 || !IsFilteringMouseDragsWhileActive())
-        Component::mouseDown(e);
+    Component::mouseDown(e);
 }
 
 /**
@@ -102,8 +100,7 @@ void DualPointMultitouchCatcherComponent::mouseDrag(const MouseEvent& e)
 
     ProcessMultitouchState();
 
-    if(iter == GetActiveMouseInputSources().begin() || !IsFilteringMouseDragsWhileActive())
-        Component::mouseDrag(e);
+    Component::mouseDrag(e);
 }
 
 /**
@@ -135,21 +132,21 @@ void DualPointMultitouchCatcherComponent::mouseUp(const MouseEvent& e)
 }
 
 /**
- * Getter for the internal bool state defining if filtering mousedrags while touch action is active
- * @return  True if filtering is active, false if not.
- */
-bool DualPointMultitouchCatcherComponent::IsFilteringMouseDragsWhileActive()
-{
-    return m_filterMouseDragsWhileActive;
-}
-
-/**
  * Getter for the internal map of active inputSources
  * @return  The list of currently active ('mouseDown') inputSources
  */
 std::map<int, Point<int>>& DualPointMultitouchCatcherComponent::GetActiveMouseInputSources()
 {
     return m_activeMouseInputSources;
+}
+
+/**
+ * Getter for the primary mouseinputsource index from internal map of active inputSources
+ * @return  The index of the primary (first) inputSources or -1 if none active at all.
+ */
+int DualPointMultitouchCatcherComponent::GetPrimaryMouseInputSourceIndex()
+{
+    return 0;
 }
 
 /**
@@ -166,12 +163,14 @@ void DualPointMultitouchCatcherComponent::ProcessMultitouchState()
     case IS_SingleTouchLeft:
         break;
     case IS_DualTouchEntered:
-        if (GetActiveMouseInputSources().size() > 1)
-            dualPointMultitouchStarted(GetActiveMouseInputSources().begin()->second, (GetActiveMouseInputSources().begin()++)->second);
+        if (2 > GetActiveMouseInputSources().size() || 0 == GetActiveMouseInputSources().count(0) || 0 == GetActiveMouseInputSources().count(1))
+            break;
+        dualPointMultitouchStarted(GetActiveMouseInputSources().at(0), GetActiveMouseInputSources().at(1));
         break;
     case IS_DualTouch:
-        if(GetActiveMouseInputSources().size() > 1)
-            dualPointMultitouchUpdated(GetActiveMouseInputSources().begin()->second, (GetActiveMouseInputSources().begin()++)->second);
+        if (2 > GetActiveMouseInputSources().size() || 0 == GetActiveMouseInputSources().count(0) || 0 == GetActiveMouseInputSources().count(1))
+            break;
+        dualPointMultitouchUpdated(GetActiveMouseInputSources().at(0), GetActiveMouseInputSources().at(1));
         break;
     case IS_DualTouchLeft:
         dualPointMultitouchFinished();
@@ -179,8 +178,9 @@ void DualPointMultitouchCatcherComponent::ProcessMultitouchState()
     case IS_TripleOrMoreTouchEntered:
     case IS_TripleOrMoreTouch:
     case IS_TripleOrMoreTouchLeft:
-        if (GetActiveMouseInputSources().size() > 1)
-            dualPointMultitouchUpdated(GetActiveMouseInputSources().begin()->second, (GetActiveMouseInputSources().begin()++)->second);
+        if (2 > GetActiveMouseInputSources().size() || 0 == GetActiveMouseInputSources().count(0) || 0 == GetActiveMouseInputSources().count(1))
+            break;
+        dualPointMultitouchUpdated(GetActiveMouseInputSources().at(0), GetActiveMouseInputSources().at(1));
         break;
     default:
         break;
