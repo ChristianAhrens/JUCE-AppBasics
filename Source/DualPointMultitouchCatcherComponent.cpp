@@ -115,11 +115,11 @@ void DualPointMultitouchCatcherComponent::mouseUp(const MouseEvent& e)
     auto iter = std::find_if(GetActiveMouseInputSources().begin(), GetActiveMouseInputSources().end(), [&](const auto& val) { return val.first == e.source.getIndex(); });
     if (iter != GetActiveMouseInputSources().end())
     {
-        if (GetActiveMouseInputSources().size() == 1)
+        if (iter->first == 0)
             m_inputState = IS_SingleTouchLeft;
-        else if (GetActiveMouseInputSources().size() == 2)
+        else if (iter->first == 1)
             m_inputState = IS_DualTouchLeft;
-        else if (GetActiveMouseInputSources().size() > 2)
+        else if (iter->first > 1)
             m_inputState = IS_TripleOrMoreTouchLeft;
         GetActiveMouseInputSources().erase(iter);
     }
