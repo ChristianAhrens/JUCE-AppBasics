@@ -30,22 +30,6 @@ DualPointMultitouchCatcherComponent::~DualPointMultitouchCatcherComponent()
 }
 
 /**
- *
- */
-void DualPointMultitouchCatcherComponent::paint(Graphics& g)
-{
-    Component::paint(g);
-}
-
-/**
- *
- */
-void DualPointMultitouchCatcherComponent::resized()
-{
-    Component::resized();
-}
-
-/**
  * Called when a mouse button is pressed. 
  * @param e		Details about the position and status of the mouse event, including the source component in which it occurred 
  */

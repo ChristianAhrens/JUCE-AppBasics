@@ -45,9 +45,6 @@ public:
     virtual void dualPointMultitouchFinished() = 0;
 
 protected:
-    void paint(Graphics&) override;
-    void resized() override;
-    
     virtual void mouseDown(const MouseEvent&) override;
     virtual void mouseDrag(const MouseEvent&) override;
     virtual void mouseUp(const MouseEvent&) override;
