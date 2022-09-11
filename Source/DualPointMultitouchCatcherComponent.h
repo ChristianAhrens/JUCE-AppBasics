@@ -48,15 +48,20 @@ protected:
     virtual void mouseDown(const MouseEvent&) override;
     virtual void mouseDrag(const MouseEvent&) override;
     virtual void mouseUp(const MouseEvent&) override;
+    
+    virtual void modifierKeysChanged (const ModifierKeys& modifiers) override;
 
     std::map<int, Point<int>>& GetActiveMouseInputSources();
     int GetPrimaryMouseInputSourceIndex();
+    
+    bool IsInFakeALTMultiTouch();
 
     void ProcessMultitouchState();
 
 private:
     std::map<int, Point<int>>   m_activeMouseInputSources;
     InputState                  m_inputState{ IS_None };
+    bool                        m_fakeDualMultiTouchWithALTModifier{ false };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DualPointMultitouchCatcherComponent)
 };
