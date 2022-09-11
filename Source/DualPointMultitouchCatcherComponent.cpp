@@ -20,6 +20,7 @@ namespace JUCEAppBasics
 DualPointMultitouchCatcherComponent::DualPointMultitouchCatcherComponent()
 	:   Component()
 {
+    setWantsKeyboardFocus(true);
 }
 
 /**
@@ -115,8 +116,8 @@ void DualPointMultitouchCatcherComponent::mouseUp(const MouseEvent& e)
 
     auto iter = GetActiveMouseInputSources().end();
     // if we are in a 'fake' multitouch action, simulated by manually inserting second mouse event when ALT modifier is pressed, we need to handle mouse index differently here
-    if (juce::ModifierKeys::currentModifiers.isAltDown())
-        iter = std::find_if(GetActiveMouseInputSources().begin(), GetActiveMouseInputSources().end(), [&](const auto& val) { return 0 == e.source.getIndex(); });
+    if (juce::ModifierKeys::currentModifiers.isAltDown() && IsInFakeALTMultiTouch())
+        iter = std::find_if(GetActiveMouseInputSources().begin(), GetActiveMouseInputSources().end(), [&](const auto& val) { return 1 == val.first; });
     else
         iter = std::find_if(GetActiveMouseInputSources().begin(), GetActiveMouseInputSources().end(), [&](const auto& val) { return val.first == e.source.getIndex(); });
     
@@ -138,9 +139,9 @@ void DualPointMultitouchCatcherComponent::mouseUp(const MouseEvent& e)
     // if we are in a 'fake' multitouch action, simulated by manually inserting second mouse event when ALT modifier is pressed, we need to handle mouse index differently here
     if (juce::ModifierKeys::currentModifiers.isAltDown() && IsInFakeALTMultiTouch())
     {
-        auto iter2 = std::find_if(GetActiveMouseInputSources().begin(), GetActiveMouseInputSources().end(), [&](const auto& val) { return 1 == e.source.getIndex(); });
-        if (iter2 != GetActiveMouseInputSources().end())
-            GetActiveMouseInputSources().erase(iter2);
+        auto iterFirstTouchSource = std::find_if(GetActiveMouseInputSources().begin(), GetActiveMouseInputSources().end(), [&](const auto& val) { return 0 == val.first; });
+        if (iterFirstTouchSource != GetActiveMouseInputSources().end())
+            GetActiveMouseInputSources().erase(iterFirstTouchSource);
         m_inputState = IS_DualTouchLeft;
         ProcessMultitouchState();
         m_fakeDualMultiTouchWithALTModifier = false;
@@ -159,8 +160,9 @@ void DualPointMultitouchCatcherComponent::modifierKeysChanged (const ModifierKey
     if (!modifiers.isAltDown() && IsInFakeALTMultiTouch())
     {
         auto iter = std::find_if(GetActiveMouseInputSources().begin(), GetActiveMouseInputSources().end(), [&](const auto& val) { return 1 == val.first; });
+        if (iter != GetActiveMouseInputSources().end())
+            GetActiveMouseInputSources().erase(iter);
         m_inputState = IS_DualTouchLeft;
-        GetActiveMouseInputSources().erase(iter);
         m_fakeDualMultiTouchWithALTModifier = false;
         ProcessMultitouchState();
     }
