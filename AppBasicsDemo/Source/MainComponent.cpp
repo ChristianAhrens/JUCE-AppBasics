@@ -109,6 +109,7 @@ MainComponent::MainComponent()
         {BinaryData::rule24px_svg},
         {BinaryData::rule_checked24px_svg},
         {BinaryData::rule_unchecked24px_svg},
+        {BinaryData::rule_one24px_svg},
         {BinaryData::school24px_svg},
         {BinaryData::select_all24px_svg},
         {BinaryData::sensors_black_24dp_svg},
