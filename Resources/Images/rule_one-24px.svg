@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+	<g>
+	    <rect
+	       fill="none"
+	       height="24"
+	       width="24"
+	       id="rect1" />
+	    <path
+	       name="firstline"
+	       d="M 11,7 
+		      H 2 
+		      v 2 
+		      h 9 
+		      V 7 
+		      z"
+	       id="path2" />
+	    <path
+	       name="secondline"
+	       d="M 11,15 
+		      H 2 
+		      v 2 
+		      h 9 
+		      V 15 
+		      z"
+	       id="path3" />
+	</g>
+    <style>
+      .MyText {
+        font: normal 22px arial;
+      }
+    </style>
+    <text x="12" y="20" class="MyText">1</text>
+</svg>
