@@ -61,6 +61,8 @@ void DualPointMultitouchCatcherComponent::mouseDown(const MouseEvent& e)
                 m_inputState = IS_DualTouchEntered;
             else if (GetActiveMouseInputSources().size() > 1)
                 m_inputState = IS_TripleOrMoreTouchEntered;
+            jassert(GetActiveMouseInputSources().count(0) > 0); // the primary mouse input source index must be present, since we are already in multitouch!
+            GetActiveMouseInputSources().insert(std::make_pair(0, e.getMouseDownPosition())); // replace the primary touch position with the initial drag position to base our value mod calc on drag delta rather than multitouch guesture
             GetActiveMouseInputSources().insert(std::make_pair(e.source.getIndex(), e.getMouseDownPosition()));
         }
         else
