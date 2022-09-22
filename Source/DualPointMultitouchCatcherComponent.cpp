@@ -139,7 +139,7 @@ void DualPointMultitouchCatcherComponent::mouseUp(const MouseEvent& e)
     ProcessMultitouchState();
     
     // if we are in a 'fake' multitouch action, simulated by manually inserting second mouse event when ALT modifier is pressed, we need to handle mouse index differently here
-    if (juce::ModifierKeys::currentModifiers.isAltDown() && IsInFakeALTMultiTouch())
+    if (juce::ModifierKeys::currentModifiers.isAltDown() || IsInFakeALTMultiTouch())
     {
         auto iterFirstTouchSource = std::find_if(GetActiveMouseInputSources().begin(), GetActiveMouseInputSources().end(), [&](const auto& val) { return 0 == val.first; });
         if (iterFirstTouchSource != GetActiveMouseInputSources().end())
@@ -165,7 +165,7 @@ void DualPointMultitouchCatcherComponent::modifierKeysChanged (const ModifierKey
         if (iter != GetActiveMouseInputSources().end())
             GetActiveMouseInputSources().erase(iter);
         m_inputState = IS_DualTouchLeft;
-        m_fakeDualMultiTouchWithALTModifier = false;
+        // no resetting fakeDUalMultiTouch flag member here, it needs to be done in mouseUp to avoid consecutive mouseUps to not be interpreted as part of fakeALTmultitouch!
         ProcessMultitouchState();
     }
     // otherwise if ALT was just pressed and we are not yet in fake multitouch -> start fake multitouch
