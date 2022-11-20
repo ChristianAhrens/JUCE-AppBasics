@@ -79,6 +79,7 @@ public:
     void setCommandData(const juce::MidiMessage& m);
     int getCommandDataExpectedBytes() const;
     static int getCommandDataExpectedBytes(const juce::MidiMessage& m);
+    bool isCommandTriggerAssignment() const;
 
     static int getValue(const juce::MidiMessage& m);
 

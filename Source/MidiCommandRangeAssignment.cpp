@@ -510,6 +510,11 @@ int MidiCommandRangeAssignment::getCommandDataExpectedBytes(const juce::MidiMess
     }
 }
 
+bool MidiCommandRangeAssignment::isCommandTriggerAssignment() const
+{
+    return !getCommandData().empty() && !isValueRangeAssignment() && !isCommandRangeAssignment();
+}
+
 void MidiCommandRangeAssignment::setCommandData(const std::vector<std::uint8_t>& commandData)
 {
     m_commandData = commandData;
@@ -647,12 +652,38 @@ bool MidiCommandRangeAssignment::extendCommandRange(const juce::MidiMessage& m)
 
 bool MidiCommandRangeAssignment::isCommandRangeAssignment() const
 {
-    return (!m_commandRange.getStart().empty() && !m_commandRange.getEnd().empty() && !m_commandRange.isEmpty());
+    return (!m_commandRange.getStart().empty() && !m_commandRange.getEnd().empty() && !m_commandRange.isEmpty() && m_commandRange.getStart() != m_commandRange.getEnd());
 }
 
 bool MidiCommandRangeAssignment::isMatchingCommand(const juce::MidiMessage& m) const
 {
-    return (m_commandData == getCommandData(m));
+    auto messageCommandData = getCommandData(m);
+
+    if (m_commandData.size() != messageCommandData.size())
+        return false;
+
+    auto relevantOctets = 0;
+    if (m.isAftertouch())
+        relevantOctets = 2; // see getAfterTouchValue(), returns octet 3 as value
+    else if (m.isChannelPressure())
+        relevantOctets = 1; // see getChannelPressureValue(), returns octet 2 as value
+    else if (m.isController())
+        relevantOctets = 2; // see getControllerValue(), returns octet 3 as value
+    else if (m.isPitchWheel())
+        relevantOctets = 1; // see getPitchWheelValue(), returns octet 2 and part of 3 as value
+    else if (m.isQuarterFrame())
+        relevantOctets = 1; // see getQuarterFrameValue(), returns part of octet 2
+    else if (m.isNoteOnOrOff())
+        relevantOctets = 2;
+    else
+        for (auto i = 0; i < messageCommandData.size(); i++)
+            relevantOctets++;
+
+    auto match = true;
+    for (auto octetIdx = 0; octetIdx < relevantOctets; octetIdx++)
+        match &= m_commandData[octetIdx] == messageCommandData[octetIdx];
+
+    return match;
 }
 
 bool MidiCommandRangeAssignment::isMatchingCommandRange(const std::vector<std::uint8_t>& c) const
@@ -672,11 +703,14 @@ bool MidiCommandRangeAssignment::isMatchingCommandRange(const std::vector<std::u
 
 bool MidiCommandRangeAssignment::isMatchingCommandRange(const juce::MidiMessage& m) const
 {
+    // no need to proceed with cmdRnge matching test if we do not even have a valid assignment
     if (!isCommandRangeAssignment())
         return false;
 
-    auto commandType = getCommandType(getCommandRange().getStart());
-    if (commandType != getCommandType(getCommandRange().getEnd()))
+    // the incoming type must match both range start and end (unequal start+end are even no valid assignment)
+    auto validRangeStartType = getCommandType(m) == getCommandType(getCommandRange().getStart());
+    auto validRangeEndType = getCommandType(m) == getCommandType(getCommandRange().getEnd());
+    if (!validRangeStartType || !validRangeEndType)
         return false;
 
     auto commandRange = juce::Range<int>(getCommandValue(getCommandRange().getStart()), getCommandValue(getCommandRange().getEnd()));;
