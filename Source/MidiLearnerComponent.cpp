@@ -86,8 +86,15 @@ void MidiLearnerComponent::activateMidiInput()
         else
         {
             m_midiInput = juce::MidiInput::openDevice(m_deviceIdentifier, this);
-            m_midiInput->start();
-            DBG(String(__FUNCTION__) + " Activated MIDI input " + m_midiInput->getName() + +" (" + m_midiInput->getIdentifier() + ")");
+            if (m_midiInput)
+            {
+                m_midiInput->start();
+                DBG(String(__FUNCTION__) + " Activated MIDI input " + m_midiInput->getName() + +" (" + m_midiInput->getIdentifier() + ")");
+            }
+            else
+            {
+                DBG(String(__FUNCTION__) + " MIDI input device " + m_deviceIdentifier + " could not be opened");
+            }
         }
     }
 }
