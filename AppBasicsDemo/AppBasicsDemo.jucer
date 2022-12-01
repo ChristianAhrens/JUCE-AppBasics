@@ -49,6 +49,8 @@
               file="../Resources/Images/colorize_black_24dp.svg"/>
         <FILE id="YaRpRL" name="compare_black_24dp.svg" compile="0" resource="1"
               file="../Resources/Images/compare_black_24dp.svg"/>
+        <FILE id="J8bK9J" name="crop-rotate-24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/crop-rotate-24dp.svg"/>
         <FILE id="C75T2Y" name="download_black_24dp.svg" compile="0" resource="1"
               file="../Resources/Images/download_black_24dp.svg"/>
         <FILE id="D3tjjx" name="equalizer-24px.svg" compile="0" resource="1"
@@ -136,6 +138,8 @@
               file="../Resources/Images/text_fields_black_24dp.svg"/>
         <FILE id="bc6RJW" name="track_changes-24px.svg" compile="0" resource="1"
               file="../Resources/Images/track_changes-24px.svg"/>
+        <FILE id="JbdG04" name="translate-24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/translate-24dp.svg"/>
         <FILE id="G0d5Pl" name="tune-24px.svg" compile="0" resource="1" file="../Resources/Images/tune-24px.svg"/>
         <FILE id="gEjTUS" name="vertical_split-24px.svg" compile="0" resource="1"
               file="../Resources/Images/vertical_split-24px.svg"/>
