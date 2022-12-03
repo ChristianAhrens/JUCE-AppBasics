@@ -75,6 +75,7 @@ MainComponent::MainComponent()
         {BinaryData::compare_black_24dp_svg},
         {BinaryData::croprotate24dp_svg},
         {BinaryData::download_black_24dp_svg},
+        {BinaryData::dual_handle24dp_svg},
         {BinaryData::equalizer24px_svg},
         {BinaryData::fast_forward24px_svg},
         {BinaryData::fast_rewind24px_svg},

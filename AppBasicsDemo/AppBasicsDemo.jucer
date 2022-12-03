@@ -37,6 +37,8 @@
               file="../Resources/Images/call_made-24px.svg"/>
         <FILE id="W0Dvu6" name="call_received-24px.svg" compile="0" resource="1"
               file="../Resources/Images/call_received-24px.svg"/>
+        <FILE id="z8LfG6" name="dual_handle-24dp.svg" compile="0" resource="1"
+              file="../Resources/Images/dual_handle-24dp.svg"/>
         <FILE id="ovhgPb" name="cancel-24px.svg" compile="0" resource="1" file="../Resources/Images/cancel-24px.svg"/>
         <FILE id="B8HneQ" name="cast-24px.svg" compile="0" resource="1" file="../Resources/Images/cast-24px.svg"/>
         <FILE id="AbevsC" name="clear_black_24dp.svg" compile="0" resource="1"
