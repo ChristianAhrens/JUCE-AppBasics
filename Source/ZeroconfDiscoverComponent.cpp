@@ -208,14 +208,15 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 		}
 	}
 
-	m_ignorePopupResultCount = 1;
+	m_ignoreBlankPopupResultCount = 1;
 	m_currentServiceBrowsingPopup.showMenuAsync(juce::PopupMenu::Options(), [this](int result)
 		{
-			if (m_ignorePopupResultCount == 0)
+			if (m_ignoreBlankPopupResultCount == 0 || result > 0)
 				handlePopupResult(result);
 			else
-				m_ignorePopupResultCount--;
+                m_ignoreBlankPopupResultCount--;
 		});
+    setListeningForPopupResults(true);
 }
 
 void ZeroconfDiscoverComponent::handlePopupResult(int result)
@@ -318,7 +319,6 @@ void ZeroconfDiscoverComponent::buttonClicked(Button* button)
 			{
 				searcher->StartSearching();
 				showMenuAndGetService(searcher->GetServiceName());
-				setListeningForPopupResults(true);
 			}
 			return;
 		}
@@ -361,8 +361,8 @@ void ZeroconfDiscoverComponent::handleMessage(const Message& message)
 		{
 			setListeningForPopupResults(false);
 			m_currentServiceBrowsingPopup.dismissAllActiveMenus();
+            m_currentServiceBrowsingPopup.clear();
 			showMenuAndGetService(serviceChangedMessage->GetServiceName());
-			setListeningForPopupResults(true);
 		}
 	}
 }
@@ -401,6 +401,16 @@ String ZeroconfDiscoverComponent::getServiceDescriptor(ZeroconfServiceType type)
         default:
             return String();
     };
+}
+
+bool ZeroconfDiscoverComponent::isListeningForPopupResults()
+{
+    return m_listeningForPopupResults;
+}
+
+void ZeroconfDiscoverComponent::setListeningForPopupResults(bool listening)
+{
+    m_listeningForPopupResults = listening;
 }
 
 }

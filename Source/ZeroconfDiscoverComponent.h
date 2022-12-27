@@ -85,6 +85,9 @@ private:
     void addSearcher(String name, String serviceName);
     void removeSearcher(String name);
     
+    bool isListeningForPopupResults();
+    void setListeningForPopupResults(bool listening);
+    
     bool                                                                                    m_useSeparateServiceSearchers;
     std::vector<std::unique_ptr<ZeroconfSearcher::ZeroconfSearcher>>                        m_searchers;
     
@@ -93,11 +96,9 @@ private:
 
     std::vector<std::tuple<std::string, ZeroconfSearcher::ZeroconfSearcher::ServiceInfo*>>  m_currentServiceBrowsingList;
     PopupMenu                                                                               m_currentServiceBrowsingPopup;
-
-    bool isListeningForPopupResults() { return m_listeningForPopupResults; };
-    void setListeningForPopupResults(bool listening) { m_listeningForPopupResults = listening; };
+    
     bool m_listeningForPopupResults { false };
-    int m_ignorePopupResultCount{ 0 };
+    int m_ignoreBlankPopupResultCount{ 0 };
     
     bool m_showServiceNameLabels { false };
 
