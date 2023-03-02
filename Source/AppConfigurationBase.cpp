@@ -30,6 +30,9 @@ AppConfigurationBase::AppConfigurationBase(const File& file)
 
 	initializeFromDisk();
 
+	if (!flush(false))
+		jassertfalse;
+
 	SetupFileFlushThread();
 }
 
@@ -49,6 +52,14 @@ void AppConfigurationBase::SetupFileFlushThread()
 				m_fileFlushCV.wait(fileflushlock);
 
 				std::lock_guard<std::mutex> xmlaccesslock(m_xmlCopyAccessMutex);
+				if (!m_xmlFileFlushCopy)
+				{
+					// Ending up here would mean that the AppConfigurationBase instance
+					// seemingly no longer exists, but this thread is still running, which
+					// is unecpected and should not happen!
+					jassertfalse;
+					break;
+				}
 				if (!m_xmlFileFlushCopy->writeTo(*m_file.get()))
 					jassertfalse;
 			}
