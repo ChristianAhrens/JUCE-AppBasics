@@ -163,6 +163,16 @@ JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPhone(const juce::String& d
         return KnownDevices::iPhone13Pro;
     if (deviceDescription == "iPhone14,3") // iPhone 13 Pro Max
         return KnownDevices::iPhone13ProMax;
+    if (deviceDescription == "iPhone14,6") // iPhone SE 3nd Gen
+        return KnownDevices::iPhoneSE3;
+    if (deviceDescription == "iPhone14,7") // iPhone 14
+        return KnownDevices::iPhone14;
+    if (deviceDescription == "iPhone15,2") // iPhone 14 Pro
+        return KnownDevices::iPhone14Pro;
+    if (deviceDescription == "iPhone14,8") // iPhone 14 Plus
+        return KnownDevices::iPhone14Plus;
+    if (deviceDescription == "iPhone15,3") // iPhone 14 Pro Max
+        return KnownDevices::iPhone14ProMax;
     if (deviceDescription.contains("iPhone"))
         return KnownDevices::GenericiPhone;
     
@@ -514,6 +524,11 @@ JUCEAppBasics::iOS_utils::KnownDevices getGenericDeviceType()
     case iPhone13Mini:
     case iPhone13Pro:
     case iPhone13ProMax:
+    case iPhoneSE3:
+    case iPhone14:
+    case iPhone14Plus:
+    case iPhone14Pro:
+    case iPhone14ProMax:
         return GenericiPhone;
     case GenericiPad:
     case iPad:
@@ -581,6 +596,7 @@ int getDeviceDisplayNotchIndent()
     case iPhone6SPlus:
     case iPhoneSE:
     case iPhoneSE2:
+    case iPhoneSE3:
     case iPhone7:
     case iPhone7Plus:
     case iPhone8:
@@ -601,9 +617,14 @@ int getDeviceDisplayNotchIndent()
     case iPhone13:
     case iPhone13Mini:
     case iPhone13Pro:
-    case iPhone13ProMax:
+    case iPhone14:
+    case iPhone14Plus:
     case GenericiPhone:
         displayNotchIndent = 35;
+        break;
+    case iPhone14Pro:
+    case iPhone14ProMax:
+        displayNotchIndent = 50;
         break;
     case iPad:
     case iPad2:
@@ -681,6 +702,10 @@ int getDeviceDisplaySlideBarIndent()
     case iPhone13Mini:
     case iPhone13Pro:
     case iPhone13ProMax:
+    case iPhone14:
+    case iPhone14Plus:
+    case iPhone14Pro:
+    case iPhone14ProMax:
         slideBarIndent = 20;
         break;
     case iPad:
