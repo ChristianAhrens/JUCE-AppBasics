@@ -341,10 +341,18 @@ JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPad(const juce::String& dev
         return KnownDevices::iPadAir4;
     if (deviceDescription == "iPad13,2") // iPad air 4th Gen(WiFi + Celular)
         return KnownDevices::iPadAir4;
+    if (deviceDescription == "iPad13,17") // iPad air 5th Gen
+        return KnownDevices::iPadAir5;
+    if (deviceDescription == "iPad13,18") // iPad 10th Gen
+        return KnownDevices::iPad10;
     if (deviceDescription == "iPad14,1") // iPad mini 6th Gen (WiFi)
         return KnownDevices::iPadmini6;
     if (deviceDescription == "iPad14,2") // iPad mini 6th Gen
         return KnownDevices::iPadmini6;
+    if (deviceDescription == "iPad14,3") // iPad Pro 11 inch 4nd Gen
+        return KnownDevices::iPadPro1104;
+    if (deviceDescription == "iPad14,5") // iPad Pro 12.9 inch 6th Gen
+        return KnownDevices::iPadPro1296;
     if (deviceDescription.contains("iPad"))
         return KnownDevices::GenericiPad;
 
@@ -554,6 +562,7 @@ JUCEAppBasics::iOS_utils::KnownDevices getGenericDeviceType()
     case iPadPro1293:
     case iPadPro1102:
     case iPadPro1294:
+    case iPadPro1296:
     case iPadmini:
     case iPadmini2:
     case iPadmini3:
@@ -630,25 +639,29 @@ int getDeviceDisplayNotchIndent()
     case iPad2:
     case iPad3:
     case iPad4:
-    case iPadAir:
-    case iPadAir2:
     case iPad5:
     case iPad6:
-    case iPadAir3:
     case iPad7:
+    case iPad10:
+    case iPadAir:
+    case iPadAir2:
+    case iPadAir3:
+    case iPadAir4:
+    case iPadAir5:
     case iPadPro:
     case iPadPro2:
     case iPadPro3:
     case iPadPro4:
+    case iPadPro1296:
+    case iPadPro1104:
     case iPadmini:
     case iPadmini2:
     case iPadmini3:
     case iPadmini4:
     case iPadmini5:
     case iPadmini6:
-    case iPadAir4:
     case GenericiPad:
-        displayNotchIndent = 0;
+        displayNotchIndent = 23;
         break;
     case GenericMac:
     case GenericPC:
@@ -712,16 +725,21 @@ int getDeviceDisplaySlideBarIndent()
     case iPad2:
     case iPad3:
     case iPad4:
-    case iPadAir:
-    case iPadAir2:
     case iPad5:
     case iPad6:
-    case iPadAir3:
     case iPad7:
+    case iPad10:
+    case iPadAir:
+    case iPadAir2:
+    case iPadAir3:
+    case iPadAir4:
+    case iPadAir5:
     case iPadPro:
     case iPadPro2:
     case iPadPro3:
     case iPadPro4:
+    case iPadPro1296:
+    case iPadPro1104:
     case iPadmini:
     case iPadmini2:
     case iPadmini3:
@@ -729,6 +747,8 @@ int getDeviceDisplaySlideBarIndent()
     case iPadmini5:
     case iPadmini6:
     case GenericiPad:
+        slideBarIndent = 20;
+        break;
     case GenericMac:
     case GenericPC:
     case GenericAndroidPhone:
