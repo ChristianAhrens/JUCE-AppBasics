@@ -661,7 +661,7 @@ int getDeviceDisplayNotchIndent()
     case iPadmini5:
     case iPadmini6:
     case GenericiPad:
-        displayNotchIndent = 23;
+        displayNotchIndent = 0;
         break;
     case GenericMac:
     case GenericPC:
@@ -747,7 +747,7 @@ int getDeviceDisplaySlideBarIndent()
     case iPadmini5:
     case iPadmini6:
     case GenericiPad:
-        slideBarIndent = 20;
+        slideBarIndent = 0;
         break;
     case GenericMac:
     case GenericPC:
