@@ -91,6 +91,16 @@ void ZeroconfDiscoverComponent::removeDiscoverService(ZeroconfServiceType servic
 	removeSearcher(serviceName);
 }
 
+void ZeroconfDiscoverComponent::addPopupCategory(const juce::String& categoryName, const std::pair<juce::String, juce::String>& txtRecordNameValue)
+{
+	m_currentPopupCategories[categoryName] = txtRecordNameValue;
+}
+
+void ZeroconfDiscoverComponent::removePopupCategory(const juce::String& categoryName)
+{
+	m_currentPopupCategories.erase(categoryName);
+}
+
 void ZeroconfDiscoverComponent::addSearcher(String name, String serviceName)
 {
 	ZeroconfSearcher::ZeroconfSearcher * searcher = getSearcherByName(name);
@@ -191,20 +201,44 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 	}
 	else
 	{
+		auto currentCategorizedServicesMap = std::map<juce::String, std::map<int, juce::String>>();
+
 		auto itemNo = 0;
 		for (auto const& serviceEntry : m_currentServiceBrowsingList)
 		{
 			auto& serviceEntryName = std::get<0>(serviceEntry);
 			auto& service = std::get<1>(serviceEntry);
 
-			String serviceItemString;
-			//serviceItemString = String(service->name) + " on " + (service->host.empty() ? service->ip : service->host) + " (" + String(service->ip) + ":" + String(service->port) + ")";
-			
 			auto name = String(service->name).upToFirstOccurrenceOf(String("." + serviceEntryName), false, true);
-			serviceItemString = name + " (" + String(service->ip) + ")";
+			auto serviceItemString = juce::String(name + " (" + String(service->ip) + ")");
 
 			itemNo++;
-			m_currentServiceBrowsingPopup.addItem(itemNo, serviceItemString);
+
+			auto categoryMatch = false;
+			for (auto const& popupCategory : m_currentPopupCategories)
+			{
+				auto recordToMatch = service->txtRecords.find(popupCategory.second.first.toStdString());
+				if (recordToMatch != service->txtRecords.end() && recordToMatch->second == popupCategory.second.second.toStdString())
+				{
+					currentCategorizedServicesMap[popupCategory.first][itemNo] = serviceItemString;
+					categoryMatch = true;
+				}
+			}
+			if (!categoryMatch)
+				currentCategorizedServicesMap["Other " + serviceEntryName + " services"][itemNo] = serviceItemString;
+		}
+
+		for (auto const& serviceCategory : currentCategorizedServicesMap)
+		{
+			if (currentCategorizedServicesMap.size() > 1)
+			{
+				m_currentServiceBrowsingPopup.addSeparator();
+				m_currentServiceBrowsingPopup.addSectionHeader(serviceCategory.first);
+			}
+			for (auto const& serviceEntry : serviceCategory.second)
+			{
+				m_currentServiceBrowsingPopup.addItem(serviceEntry.first, serviceEntry.second);
+			}
 		}
 	}
 
