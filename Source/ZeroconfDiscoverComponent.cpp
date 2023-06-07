@@ -162,13 +162,10 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 			{
 				for (auto& service : searcher->GetServices())
 				{
-					if (service)
-					{
-						if (std::find_if(m_currentServiceBrowsingList.begin(), m_currentServiceBrowsingList.end(), [&](const auto& val) { return std::get<1>(val) == service; }) == m_currentServiceBrowsingList.end())
-							m_currentServiceBrowsingList.push_back(std::make_tuple(searcher->GetServiceName(), service));
-						else
-							continue;
-					}
+					if (std::find_if(m_currentServiceBrowsingList.begin(), m_currentServiceBrowsingList.end(), [=](const auto& val) { return std::get<1>(val) == service; }) == m_currentServiceBrowsingList.end())
+						m_currentServiceBrowsingList.push_back(std::make_tuple(searcher->GetServiceName(), service));
+					else
+						continue;
 				}
 			}
 		}
@@ -185,13 +182,10 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 
 		for (auto& service : searcher->GetServices())
 		{
-			if (service)
-			{
-				if (std::find_if(m_currentServiceBrowsingList.begin(), m_currentServiceBrowsingList.end(), [&](const auto& val) { return std::get<1>(val) == service; }) == m_currentServiceBrowsingList.end())
-					m_currentServiceBrowsingList.push_back(std::make_tuple(searcher->GetServiceName(), service));
-				else
-					continue;
-			}
+			if (std::find_if(m_currentServiceBrowsingList.begin(), m_currentServiceBrowsingList.end(), [&](const auto& val) { return std::get<1>(val) == service; }) == m_currentServiceBrowsingList.end())
+				m_currentServiceBrowsingList.push_back(std::make_tuple(searcher->GetServiceName(), service));
+			else
+				continue;
 		}
 	}
 
@@ -209,16 +203,16 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 			auto& serviceEntryName = std::get<0>(serviceEntry);
 			auto& service = std::get<1>(serviceEntry);
 
-			auto name = String(service->name).upToFirstOccurrenceOf(String("." + serviceEntryName), false, true);
-			auto serviceItemString = juce::String(name + " (" + String(service->ip) + ")");
+			auto name = String(service.name).upToFirstOccurrenceOf(String("." + serviceEntryName), false, true);
+			auto serviceItemString = juce::String(name + " (" + String(service.ip) + ")");
 
 			itemNo++;
 
 			auto categoryMatch = false;
 			for (auto const& popupCategory : m_currentPopupCategories)
 			{
-				auto recordToMatch = service->txtRecords.find(popupCategory.second.first.toStdString());
-				if (recordToMatch != service->txtRecords.end() && recordToMatch->second == popupCategory.second.second.toStdString())
+				auto recordToMatch = service.txtRecords.find(popupCategory.second.first.toStdString());
+				if (recordToMatch != service.txtRecords.end() && recordToMatch->second == popupCategory.second.second.toStdString())
 				{
 					currentCategorizedServicesMap[popupCategory.first][itemNo] = serviceItemString;
 					categoryMatch = true;
@@ -260,15 +254,15 @@ void ZeroconfDiscoverComponent::handlePopupResult(int result)
 		if (result > 0 && onServiceSelected)
 		{
 			auto serviceIndex = result - 1;
-			auto service = (m_currentServiceBrowsingList.size() >= serviceIndex) ? std::get<1>(m_currentServiceBrowsingList.at(serviceIndex)) : static_cast<ZeroconfSearcher::ZeroconfSearcher::ServiceInfo*>(nullptr);
 
-			if (service != nullptr)
+			if (m_currentServiceBrowsingList.size() >= serviceIndex)
 			{
-				auto searcher = getSearcherByServiceName(service->name);
+				auto service = std::get<1>(m_currentServiceBrowsingList.at(serviceIndex));
+				auto searcher = getSearcherByServiceName(service.name);
 
 				if (searcher != nullptr)
 				{
-					onServiceSelected(getServiceType(searcher->GetName()), service);
+					onServiceSelected(getServiceType(searcher->GetName()), &service);
 					searcher->StopSearching();
 					setListeningForPopupResults(false);
 				}
@@ -282,15 +276,12 @@ void ZeroconfDiscoverComponent::handlePopupResult(int result)
 		{
 			for (auto const& serviceEntry : m_currentServiceBrowsingList)
 			{
-				if (std::get<1>(serviceEntry) != nullptr)
-				{
-					auto searcher = getSearcherByServiceName(std::get<0>(serviceEntry));
+				auto searcher = getSearcherByServiceName(std::get<0>(serviceEntry));
 
-					if (searcher != nullptr)
-					{
-						searcher->StopSearching();
-						setListeningForPopupResults(false);
-					}
+				if (searcher != nullptr)
+				{
+					searcher->StopSearching();
+					setListeningForPopupResults(false);
 				}
 			}
 		}
@@ -376,13 +367,10 @@ void ZeroconfDiscoverComponent::handleMessage(const Message& message)
 			{
 				for (auto& service : searcher->GetServices())
 				{
-					if (service)
+					if (std::find_if(m_currentServiceBrowsingList.begin(), m_currentServiceBrowsingList.end(), [&](const auto& val) { return std::get<1>(val) == service; }) == m_currentServiceBrowsingList.end())
 					{
-						if (std::find_if(m_currentServiceBrowsingList.begin(), m_currentServiceBrowsingList.end(), [&](const auto& val) { return std::get<1>(val) == service; }) == m_currentServiceBrowsingList.end())
-						{
-							servicesChanged = true;
-							break;
-						}
+						servicesChanged = true;
+						break;
 					}
 				}
 

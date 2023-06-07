@@ -98,7 +98,7 @@ private:
 
     std::map<juce::String, std::pair<juce::String, juce::String>>                           m_currentPopupCategories;
 
-    std::vector<std::tuple<std::string, ZeroconfSearcher::ZeroconfSearcher::ServiceInfo*>>  m_currentServiceBrowsingList;
+    std::vector<std::tuple<std::string, ZeroconfSearcher::ZeroconfSearcher::ServiceInfo>>  m_currentServiceBrowsingList;
     PopupMenu                                                                               m_currentServiceBrowsingPopup;
     
     bool m_listeningForPopupResults { false };
