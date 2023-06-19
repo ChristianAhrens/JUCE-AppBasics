@@ -32,6 +32,22 @@ public:
         ZST_Max
     };
 
+    enum ZeroconfServiceCategoryType
+    {
+        ZSCT_Unknown,
+        ZSCT_MetaInfo,       /**> The category is characterized by a meta info field string "NAME", "HOST", "IP" or "PORT". */
+        ZSCT_TxtRecord,      /**> The category is characterized by a txtRecord entry name. */
+        ZSCT_Max
+    };
+
+    enum ZeroconfServiceCategoryMatch
+    {
+        ZSCM_Unknown,
+        ZSCM_Match,     /**> The expected categorization value has to exactly match what was found in a serviceinfo. */
+        ZSCM_Contain,   /**> The expected categorization value has to be contained what was found in a serviceinfo. */
+        ZSCM_Max
+    };
+
     class ServiceChangedMessage : public Message
     {
     public:
@@ -50,7 +66,7 @@ public:
     void clearServices();
     void addDiscoverService(ZeroconfServiceType serviceType);
     void removeDiscoverService(ZeroconfServiceType serviceType);
-    void addPopupCategory(const juce::String& categoryName, const std::pair<juce::String, juce::String>& txtRecordNameValue);
+    bool addPopupCategory(const juce::String& categoryName, const std::pair<std::pair<ZeroconfServiceCategoryType, juce::String>, std::pair<ZeroconfServiceCategoryMatch, juce::String>>& categoryProcessingData);
     void removePopupCategory(const juce::String& categoryName);
     void setShowServiceNameLabels(bool show);
     void handlePopupResult(int result);
@@ -90,16 +106,16 @@ private:
     bool isListeningForPopupResults();
     void setListeningForPopupResults(bool listening);
     
-    bool                                                                                    m_useSeparateServiceSearchers;
-    std::vector<std::unique_ptr<ZeroconfSearcher::ZeroconfSearcher>>                        m_searchers;
+    bool                                                                                                                                            m_useSeparateServiceSearchers;
+    std::vector<std::unique_ptr<ZeroconfSearcher::ZeroconfSearcher>>                                                                                m_searchers;
     
-    std::map<juce::String, std::unique_ptr<DrawableButton>>                                 m_discoveryButtons;
-    std::map<juce::String, std::unique_ptr<Label>>                                          m_serviceNameLabels;
+    std::map<juce::String, std::unique_ptr<DrawableButton>>                                                                                         m_discoveryButtons;
+    std::map<juce::String, std::unique_ptr<Label>>                                                                                                  m_serviceNameLabels;
 
-    std::map<juce::String, std::pair<juce::String, juce::String>>                           m_currentPopupCategories;
+    std::map<juce::String, std::pair<std::pair<ZeroconfServiceCategoryType, juce::String>, std::pair<ZeroconfServiceCategoryMatch, juce::String>>>  m_currentPopupCategories;
 
-    std::vector<std::tuple<std::string, ZeroconfSearcher::ZeroconfSearcher::ServiceInfo>>  m_currentServiceBrowsingList;
-    PopupMenu                                                                               m_currentServiceBrowsingPopup;
+    std::vector<std::tuple<std::string, ZeroconfSearcher::ZeroconfSearcher::ServiceInfo>>                                                           m_currentServiceBrowsingList;
+    juce::PopupMenu                                                                                                                                 m_currentServiceBrowsingPopup;
     
     bool m_listeningForPopupResults { false };
     int m_ignoreBlankPopupResultCount{ 0 };

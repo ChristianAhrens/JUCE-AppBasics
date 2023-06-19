@@ -91,9 +91,16 @@ void ZeroconfDiscoverComponent::removeDiscoverService(ZeroconfServiceType servic
 	removeSearcher(serviceName);
 }
 
-void ZeroconfDiscoverComponent::addPopupCategory(const juce::String& categoryName, const std::pair<juce::String, juce::String>& txtRecordNameValue)
+bool ZeroconfDiscoverComponent::addPopupCategory(const juce::String& categoryName, const std::pair<std::pair<ZeroconfServiceCategoryType, juce::String>, std::pair<ZeroconfServiceCategoryMatch, juce::String>>& categoryProcessingData)
 {
-	m_currentPopupCategories[categoryName] = txtRecordNameValue;
+	if (categoryProcessingData.first.first <= ZSCT_Unknown || categoryProcessingData.first.first >= ZSCT_Max)
+		return false;
+	if (categoryProcessingData.second.first <= ZSCM_Unknown || categoryProcessingData.second.first >= ZSCM_Max)
+		return false;
+
+	m_currentPopupCategories[categoryName] = categoryProcessingData;
+
+	return true;
 }
 
 void ZeroconfDiscoverComponent::removePopupCategory(const juce::String& categoryName)
@@ -211,11 +218,46 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 			auto categoryMatch = false;
 			for (auto const& popupCategory : m_currentPopupCategories)
 			{
-				auto recordToMatch = service.txtRecords.find(popupCategory.second.first.toStdString());
-				if (recordToMatch != service.txtRecords.end() && recordToMatch->second == popupCategory.second.second.toStdString())
+				auto& categoryType = popupCategory.second.first.first;
+				auto& categoryIdentStr = popupCategory.second.first.second;
+				auto& matchType = popupCategory.second.second.first;
+				auto& matchVal = popupCategory.second.second.second;
+				if (categoryType == ZSCT_MetaInfo)
 				{
-					currentCategorizedServicesMap[popupCategory.first][itemNo] = serviceItemString;
-					categoryMatch = true;
+					juce::String refVal;
+					if (categoryIdentStr == "NAME")
+						refVal = service.name;
+					else if (categoryIdentStr == "HOST")
+						refVal = service.host;
+					else if (categoryIdentStr == "IP")
+						refVal = service.ip;
+					else if (categoryIdentStr == "PORT")
+						refVal = juce::String(service.port);
+
+					if (refVal.isNotEmpty())
+					{
+						categoryMatch = true;
+						if (matchType == ZSCM_Match && refVal == matchVal)
+							currentCategorizedServicesMap[popupCategory.first][itemNo] = serviceItemString;
+						else if (matchType == ZSCM_Contain && juce::String(refVal).contains(matchVal))
+							currentCategorizedServicesMap[popupCategory.first][itemNo] = serviceItemString;
+						else
+							categoryMatch = false;
+					}
+				}
+				else if (categoryType == ZSCT_TxtRecord)
+				{
+					auto recordToMatch = service.txtRecords.find(categoryIdentStr.toStdString());
+					if (recordToMatch != service.txtRecords.end())
+					{
+						categoryMatch = true;
+						if (matchType == ZSCM_Match && recordToMatch->second == matchVal.toStdString())
+							currentCategorizedServicesMap[popupCategory.first][itemNo] = serviceItemString;
+						else if (matchType == ZSCM_Contain && juce::String(recordToMatch->second).contains(matchVal))
+							currentCategorizedServicesMap[popupCategory.first][itemNo] = serviceItemString;
+						else
+							categoryMatch = false;
+					}
 				}
 			}
 			if (!categoryMatch)
