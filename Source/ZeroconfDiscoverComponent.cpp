@@ -279,13 +279,19 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 	}
 
 	m_ignoreBlankPopupResultCount = 1;
-	m_currentServiceBrowsingPopup.showMenuAsync(juce::PopupMenu::Options(), [this](int result)
-		{
+	auto margin = 3;
+	auto popupPosOffsetX = getWidth() + margin;
+	auto popupPosOffsetY = getHeight() / 2;
+	m_currentServiceBrowsingPopup.showMenuAsync(juce::PopupMenu::Options()
+		.withTargetScreenArea(getScreenBounds().translated(popupPosOffsetX, popupPosOffsetY))
+		.withPreferredPopupDirection(juce::PopupMenu::Options::PopupDirection::upwards), 
+		[this](int result) {
 			if (m_ignoreBlankPopupResultCount == 0 || result > 0)
 				handlePopupResult(result);
 			else
                 m_ignoreBlankPopupResultCount--;
 		});
+
     setListeningForPopupResults(true);
 }
 
