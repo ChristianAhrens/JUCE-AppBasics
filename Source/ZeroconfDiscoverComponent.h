@@ -59,7 +59,7 @@ public:
     };
 
 public:
-    ZeroconfDiscoverComponent();
+    ZeroconfDiscoverComponent(const juce::String& name);
     ~ZeroconfDiscoverComponent();
     
     void clearServices();
@@ -90,6 +90,37 @@ public:
     std::function<void(ZeroconfServiceType, ZeroconfSearcher::ZeroconfSearcher::ServiceInfo*)> onServiceSelected;
 
 private:
+    //==============================================================================
+    class CustomLabelItemComponent : public juce::PopupMenu::CustomComponent
+    {
+    public:
+        CustomLabelItemComponent(const juce::String& componentName, const juce::String& labelText)
+            : juce::PopupMenu::CustomComponent(true) {
+            m_label = std::make_unique<juce::Label>(componentName, labelText);
+            
+            addAndMakeVisible(m_label.get());
+        };
+        void getIdealSize(int& idealWidth, int& idealHeight) override {
+            auto margin = 8;
+            idealWidth = m_label->getFont().getStringWidth(m_label->getText()) + margin;
+            idealHeight = static_cast<int>(m_label->getFont().getHeight()) + margin;
+        };
+        void resized() override {
+            m_label->setBounds(getLocalBounds());
+        };
+        void paint(Graphics& g) {
+            if (isItemHighlighted())
+                m_label->setColour(juce::Label::ColourIds::backgroundColourId, getLookAndFeel().findColour(juce::PopupMenu::ColourIds::highlightedBackgroundColourId));
+            else
+                m_label->setColour(juce::Label::ColourIds::backgroundColourId, getLookAndFeel().findColour(juce::Label::ColourIds::backgroundColourId));
+            juce::PopupMenu::CustomComponent::paint(g);
+        };
+
+    private:
+        std::unique_ptr<juce::Label>    m_label;
+    };
+
+    //==============================================================================
     ZeroconfSearcher::ZeroconfSearcher * getSearcherByName(const juce::String& name);
     ZeroconfSearcher::ZeroconfSearcher* getSearcherByServiceName(const juce::String& serviceName);
 
@@ -98,6 +129,8 @@ private:
     void addSearcher(const juce::String& name, const juce::String& serviceName);
     void removeSearcher(const juce::String& name);
 
+    bool isSearchingActive();
+    void startupSearching();
     void shutdownSearching();
     
     bool isPopupActive();
@@ -111,7 +144,8 @@ private:
     std::vector<std::tuple<juce::String, ZeroconfSearcher::ZeroconfSearcher::ServiceInfo>>                                                          m_currentServiceBrowsingList;
     juce::PopupMenu                                                                                                                                 m_currentServiceBrowsingPopup;
     
-    bool m_popupActive { false };
+    bool m_popupActive{ false };
+    bool m_searchingActive{ false };
     int m_ignoreBlankPopupResultCount{ 0 };
     
     bool m_showServiceNameLabels { false };

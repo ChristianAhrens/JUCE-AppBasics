@@ -24,24 +24,21 @@ namespace JUCEAppBasics
 {
 
 //==============================================================================
-ZeroconfDiscoverComponent::ZeroconfDiscoverComponent()
-	: juce::DrawableButton("ZeroconfDiscoverComponent", ButtonStyle::ImageOnButtonBackground)
+ZeroconfDiscoverComponent::ZeroconfDiscoverComponent(const juce::String& name)
+	: juce::DrawableButton(name, ButtonStyle::ImageOnButtonBackground)
 {
-	onClick = [this]() {
-		for (auto const& searcher : m_searchers)
-		{
-			if (searcher && !isPopupActive())
-			{
-				searcher->StartSearching();
-				showMenuAndGetService(searcher->GetServiceName());
-			}
-		}
-		return;
-	};
+	setPopupActive(false);
+
+	// Being a global mouse listner and at the same time deriving 
+	// from a button breaks the usual button onclick std::function 
+	// and listener callback pattern useless. Therefor we have to detect 
+	// our button click by hand in ::mouseDown processing!
+	juce::Desktop::getInstance().addGlobalMouseListener(this);
 }
 
 ZeroconfDiscoverComponent::~ZeroconfDiscoverComponent()
 {
+	juce::Desktop::getInstance().removeGlobalMouseListener(this);
 }
 
 void ZeroconfDiscoverComponent::clearServices()
@@ -95,13 +92,13 @@ void ZeroconfDiscoverComponent::addSearcher(const juce::String& name, const juce
 
 void ZeroconfDiscoverComponent::removeSearcher(const juce::String& name)
 {
-	ZeroconfSearcher::ZeroconfSearcher * s = getSearcherByName(name);
+	ZeroconfSearcher::ZeroconfSearcher* s = getSearcherByName(name);
 	auto const zsit = std::find_if(m_searchers.begin(), m_searchers.end(), [&](const auto& val) { return val.get() == s; });
 	if (zsit != m_searchers.end())
 		m_searchers.erase(zsit);
 }
 
-ZeroconfSearcher::ZeroconfSearcher * ZeroconfDiscoverComponent::getSearcherByName(const juce::String& name)
+ZeroconfSearcher::ZeroconfSearcher* ZeroconfDiscoverComponent::getSearcherByName(const juce::String& name)
 {
 	for (auto const& searcher : m_searchers)
 	{
@@ -172,7 +169,7 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 
 	if (m_currentServiceBrowsingList.empty())
 	{
-		m_currentServiceBrowsingPopup.addItem(-1, "No service found", false);
+		m_currentServiceBrowsingPopup.addCustomItem(-1, std::make_unique<CustomLabelItemComponent>("CustomItem-1", "No service found"), nullptr, "No service found");
 	}
 	else
 	{
@@ -247,7 +244,7 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 			}
 			for (auto const& serviceEntry : serviceCategory.second)
 			{
-				m_currentServiceBrowsingPopup.addItem(serviceEntry.first, serviceEntry.second);
+				m_currentServiceBrowsingPopup.addCustomItem(serviceEntry.first, std::make_unique<CustomLabelItemComponent>("CustomItem" + juce::String(serviceEntry.first), serviceEntry.second), nullptr, serviceEntry.second);
 			}
 		}
 	}
@@ -401,24 +398,64 @@ void ZeroconfDiscoverComponent::setPopupActive(bool active)
 
 void ZeroconfDiscoverComponent::mouseDown(const juce::MouseEvent& e)
 {
-	auto discoverButtonHit = getLocalBounds().contains(e.getPosition());
-	auto popupMenuHit = false;
-
-	if (isPopupActive())
+	auto discoverButtonHit = getScreenBounds().contains(e.getScreenPosition());
+	if (discoverButtonHit && !isSearchingActive())
 	{
+		startupSearching();
+		juce::DrawableButton::mouseDown(e);
+	}
+	else if (isPopupActive() && isSearchingActive())
+	{
+		auto outsideWorldHit = true;
+		auto iter = juce::PopupMenu::MenuItemIterator(m_currentServiceBrowsingPopup, true);
+		if (!discoverButtonHit)
+		{
+			auto popupMenuHit = false;
+			while (iter.next())
+			{
+				if (iter.getItem().customComponent == e.originalComponent)
+				{
+					popupMenuHit = true;
+					break;
+				}
+			}
+			outsideWorldHit = !popupMenuHit;
+		}
+
 		if (discoverButtonHit)
 		{
 			m_ignoreBlankPopupResultCount = 0; // reset the ignore count for popup menu results. this enables the next popup result that is the direct cause of this mouseDown to be processed and not be ignored.
 			return;
 		}
 
-		if (!popupMenuHit)
+		if (outsideWorldHit)
 		{
 			m_ignoreBlankPopupResultCount = 0; // reset the ignore count for popup menu results. this enables the next popup result that is the direct cause of this mouseDown to be processed and not be ignored.
 		}
+
+		juce::DrawableButton::mouseDown(e);
+	}
+}
+
+bool ZeroconfDiscoverComponent::isSearchingActive()
+{
+	return m_searchingActive;
+}
+
+void ZeroconfDiscoverComponent::startupSearching()
+{
+	m_searchingActive = true;
+
+	for (auto const& searcher : m_searchers)
+	{
+		if (searcher && !isPopupActive())
+		{
+			searcher->StartSearching();
+			showMenuAndGetService(searcher->GetServiceName());
+		}
 	}
 
-	juce::DrawableButton::mouseDown(e);
+	return;
 }
 
 void ZeroconfDiscoverComponent::shutdownSearching()
@@ -433,11 +470,11 @@ void ZeroconfDiscoverComponent::shutdownSearching()
 	}
 	for (auto const& searcher : searchersToShutdown)
 	{
-		DBG(juce::String(__FUNCTION__) << " stop searching " << searcher->GetServiceName());
 		if (nullptr != searcher)
 			searcher->StopSearching();
 	}
 	m_currentServiceBrowsingList.clear();
+	m_searchingActive = false;
 }
 
 
