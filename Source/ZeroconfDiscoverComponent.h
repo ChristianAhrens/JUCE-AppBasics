@@ -18,8 +18,7 @@ namespace JUCEAppBasics
 {
 
 class ZeroconfDiscoverComponent :
-    public Component,
-    public Button::Listener,
+    public juce::DrawableButton,
     public ZeroconfSearcher::ZeroconfSearcher::ZeroconfSearcherListener,
     public MessageListener
 {
@@ -60,7 +59,7 @@ public:
     };
 
 public:
-    ZeroconfDiscoverComponent(bool useSeparateServiceSearchers, bool showServiceNameLabels = true);
+    ZeroconfDiscoverComponent();
     ~ZeroconfDiscoverComponent();
     
     void clearServices();
@@ -68,17 +67,13 @@ public:
     void removeDiscoverService(ZeroconfServiceType serviceType);
     bool addPopupCategory(const juce::String& categoryName, const std::pair<std::pair<ZeroconfServiceCategoryType, juce::String>, std::pair<ZeroconfServiceCategoryMatch, juce::String>>& categoryProcessingData);
     void removePopupCategory(const juce::String& categoryName);
-    void setShowServiceNameLabels(bool show);
     void handlePopupResult(int result);
-    
-    //==============================================================================
-    void buttonClicked(Button*) override;
-	
-    //==============================================================================
-    void resized() override;
 
     //==============================================================================
     void lookAndFeelChanged() override;
+
+    //==============================================================================
+    void mouseDown(const juce::MouseEvent& e) override;
 
     //==============================================================================
     void handleServicesChanged(std::string serviceName) override;
@@ -89,7 +84,7 @@ public:
     //==============================================================================
     static juce::String getServiceName(ZeroconfServiceType type);
     static ZeroconfServiceType getServiceType(juce::String name);
-    static String getServiceDescriptor(ZeroconfServiceType type);
+    static juce::String getServiceDescriptor(ZeroconfServiceType type);
     
     //==============================================================================
     std::function<void(ZeroconfServiceType, ZeroconfSearcher::ZeroconfSearcher::ServiceInfo*)> onServiceSelected;
@@ -100,24 +95,23 @@ private:
 
     void showMenuAndGetService(const juce::String& serviceName);
 
-    void addSearcher(juce::String name, juce::String serviceName);
-    void removeSearcher(juce::String name);
+    void addSearcher(const juce::String& name, const juce::String& serviceName);
+    void removeSearcher(const juce::String& name);
+
+    void shutdownSearching();
     
-    bool isListeningForPopupResults();
-    void setListeningForPopupResults(bool listening);
+    bool isPopupActive();
+    void setPopupActive(bool active);
     
     bool                                                                                                                                            m_useSeparateServiceSearchers;
     std::vector<std::unique_ptr<ZeroconfSearcher::ZeroconfSearcher>>                                                                                m_searchers;
-    
-    std::map<juce::String, std::unique_ptr<DrawableButton>>                                                                                         m_discoveryButtons;
-    std::map<juce::String, std::unique_ptr<Label>>                                                                                                  m_serviceNameLabels;
 
     std::map<juce::String, std::pair<std::pair<ZeroconfServiceCategoryType, juce::String>, std::pair<ZeroconfServiceCategoryMatch, juce::String>>>  m_currentPopupCategories;
 
-    std::vector<std::tuple<std::string, ZeroconfSearcher::ZeroconfSearcher::ServiceInfo>>                                                           m_currentServiceBrowsingList;
+    std::vector<std::tuple<juce::String, ZeroconfSearcher::ZeroconfSearcher::ServiceInfo>>                                                          m_currentServiceBrowsingList;
     juce::PopupMenu                                                                                                                                 m_currentServiceBrowsingPopup;
     
-    bool m_listeningForPopupResults { false };
+    bool m_popupActive { false };
     int m_ignoreBlankPopupResultCount{ 0 };
     
     bool m_showServiceNameLabels { false };

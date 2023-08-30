@@ -24,26 +24,25 @@ namespace JUCEAppBasics
 {
 
 //==============================================================================
-ZeroconfDiscoverComponent::ZeroconfDiscoverComponent(bool useSeparateServiceSearchers, bool showServiceNameLabels)
+ZeroconfDiscoverComponent::ZeroconfDiscoverComponent()
+	: juce::DrawableButton("ZeroconfDiscoverComponent", ButtonStyle::ImageOnButtonBackground)
 {
-	m_useSeparateServiceSearchers = useSeparateServiceSearchers;
-
-	setShowServiceNameLabels(showServiceNameLabels);
+	onClick = [this]() {
+		for (auto const& searcher : m_searchers)
+		{
+			if (searcher && !isPopupActive())
+			{
+				searcher->StartSearching();
+				showMenuAndGetService(searcher->GetServiceName());
+			}
+		}
+		return;
+	};
 }
 
 ZeroconfDiscoverComponent::~ZeroconfDiscoverComponent()
 {
-    for(auto const& serviceDiscoverButtonKV : m_discoveryButtons)
-        removeSearcher(serviceDiscoverButtonKV.first);
 }
-
-void ZeroconfDiscoverComponent::setShowServiceNameLabels(bool show)
-{
-    m_showServiceNameLabels = show;
-    
-    for (auto const& labelKV : m_serviceNameLabels)
-        labelKV.second->setVisible(show);
-};
 
 void ZeroconfDiscoverComponent::clearServices()
 {
@@ -55,19 +54,6 @@ void ZeroconfDiscoverComponent::addDiscoverService(ZeroconfServiceType serviceTy
 {
     auto serviceName = getServiceName(serviceType);
     auto serviceDescriptor = getServiceDescriptor(serviceType);
-    
-	if(m_useSeparateServiceSearchers || m_discoveryButtons.empty())
-	{
-		m_discoveryButtons.insert(std::make_pair(serviceName, std::make_unique<DrawableButton>(serviceName, DrawableButton::ButtonStyle::ImageOnButtonBackground)));
-		m_discoveryButtons.at(serviceName)->addListener(this);
-		m_discoveryButtons.at(serviceName)->setButtonText(serviceName);
-		addAndMakeVisible(m_discoveryButtons.at(serviceName).get());
-    
-		m_serviceNameLabels.insert(std::make_pair(serviceName, std::make_unique<Label>(serviceName, serviceName + ":")));
-		addAndMakeVisible(m_serviceNameLabels.at(serviceName).get());
-
-		lookAndFeelChanged();
-	}
 
     addSearcher(serviceName, serviceDescriptor);
 }
@@ -75,18 +61,6 @@ void ZeroconfDiscoverComponent::addDiscoverService(ZeroconfServiceType serviceTy
 void ZeroconfDiscoverComponent::removeDiscoverService(ZeroconfServiceType serviceType)
 {
 	auto serviceName = getServiceName(serviceType);
-
-	if (m_discoveryButtons.count(serviceName) > 0)
-	{
-		removeChildComponent(m_discoveryButtons.at(serviceName).get());
-		m_discoveryButtons.erase(serviceName);
-	}
-
-	if (m_serviceNameLabels.count(serviceName) > 0)
-	{
-		removeChildComponent(m_serviceNameLabels.at(serviceName).get());
-		m_serviceNameLabels.erase(serviceName);
-	}
 
 	removeSearcher(serviceName);
 }
@@ -108,7 +82,7 @@ void ZeroconfDiscoverComponent::removePopupCategory(const juce::String& category
 	m_currentPopupCategories.erase(categoryName);
 }
 
-void ZeroconfDiscoverComponent::addSearcher(String name, String serviceName)
+void ZeroconfDiscoverComponent::addSearcher(const juce::String& name, const juce::String& serviceName)
 {
 	ZeroconfSearcher::ZeroconfSearcher * searcher = getSearcherByName(name);
 
@@ -119,7 +93,7 @@ void ZeroconfDiscoverComponent::addSearcher(String name, String serviceName)
 	}
 }
 
-void ZeroconfDiscoverComponent::removeSearcher(String name)
+void ZeroconfDiscoverComponent::removeSearcher(const juce::String& name)
 {
 	ZeroconfSearcher::ZeroconfSearcher * s = getSearcherByName(name);
 	auto const zsit = std::find_if(m_searchers.begin(), m_searchers.end(), [&](const auto& val) { return val.get() == s; });
@@ -278,7 +252,12 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 		}
 	}
 
-	m_ignoreBlankPopupResultCount = 1;
+	m_ignoreBlankPopupResultCount = 1; /** An initial empty popup result (0) is expected 
+										* before actual searcher entries are being added 
+										* to the menu that shall not be processed and 
+										* cause the searching to be aborted.
+										* Therefor we set an initial ignore count 1 to be
+										* used and decremented to enable processing all further results. */
 	auto margin = 3;
 	auto popupPosOffsetX = getWidth() + margin;
 	auto popupPosOffsetY = getHeight() / 2;
@@ -292,82 +271,38 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
                 m_ignoreBlankPopupResultCount--;
 		});
 
-    setListeningForPopupResults(true);
+    setPopupActive(true);
 }
 
 void ZeroconfDiscoverComponent::handlePopupResult(int result)
 {
-	if (isListeningForPopupResults())
+	// handle result
+	if (result > 0 && onServiceSelected)
 	{
-		if (result > 0 && onServiceSelected)
+		auto serviceIndex = result - 1;
+
+		if (m_currentServiceBrowsingList.size() >= serviceIndex)
 		{
-			auto serviceIndex = result - 1;
+			auto service = std::get<1>(m_currentServiceBrowsingList.at(serviceIndex));
+			auto searcher = getSearcherByServiceName(service.name);
 
-			if (m_currentServiceBrowsingList.size() >= serviceIndex)
-			{
-				auto service = std::get<1>(m_currentServiceBrowsingList.at(serviceIndex));
-				auto searcher = getSearcherByServiceName(service.name);
-
-				if (searcher != nullptr)
-				{
-					onServiceSelected(getServiceType(searcher->GetName()), &service);
-					searcher->StopSearching();
-					setListeningForPopupResults(false);
-				}
-				else
-					onServiceSelected(ZST_Unkown, nullptr);
-			}
+			if (searcher != nullptr)
+				onServiceSelected(getServiceType(searcher->GetName()), &service);
 			else
 				onServiceSelected(ZST_Unkown, nullptr);
 		}
 		else
-		{
-			for (auto const& serviceEntry : m_currentServiceBrowsingList)
-			{
-				auto searcher = getSearcherByServiceName(std::get<0>(serviceEntry));
-
-				if (searcher != nullptr)
-				{
-					searcher->StopSearching();
-					setListeningForPopupResults(false);
-				}
-			}
-		}
-
-		m_currentServiceBrowsingList.clear();
+			onServiceSelected(ZST_Unkown, nullptr);
 	}
-}
 
-void ZeroconfDiscoverComponent::resized()
-{
-	if (m_useSeparateServiceSearchers)
-	{
-		auto buttonBounds = getLocalBounds().reduced(2);
+	shutdownSearching();
 
-		FlexBox fb;
-		fb.flexDirection = FlexBox::Direction::row;
-		for (auto const& buttonKV : m_discoveryButtons)
-		{
-			if (m_showServiceNameLabels && m_serviceNameLabels.count(buttonKV.first) != 0)
-			{
-				fb.items.add(FlexItem().withFlex(1));
-				fb.items.add(FlexItem(*m_serviceNameLabels.at(buttonKV.first).get()).withFlex(2).withMargin(FlexItem::Margin(2, 2, 2, 2)));
-			}
-			fb.items.add(FlexItem(*buttonKV.second.get()).withFlex(2).withMargin(FlexItem::Margin(2, 2, 2, 2)));
-		}
-		fb.performLayout(buttonBounds);
-	}
-	else
-	{
-		jassert(m_discoveryButtons.size() == 1);
-		if (m_discoveryButtons.size() == 1)
-			m_discoveryButtons.begin()->second->setBounds(getLocalBounds());
-	}
+	setPopupActive(false);
 }
 
 void ZeroconfDiscoverComponent::lookAndFeelChanged()
 {
-	Component::lookAndFeelChanged();
+	juce::DrawableButton::lookAndFeelChanged();
 
 	auto colourOn = getLookAndFeel().findColour(TextButton::ColourIds::textColourOnId);
 	auto colourOff = getLookAndFeel().findColour(TextButton::ColourIds::textColourOffId);
@@ -376,26 +311,7 @@ void ZeroconfDiscoverComponent::lookAndFeelChanged()
 	JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::find_replace24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage,
 		colourOn, colourOff, colourOff, colourOff, colourOn, colourOn, colourOn, colourOn);
 
-	for (auto const& button : m_discoveryButtons)
-		button.second->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
-}
-
-void ZeroconfDiscoverComponent::buttonClicked(Button* button)
-{
-    for (auto const& buttonKV : m_discoveryButtons)
-    {
-		if (button == buttonKV.second.get())
-		{
-			auto searcherName = buttonKV.first;
-			auto searcher = getSearcherByName(searcherName);
-			if (searcher)
-			{
-				searcher->StartSearching();
-				showMenuAndGetService(searcher->GetServiceName());
-			}
-			return;
-		}
-    }
+	setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
 }
 
 void ZeroconfDiscoverComponent::handleServicesChanged(std::string serviceName)
@@ -427,17 +343,17 @@ void ZeroconfDiscoverComponent::handleMessage(const Message& message)
 			}
 		}
 
-		if (servicesChanged)
+		if (servicesChanged && isPopupActive())
 		{
-			setListeningForPopupResults(false);
 			m_currentServiceBrowsingPopup.dismissAllActiveMenus();
             m_currentServiceBrowsingPopup.clear();
+			setPopupActive(false);
 			showMenuAndGetService(serviceChangedMessage->GetServiceName());
 		}
 	}
 }
 
-ZeroconfDiscoverComponent::ZeroconfServiceType ZeroconfDiscoverComponent::getServiceType(String name)
+ZeroconfDiscoverComponent::ZeroconfServiceType ZeroconfDiscoverComponent::getServiceType(juce::String name)
 {
     if (name.contains(getServiceName(ZST_OSC)))
         return ZST_OSC;
@@ -447,7 +363,7 @@ ZeroconfDiscoverComponent::ZeroconfServiceType ZeroconfDiscoverComponent::getSer
         return ZST_Unkown;
 }
 
-String ZeroconfDiscoverComponent::getServiceName(ZeroconfServiceType type)
+juce::String ZeroconfDiscoverComponent::getServiceName(ZeroconfServiceType type)
 {
     switch (type)
     {
@@ -460,7 +376,7 @@ String ZeroconfDiscoverComponent::getServiceName(ZeroconfServiceType type)
     };
 }
 
-String ZeroconfDiscoverComponent::getServiceDescriptor(ZeroconfServiceType type)
+juce::String ZeroconfDiscoverComponent::getServiceDescriptor(ZeroconfServiceType type)
 {
     switch (type)
     {
@@ -469,18 +385,60 @@ String ZeroconfDiscoverComponent::getServiceDescriptor(ZeroconfServiceType type)
         case ZST_OSC:
             return "_osc._udp";
         default:
-            return String();
+            return juce::String();
     };
 }
 
-bool ZeroconfDiscoverComponent::isListeningForPopupResults()
+bool ZeroconfDiscoverComponent::isPopupActive()
 {
-    return m_listeningForPopupResults;
+    return m_popupActive;
 }
 
-void ZeroconfDiscoverComponent::setListeningForPopupResults(bool listening)
+void ZeroconfDiscoverComponent::setPopupActive(bool active)
 {
-    m_listeningForPopupResults = listening;
+    m_popupActive = active;
 }
+
+void ZeroconfDiscoverComponent::mouseDown(const juce::MouseEvent& e)
+{
+	auto discoverButtonHit = getLocalBounds().contains(e.getPosition());
+	auto popupMenuHit = false;
+
+	if (isPopupActive())
+	{
+		if (discoverButtonHit)
+		{
+			m_ignoreBlankPopupResultCount = 0; // reset the ignore count for popup menu results. this enables the next popup result that is the direct cause of this mouseDown to be processed and not be ignored.
+			return;
+		}
+
+		if (!popupMenuHit)
+		{
+			m_ignoreBlankPopupResultCount = 0; // reset the ignore count for popup menu results. this enables the next popup result that is the direct cause of this mouseDown to be processed and not be ignored.
+		}
+	}
+
+	juce::DrawableButton::mouseDown(e);
+}
+
+void ZeroconfDiscoverComponent::shutdownSearching()
+{
+	// shutdown searching for all searchers
+	auto searchersToShutdown = std::vector<ZeroconfSearcher::ZeroconfSearcher*>();
+	for (auto const& serviceEntry : m_currentServiceBrowsingList)
+	{
+		auto searcher = getSearcherByServiceName(std::get<0>(serviceEntry));
+		if (searcher != nullptr && std::find(searchersToShutdown.begin(), searchersToShutdown.end(), searcher) == searchersToShutdown.end())
+			searchersToShutdown.push_back(searcher);
+	}
+	for (auto const& searcher : searchersToShutdown)
+	{
+		DBG(juce::String(__FUNCTION__) << " stop searching " << searcher->GetServiceName());
+		if (nullptr != searcher)
+			searcher->StopSearching();
+	}
+	m_currentServiceBrowsingList.clear();
+}
+
 
 }
