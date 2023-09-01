@@ -108,7 +108,7 @@ private:
         void resized() override {
             m_label->setBounds(getLocalBounds());
         };
-        void paint(Graphics& g) {
+        void paint(Graphics& g) override {
             if (isItemHighlighted())
                 m_label->setColour(juce::Label::ColourIds::backgroundColourId, getLookAndFeel().findColour(juce::PopupMenu::ColourIds::highlightedBackgroundColourId));
             else
