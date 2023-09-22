@@ -329,8 +329,15 @@ void MidiLearnerComponent::updatePopupMenu()
     }
 
     addPopupResultMutedOnce();
-    m_popup.showMenuAsync(PopupMenu::Options(), [this](int resultingAssiIdx) { 
-        handlePopupResult(resultingAssiIdx); });
+    auto margin = 3;
+    auto popupPosOffsetX = getWidth() + margin;
+    auto popupPosOffsetY = getHeight() / 2;
+    m_popup.showMenuAsync(juce::PopupMenu::Options()
+        .withTargetScreenArea(getScreenBounds().translated(popupPosOffsetX, popupPosOffsetY))
+        .withPreferredPopupDirection(juce::PopupMenu::Options::PopupDirection::upwards),
+        [this](int resultingAssiIdx) {
+            handlePopupResult(resultingAssiIdx); 
+        });
     
     stopTimerUpdatingPopup();
 }
