@@ -16,7 +16,7 @@ namespace JUCEAppBasics
 
 //==============================================================================
 SplitButtonComponent::SplitButtonComponent()
-	: Component()
+	: juce::Component()
 {
 
 }
@@ -32,7 +32,7 @@ void SplitButtonComponent::addListener(Listener *l)
 }
 
 
-std::uint64_t SplitButtonComponent::addButton(const String& buttonText)
+std::uint64_t SplitButtonComponent::addButton(const juce::String& buttonText, const std::float_t buttonFlex)
 {
     std::uint64_t buttonID = getNextButtonID();
 
@@ -41,13 +41,48 @@ std::uint64_t SplitButtonComponent::addButton(const String& buttonText)
     m_buttons[buttonID]->setToggleState(false, dontSendNotification);
     m_buttons[buttonID]->addListener(this);
 
+    if (buttonFlex != -1)
+        m_buttonFlexes[buttonID] = buttonFlex;
+
+    if (m_buttonIds.size() == 1 && m_buttons.size() == 1 && m_buttons.at(m_buttonIds.at(0)))
+    {
+        // a single button has no connected edges
+        m_buttons.at(m_buttonIds.at(0))->setConnectedEdges(0);
+    }
+    else if (m_buttons.size() == 2 && m_buttons.at(m_buttonIds.at(0)) && m_buttons.at(m_buttonIds.at(1)))
+    {
+        // dual buttons have connected edges only at the inner one
+        m_buttons.at(m_buttonIds.at(0))->setConnectedEdges(juce::Button::ConnectedEdgeFlags::ConnectedOnRight);
+        m_buttons.at(m_buttonIds.at(1))->setConnectedEdges(juce::Button::ConnectedEdgeFlags::ConnectedOnLeft);
+    }
+    else
+    {
+        // all other cases require that the button that is added gets only the left edge
+        // set to flat and the previously rightmost button is modified to have both left and right edges now flat
+        auto prevButtonId = m_buttonIds.at(m_buttonIds.size() - 2);
+        auto lastButtonId = m_buttonIds.at(m_buttonIds.size() - 1);
+        if (m_buttons.at(prevButtonId) && m_buttons.at(lastButtonId))
+        {
+            m_buttons.at(prevButtonId)->setConnectedEdges(juce::Button::ConnectedEdgeFlags::ConnectedOnRight | juce::Button::ConnectedEdgeFlags::ConnectedOnLeft);
+            m_buttons.at(lastButtonId)->setConnectedEdges(juce::Button::ConnectedEdgeFlags::ConnectedOnLeft);
+        }
+    }
+
     return buttonID;
 }
 
-void SplitButtonComponent::addButtons(const StringArray& buttonTexts)
+void SplitButtonComponent::addButtons(const std::vector<juce::String>& buttonTexts, const std::vector<std::float_t>& buttonFlexes)
 {
-    for (auto buttonText : buttonTexts)
-        addButton(buttonText);
+    if (buttonTexts.size() != buttonFlexes.size())
+    {
+        for (auto const& buttonText : buttonTexts)
+            addButton(buttonText);
+    }
+    else
+    {
+        for (int i = 0; i < buttonTexts.size() && i < buttonFlexes.size(); i++)
+            addButton(buttonTexts.at(i), buttonFlexes.at(i));
+    }
 }
 
 void SplitButtonComponent::setButtonDown(const std::uint64_t buttonId)
@@ -58,7 +93,7 @@ void SplitButtonComponent::setButtonDown(const std::uint64_t buttonId)
     }
 }
 
-void SplitButtonComponent::setButtonDown(const String& buttonText)
+void SplitButtonComponent::setButtonDown(const juce::String& buttonText)
 {
     for (auto const& p : m_buttons)
     {
@@ -77,7 +112,7 @@ const std::uint64_t SplitButtonComponent::getButtonDown()
     return m_firstButtonID;
 }
 
-const String SplitButtonComponent::getButtonDownText()
+const juce::String SplitButtonComponent::getButtonDownText()
 {
     for (auto const& p : m_buttons)
     {
@@ -94,7 +129,7 @@ void SplitButtonComponent::setButtonEnabled(const std::uint64_t buttonId, bool e
         m_buttons[buttonId]->setEnabled(enabled);
 }
 
-void SplitButtonComponent::setButtonEnabled(const String& buttonText, bool enabled)
+void SplitButtonComponent::setButtonEnabled(const juce::String& buttonText, bool enabled)
 {
     for (auto const& p : m_buttons)
     {
@@ -111,7 +146,7 @@ bool SplitButtonComponent::getButtonEnabled(std::uint64_t buttonId) const
         return false;
 }
 
-bool SplitButtonComponent::getButtonEnabled(const String& buttonText) const
+bool SplitButtonComponent::getButtonEnabled(const juce::String& buttonText) const
 {
     for (auto const& p : m_buttons)
     {
@@ -122,23 +157,44 @@ bool SplitButtonComponent::getButtonEnabled(const String& buttonText) const
     return false;
 }
 
-void SplitButtonComponent::paint (Graphics& g)
+void SplitButtonComponent::paint (juce::Graphics& g)
 {
-	Component::paint(g);
+    juce::Component::paint(g);
 }
 
 void SplitButtonComponent::resized()
 {
-    FlexBox fb;
-    fb.flexDirection = FlexBox::Direction::row;
-    for (auto const& p : m_buttons)
+    juce::FlexBox fb;
+    fb.flexDirection = juce::FlexBox::Direction::row;
+    for (auto const& buttonId : m_buttonIds)
     {
-        fb.items.add(FlexItem(*p.second.get()).withFlex(1));
+        auto margin = juce::FlexItem::Margin(0, 0, 0, 0);
+        auto isFirstButton = (buttonId == m_buttonIds.at(0));
+        auto isFirstOfMultiButton = (isFirstButton && (m_buttonIds.size() > 1));
+        auto isLastButton = (buttonId == m_buttonIds.at(m_buttonIds.size() - 1));
+        auto isLastOfMultiButton = (isLastButton && (m_buttonIds.size() > 1));
+        auto isInbetweenButton = !isFirstButton && !isLastButton;
+        if (isFirstOfMultiButton)
+            margin = juce::FlexItem::Margin(0, -1, 0, 0);
+        else if (isLastOfMultiButton)
+            margin = juce::FlexItem::Margin(0, 0, 0, -1);
+        else if (isInbetweenButton)
+            margin = juce::FlexItem::Margin(0, -1, 0, -1);
+
+        if (0 != m_buttons.count(buttonId) && m_buttons.at(buttonId))
+        {
+            auto& button = m_buttons.at(buttonId);
+            auto hasFlexInfo = (1 == m_buttonFlexes.count(buttonId));
+            if (hasFlexInfo)
+                fb.items.add(juce::FlexItem(*button.get()).withFlex(m_buttonFlexes.at(buttonId)).withMargin(margin));
+            else
+                fb.items.add(juce::FlexItem(*button.get()).withFlex(1).withMargin(margin));
+        }
     }
     fb.performLayout(getLocalBounds().toFloat());
 }
 
-void SplitButtonComponent::buttonClicked(Button* button)
+void SplitButtonComponent::buttonClicked(juce::Button* button)
 {
     if (button)
     {
