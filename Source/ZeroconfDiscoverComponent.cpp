@@ -41,6 +41,20 @@ ZeroconfDiscoverComponent::~ZeroconfDiscoverComponent()
 	juce::Desktop::getInstance().removeGlobalMouseListener(this);
 }
 
+/**
+ * Reimplemented method to create the custom
+ * image position information using the internal
+ * m_imageSize information that was set on object construction.
+ * @return	The custom image position based on the internal m_imageSize setting.
+ */
+juce::Rectangle<float> ZeroconfDiscoverComponent::getImageBounds() const
+{
+	jassert(getStyle() == ButtonStyle::ImageOnButtonBackground); // this method implementation assumes the button style is set to ImageOnButtonBackground
+
+	auto bounds = getLocalBounds();
+	return bounds.reduced(3, 3).toFloat();
+};
+
 void ZeroconfDiscoverComponent::clearServices()
 {
 	for (int i = ZST_Unkown + 1; i < ZST_Max; ++i)
@@ -413,7 +427,7 @@ void ZeroconfDiscoverComponent::mouseDown(const juce::MouseEvent& e)
 			auto popupMenuHit = false;
 			while (iter.next())
 			{
-				if (iter.getItem().customComponent == e.originalComponent)
+				if (iter.getItem().customComponent.get() == e.originalComponent)
 				{
 					popupMenuHit = true;
 					break;
