@@ -34,6 +34,9 @@ ZeroconfDiscoverComponent::ZeroconfDiscoverComponent(const juce::String& name)
 	// and listener callback pattern useless. Therefor we have to detect 
 	// our button click by hand in ::mouseDown processing!
 	juce::Desktop::getInstance().addGlobalMouseListener(this);
+
+	// Initially prep. all lookandfeel dependant - esp. button icon in this case.
+	lookAndFeelChanged();
 }
 
 ZeroconfDiscoverComponent::~ZeroconfDiscoverComponent()
