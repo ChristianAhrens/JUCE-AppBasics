@@ -89,13 +89,104 @@ public:
 		virtual void onConfigUpdated() = 0;
 	};
 
+	class Version
+	{
+	public:
+		Version()
+		{
+		};
+		Version(const juce::String& versionString)
+		{
+			auto other = FromString(versionString);
+			m_major = other.GetMajor();
+			m_minor = other.GetMinor();
+			m_fixlevel = other.GetFixlevel();
+		};
+		Version(const Version& other)
+		{
+			m_major = other.GetMajor();
+			m_minor = other.GetMinor();
+			m_fixlevel = other.GetFixlevel();
+		};
+		Version(int major, int minor, int fixlevel)
+		{
+			m_major = major;
+			m_minor = minor;
+			m_fixlevel = fixlevel;
+		};
+		~Version()
+		{
+		};
+
+		bool operator==(const Version& other) const
+		{
+			return GetMajor() == other.GetMajor()
+				&& GetMinor() == other.GetMinor()
+				&& GetFixlevel() == other.GetFixlevel();
+		};
+		bool operator!=(const Version& other) const
+		{
+			return !(*this == other);
+		};
+
+		bool IsValid() const
+		{
+			return m_major != 0 || m_minor != 0 || m_fixlevel != 0;
+		};
+
+		static Version FromString(const juce::String& versionString)
+		{
+			auto sa = juce::StringArray();
+			auto cnt = sa.addTokens(versionString, ".", "");
+			jassert(3 == cnt);
+			if (3 != cnt)
+				return Version();
+
+			return Version(sa[0].getIntValue(), sa[1].getIntValue(), sa[2].getIntValue());
+		};
+
+		static juce::String ToString(const Version& version)
+		{
+			juce::String rv;
+			rv << version.GetMajor() << "." << version.GetMinor() << "." << version.GetFixlevel();
+			return rv;
+		};
+
+		juce::String ToString() const
+		{
+			return Version::ToString(*this);
+		};
+
+		int GetMajor() const
+		{
+			return m_major;
+		};
+		int GetMinor() const
+		{
+			return m_minor;
+		};
+		int GetFixlevel() const
+		{
+			return m_fixlevel;
+		};
+
+	private:
+		int m_major { 0 };
+		int m_minor{ 0 };
+		int m_fixlevel{ 0 };
+	};
+
 public:
-	AppConfigurationBase(const File &file);
+	AppConfigurationBase();
 	virtual ~AppConfigurationBase();
 
 	static AppConfigurationBase* getInstance() noexcept;
 	static AppConfigurationBase*	m_singleton;
 	static String getDefaultConfigFilePath() noexcept;
+
+	void InitializeBase(const juce::File& file, const Version& configVersion = Version());
+
+	bool UsesConfigVersion() { return m_configVersion.IsValid(); };
 
 	virtual bool isValid();
 	static bool isValid(const std::unique_ptr<XmlElement>& xmlConfiguration);
@@ -118,9 +209,12 @@ public:
 	void ResetFlushAndUpdateDisabled(bool flushAndUpdateNow = true);
 
 protected:
-	std::unique_ptr<XmlElement>		m_xml{ nullptr };
-	std::unique_ptr<XmlElement>		m_xmlFileFlushCopy{ nullptr };
-	std::mutex						m_xmlCopyAccessMutex;
+	virtual bool HandleConfigVersionConflict(const Version& configVersionFound);
+
+protected:
+	std::unique_ptr<XmlElement>	m_xml{ nullptr };
+	std::unique_ptr<XmlElement>	m_xmlFileFlushCopy{ nullptr };
+	std::mutex							m_xmlCopyAccessMutex;
 	
 	std::unique_ptr<File>			m_file{ nullptr };
 	std::unique_ptr<std::thread>	m_fileFlushThread;
@@ -146,6 +240,8 @@ private:
 	std::vector<Watcher*>		m_watchers;
 
 	std::pair<bool, bool>		m_flushAndUpdateDisabled{ false, false };
+
+	Version						m_configVersion;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AppConfigurationBase)
 };

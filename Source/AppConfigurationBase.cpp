@@ -18,27 +18,33 @@ namespace JUCEAppBasics
 AppConfigurationBase* AppConfigurationBase::m_singleton = nullptr;
 
 
-AppConfigurationBase::AppConfigurationBase(const File& file)
-	: m_file(std::make_unique<File>(file))
+AppConfigurationBase::AppConfigurationBase()
 {
 	if (m_singleton)
 		jassertfalse;
 	m_singleton = this;
-
-	if (!exists() && !create())
-		jassertfalse;
-
-	initializeFromDisk();
-
-	if (!flush(false))
-		jassertfalse;
-
-	SetupFileFlushThread();
 }
 
 AppConfigurationBase::~AppConfigurationBase()
 {
 	TeardownFileFlushThread();
+}
+
+void AppConfigurationBase::InitializeBase(const juce::File& file, const Version& configVersion)
+{
+	m_file = std::make_unique<juce::File>(file);
+	m_configVersion = configVersion;
+
+	if (!exists() && !create())
+		jassertfalse;
+
+	if (!initializeFromDisk())
+		jassertfalse;
+
+	if (!flush(false))
+		jassertfalse;
+
+	SetupFileFlushThread();
 }
 
 void AppConfigurationBase::SetupFileFlushThread()
@@ -133,9 +139,25 @@ bool AppConfigurationBase::initializeFromDisk()
 {
 	m_xml = juce::parseXML(*m_file.get());
 
-	if (m_xml && m_xml->hasTagName(JUCEApplication::getInstance()->getApplicationName()))
+	if (m_xml && m_xml->hasTagName(juce::JUCEApplication::getInstance()->getApplicationName()))
 	{
-		return true;
+		if (UsesConfigVersion())
+		{
+			const juce::String cfgVAttributeName = "configVersion";
+			if (!m_xml->hasAttribute(cfgVAttributeName))
+			{
+				m_xml->setAttribute(cfgVAttributeName, m_configVersion.ToString());
+				return true;
+			}
+			else
+			{
+				auto configVersionFound = Version::FromString(m_xml->getStringAttribute(cfgVAttributeName));
+				if (configVersionFound != m_configVersion)
+					return HandleConfigVersionConflict(configVersionFound);
+			}
+		}
+		
+		return true;		
 	}
 	else
 	{
@@ -182,7 +204,7 @@ void AppConfigurationBase::addDumper(AppConfigurationBase::Dumper* d)
 void AppConfigurationBase::triggerConfigurationDump(bool includeWatcherUpdate)
 {
 
-	for (auto d : m_dumpers)
+	for (const auto& d : m_dumpers)
 		d->performConfigurationDump();
 
 	flush(includeWatcherUpdate);
@@ -211,7 +233,7 @@ void AppConfigurationBase::triggerWatcherUpdate()
 		return;
 	}
 
-	for (auto w : m_watchers)
+	for (const auto& w : m_watchers)
 		w->onConfigUpdated();
 }
 
@@ -296,6 +318,16 @@ void AppConfigurationBase::ResetFlushAndUpdateDisabled(bool flushAndUpdateNow)
 
 	if (flushAndUpdateNow)
 		flush(true);
+}
+
+bool AppConfigurationBase::HandleConfigVersionConflict(const JUCEAppBasics::AppConfigurationBase::Version& configVersionFound)
+{
+	// This virtual method requires reimplementation, as soon as config version conflict handling is
+	// required by the application using an derived instance of AppConfigurationBase!
+	// This method implementation is a placeholder for as long as no config file version tracking 
+	// is used and the version is unchanged to what was originally set as default!
+	jassert(configVersionFound == m_configVersion);
+	return configVersionFound == m_configVersion;
 }
 
 #ifdef DEBUG
