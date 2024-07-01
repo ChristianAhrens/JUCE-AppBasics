@@ -9,8 +9,17 @@ class CustomLookAndFeel : public LookAndFeel_V4
 {
 
 public:
-	CustomLookAndFeel();
+	enum PaletteStyle
+	{
+		PS_Dark,
+		PS_Light
+	};
+
+public:
+	CustomLookAndFeel(PaletteStyle style = PS_Dark);
 	~CustomLookAndFeel();
+
+	void setPaletteStyle(PaletteStyle style);
 
 	//==============================================================================
 	void drawButtonBackground(Graphics&, Button&, const Colour& backgroundColour,

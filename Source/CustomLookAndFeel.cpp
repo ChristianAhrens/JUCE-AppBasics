@@ -3,86 +3,188 @@
 namespace JUCEAppBasics
 {
 
-CustomLookAndFeel::CustomLookAndFeel()
+CustomLookAndFeel::CustomLookAndFeel(PaletteStyle style)
 {
-	setColour(ColourScheme::windowBackground, Colours::darkgrey);
-	setColour(ColourScheme::widgetBackground, Colours::grey);
-	setColour(ColourScheme::menuBackground, Colours::darkgrey.darker());
-	setColour(ColourScheme::outline, Colours::lightgrey);
-	setColour(ColourScheme::defaultText, Colours::lightgrey);
-	setColour(ColourScheme::defaultFill, Colours::grey);
-	setColour(ColourScheme::highlightedText, Colours::white);
-	setColour(ColourScheme::highlightedFill, Colours::grey);
-	setColour(ColourScheme::menuText, Colours::dimgrey);
+    setPaletteStyle(style);
+}
 
-	setColour(ResizableWindow::ColourIds::backgroundColourId, Colours::darkgrey);
+void CustomLookAndFeel::setPaletteStyle(PaletteStyle style)
+{
+    switch (style)
+    {
+    case PS_Light:
+        setColour(ColourScheme::windowBackground, Colours::lightgrey);
+        setColour(ColourScheme::widgetBackground, Colours::grey);
+        setColour(ColourScheme::menuBackground, Colours::lightgrey.brighter());
+        setColour(ColourScheme::outline, Colours::darkgrey);
+        setColour(ColourScheme::defaultText, Colours::darkgrey);
+        setColour(ColourScheme::defaultFill, Colours::grey);
+        setColour(ColourScheme::highlightedText, Colours::black);
+        setColour(ColourScheme::highlightedFill, Colours::grey);
+        setColour(ColourScheme::menuText, Colours::slategrey);
 
-	setColour(TextEditor::ColourIds::backgroundColourId, Colours::darkgrey);
-	setColour(TextEditor::ColourIds::textColourId, Colours::white);
-	setColour(TextEditor::ColourIds::highlightColourId, Colours::dimgrey);
-	setColour(TextEditor::ColourIds::highlightedTextColourId, Colours::lightgrey);
-	setColour(TextEditor::ColourIds::outlineColourId, Colours::lightgrey);
-	setColour(TextEditor::ColourIds::focusedOutlineColourId, Colours::lightgrey);
-	setColour(TextEditor::ColourIds::shadowColourId, Colours::grey);
+        setColour(ResizableWindow::ColourIds::backgroundColourId, Colours::lightgrey);
 
-	setColour(ComboBox::ColourIds::arrowColourId, Colours::lightgrey);
-	setColour(ComboBox::ColourIds::backgroundColourId, Colours::darkgrey);
-	setColour(ComboBox::ColourIds::buttonColourId, Colours::grey);
-	setColour(ComboBox::ColourIds::focusedOutlineColourId, Colours::darkgrey);
-	setColour(ComboBox::ColourIds::outlineColourId, Colours::lightgrey);
-	setColour(ComboBox::ColourIds::textColourId, Colours::white);
-    
-    setColour(PopupMenu::ColourIds::backgroundColourId, Colours::darkgrey);
-    setColour(PopupMenu::ColourIds::textColourId, Colours::white);
-    setColour(PopupMenu::ColourIds::headerTextColourId, Colours::lightgrey);
-    setColour(PopupMenu::ColourIds::highlightedBackgroundColourId, Colours::white);
-    setColour(PopupMenu::ColourIds::highlightedTextColourId, Colours::lightgrey);
+        setColour(TextEditor::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(TextEditor::ColourIds::textColourId, Colours::black);
+        setColour(TextEditor::ColourIds::highlightColourId, Colours::slategrey);
+        setColour(TextEditor::ColourIds::highlightedTextColourId, Colours::darkgrey);
+        setColour(TextEditor::ColourIds::outlineColourId, Colours::darkgrey);
+        setColour(TextEditor::ColourIds::focusedOutlineColourId, Colours::darkgrey);
+        setColour(TextEditor::ColourIds::shadowColourId, Colours::grey);
 
-	setColour(TextButton::ColourIds::buttonColourId, Colours::grey); // this applies for DrawableButton as well
-    setColour(TextButton::ColourIds::buttonOnColourId, Colours::lightgrey); // this applies for DrawableButton as well
-	setColour(TextButton::ColourIds::textColourOffId, Colours::white);
-	setColour(TextButton::ColourIds::textColourOnId, Colours::white);
+        setColour(ComboBox::ColourIds::arrowColourId, Colours::darkgrey);
+        setColour(ComboBox::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(ComboBox::ColourIds::buttonColourId, Colours::grey);
+        setColour(ComboBox::ColourIds::focusedOutlineColourId, Colours::lightgrey);
+        setColour(ComboBox::ColourIds::outlineColourId, Colours::darkgrey);
+        setColour(ComboBox::ColourIds::textColourId, Colours::black);
 
-    setColour(DrawableButton::ColourIds::textColourId, Colours::white);
-    setColour(DrawableButton::ColourIds::textColourOnId, Colours::white);
-    setColour(DrawableButton::ColourIds::backgroundColourId, Colours::darkgrey);
-	setColour(DrawableButton::ColourIds::backgroundOnColourId, Colours::darkgrey);
-    
-    setColour(ListBox::ColourIds::backgroundColourId, Colours::darkgrey);
-    setColour(ListBox::ColourIds::outlineColourId, Colours::lightgrey);
-    setColour(ListBox::ColourIds::textColourId, Colours::white);
+        setColour(PopupMenu::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(PopupMenu::ColourIds::textColourId, Colours::black);
+        setColour(PopupMenu::ColourIds::headerTextColourId, Colours::darkgrey);
+        setColour(PopupMenu::ColourIds::highlightedBackgroundColourId, Colours::black);
+        setColour(PopupMenu::ColourIds::highlightedTextColourId, Colours::darkgrey);
+
+        setColour(TextButton::ColourIds::buttonColourId, Colours::grey); // this applies for DrawableButton as well
+        setColour(TextButton::ColourIds::buttonOnColourId, Colours::darkgrey); // this applies for DrawableButton as well
+        setColour(TextButton::ColourIds::textColourOffId, Colours::black);
+        setColour(TextButton::ColourIds::textColourOnId, Colours::black);
+
+        setColour(DrawableButton::ColourIds::textColourId, Colours::black);
+        setColour(DrawableButton::ColourIds::textColourOnId, Colours::black);
+        setColour(DrawableButton::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(DrawableButton::ColourIds::backgroundOnColourId, Colours::lightgrey);
+
+        setColour(ListBox::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(ListBox::ColourIds::outlineColourId, Colours::darkgrey);
+        setColour(ListBox::ColourIds::textColourId, Colours::black);
+
+        setColour(TableHeaderComponent::ColourIds::textColourId, Colours::black);
+        setColour(TableHeaderComponent::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(TableHeaderComponent::ColourIds::outlineColourId, Colours::grey);
+        setColour(TableHeaderComponent::ColourIds::highlightColourId, Colours::grey);
+
+        setColour(ScrollBar::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(ScrollBar::ColourIds::thumbColourId, Colours::grey);
+        setColour(ScrollBar::ColourIds::trackColourId, Colours::grey);
+
+        setColour(TableListBox::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(TableListBox::ColourIds::outlineColourId, Colours::darkgrey);
+        setColour(TableListBox::ColourIds::textColourId, Colours::black);
+
+        setColour(CodeEditorComponent::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(CodeEditorComponent::ColourIds::defaultTextColourId, Colours::black);
+        setColour(CodeEditorComponent::ColourIds::highlightColourId, Colours::darkgrey);
+        setColour(CodeEditorComponent::ColourIds::lineNumberBackgroundId, Colours::grey);
+        setColour(CodeEditorComponent::ColourIds::lineNumberTextId, Colours::black);
+
+        setColour(Slider::ColourIds::backgroundColourId, Colours::lightgrey.brighter().brighter());
+        setColour(Slider::ColourIds::thumbColourId, Colours::grey);
+        setColour(Slider::ColourIds::trackColourId, Colours::lightgrey.brighter());
+        setColour(Slider::ColourIds::rotarySliderFillColourId, Colours::lightgrey.brighter());
+        setColour(Slider::ColourIds::rotarySliderOutlineColourId, Colours::lightgrey.brighter().brighter());
+        setColour(Slider::ColourIds::textBoxTextColourId, Colours::black);
+        setColour(Slider::ColourIds::textBoxBackgroundColourId, Colours::lightgrey);
+        setColour(Slider::ColourIds::textBoxHighlightColourId, Colours::slategrey);
+        setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::darkgrey);
+
+        setColour(ColourSelector::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(ColourSelector::ColourIds::labelTextColourId, Colours::black);
+
+        setColour(ToggleButton::ColourIds::textColourId, Colours::black);
+        setColour(ToggleButton::ColourIds::tickColourId, Colours::black);
+        setColour(ToggleButton::ColourIds::tickDisabledColourId, Colours::black.brighter());
+
+        break;
+    case PS_Dark:
+    default:
+        setColour(ColourScheme::windowBackground, Colours::darkgrey);
+        setColour(ColourScheme::widgetBackground, Colours::grey);
+        setColour(ColourScheme::menuBackground, Colours::darkgrey.darker());
+        setColour(ColourScheme::outline, Colours::lightgrey);
+        setColour(ColourScheme::defaultText, Colours::lightgrey);
+        setColour(ColourScheme::defaultFill, Colours::grey);
+        setColour(ColourScheme::highlightedText, Colours::white);
+        setColour(ColourScheme::highlightedFill, Colours::grey);
+        setColour(ColourScheme::menuText, Colours::dimgrey);
+
+        setColour(ResizableWindow::ColourIds::backgroundColourId, Colours::darkgrey);
+
+        setColour(TextEditor::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(TextEditor::ColourIds::textColourId, Colours::white);
+        setColour(TextEditor::ColourIds::highlightColourId, Colours::dimgrey);
+        setColour(TextEditor::ColourIds::highlightedTextColourId, Colours::lightgrey);
+        setColour(TextEditor::ColourIds::outlineColourId, Colours::lightgrey);
+        setColour(TextEditor::ColourIds::focusedOutlineColourId, Colours::lightgrey);
+        setColour(TextEditor::ColourIds::shadowColourId, Colours::grey);
+
+        setColour(ComboBox::ColourIds::arrowColourId, Colours::lightgrey);
+        setColour(ComboBox::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(ComboBox::ColourIds::buttonColourId, Colours::grey);
+        setColour(ComboBox::ColourIds::focusedOutlineColourId, Colours::darkgrey);
+        setColour(ComboBox::ColourIds::outlineColourId, Colours::lightgrey);
+        setColour(ComboBox::ColourIds::textColourId, Colours::white);
+
+        setColour(PopupMenu::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(PopupMenu::ColourIds::textColourId, Colours::white);
+        setColour(PopupMenu::ColourIds::headerTextColourId, Colours::lightgrey);
+        setColour(PopupMenu::ColourIds::highlightedBackgroundColourId, Colours::white);
+        setColour(PopupMenu::ColourIds::highlightedTextColourId, Colours::lightgrey);
+
+        setColour(TextButton::ColourIds::buttonColourId, Colours::grey); // this applies for DrawableButton as well
+        setColour(TextButton::ColourIds::buttonOnColourId, Colours::lightgrey); // this applies for DrawableButton as well
+        setColour(TextButton::ColourIds::textColourOffId, Colours::white);
+        setColour(TextButton::ColourIds::textColourOnId, Colours::white);
+
+        setColour(DrawableButton::ColourIds::textColourId, Colours::white);
+        setColour(DrawableButton::ColourIds::textColourOnId, Colours::white);
+        setColour(DrawableButton::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(DrawableButton::ColourIds::backgroundOnColourId, Colours::darkgrey);
+
+        setColour(ListBox::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(ListBox::ColourIds::outlineColourId, Colours::lightgrey);
+        setColour(ListBox::ColourIds::textColourId, Colours::white);
+
+        setColour(TableHeaderComponent::ColourIds::textColourId, Colours::white);
+        setColour(TableHeaderComponent::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(TableHeaderComponent::ColourIds::outlineColourId, Colours::grey);
+        setColour(TableHeaderComponent::ColourIds::highlightColourId, Colours::grey);
+
+        setColour(ScrollBar::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(ScrollBar::ColourIds::thumbColourId, Colours::grey);
+        setColour(ScrollBar::ColourIds::trackColourId, Colours::grey);
+
+        setColour(TableListBox::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(TableListBox::ColourIds::outlineColourId, Colours::lightgrey);
+        setColour(TableListBox::ColourIds::textColourId, Colours::white);
+
+        setColour(CodeEditorComponent::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(CodeEditorComponent::ColourIds::defaultTextColourId, Colours::white);
+        setColour(CodeEditorComponent::ColourIds::highlightColourId, Colours::lightgrey);
+        setColour(CodeEditorComponent::ColourIds::lineNumberBackgroundId, Colours::grey);
+        setColour(CodeEditorComponent::ColourIds::lineNumberTextId, Colours::white);
+
+        setColour(Slider::ColourIds::backgroundColourId, Colours::darkgrey.darker().darker());
+        setColour(Slider::ColourIds::thumbColourId, Colours::grey);
+        setColour(Slider::ColourIds::trackColourId, Colours::darkgrey.darker());
+        setColour(Slider::ColourIds::rotarySliderFillColourId, Colours::darkgrey.darker());
+        setColour(Slider::ColourIds::rotarySliderOutlineColourId, Colours::darkgrey.darker().darker());
+        setColour(Slider::ColourIds::textBoxTextColourId, Colours::white);
+        setColour(Slider::ColourIds::textBoxBackgroundColourId, Colours::darkgrey);
+        setColour(Slider::ColourIds::textBoxHighlightColourId, Colours::dimgrey);
+        setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::lightgrey);
+
+        setColour(ColourSelector::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(ColourSelector::ColourIds::labelTextColourId, Colours::white);
+
+        setColour(ToggleButton::ColourIds::textColourId, Colours::white);
+        setColour(ToggleButton::ColourIds::tickColourId, Colours::white);
+        setColour(ToggleButton::ColourIds::tickDisabledColourId, Colours::white.darker());
+
+        break;
+    }
 	
-	setColour(TableHeaderComponent::ColourIds::textColourId, Colours::white);
-	setColour(TableHeaderComponent::ColourIds::backgroundColourId, Colours::darkgrey);
-	setColour(TableHeaderComponent::ColourIds::outlineColourId, Colours::grey);
-	setColour(TableHeaderComponent::ColourIds::highlightColourId, Colours::grey);
-
-	setColour(ScrollBar::ColourIds::backgroundColourId, Colours::darkgrey);
-	setColour(ScrollBar::ColourIds::thumbColourId, Colours::grey);
-	setColour(ScrollBar::ColourIds::trackColourId, Colours::grey);
-
-	setColour(TableListBox::ColourIds::backgroundColourId, Colours::darkgrey);
-	setColour(TableListBox::ColourIds::outlineColourId, Colours::lightgrey);
-	setColour(TableListBox::ColourIds::textColourId, Colours::white);
-
-	setColour(CodeEditorComponent::ColourIds::backgroundColourId, Colours::darkgrey);
-	setColour(CodeEditorComponent::ColourIds::defaultTextColourId, Colours::white);
-	setColour(CodeEditorComponent::ColourIds::highlightColourId, Colours::lightgrey);
-	setColour(CodeEditorComponent::ColourIds::lineNumberBackgroundId, Colours::grey);
-	setColour(CodeEditorComponent::ColourIds::lineNumberTextId, Colours::white);
-    
-    setColour(Slider::ColourIds::backgroundColourId, Colours::darkgrey.darker().darker());
-    setColour(Slider::ColourIds::thumbColourId, Colours::grey);
-    setColour(Slider::ColourIds::trackColourId, Colours::darkgrey.darker());
-    setColour(Slider::ColourIds::rotarySliderFillColourId, Colours::darkgrey.darker());
-    setColour(Slider::ColourIds::rotarySliderOutlineColourId, Colours::darkgrey.darker().darker());
-    setColour(Slider::ColourIds::textBoxTextColourId, Colours::white);
-    setColour(Slider::ColourIds::textBoxBackgroundColourId, Colours::darkgrey);
-    setColour(Slider::ColourIds::textBoxHighlightColourId, Colours::dimgrey);
-    setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::lightgrey);
-
-    setColour(ColourSelector::ColourIds::backgroundColourId, Colours::darkgrey);
-    setColour(ColourSelector::ColourIds::labelTextColourId, Colours::white);
 }
 
 CustomLookAndFeel::~CustomLookAndFeel()
