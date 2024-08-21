@@ -173,6 +173,14 @@ JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPhone(const juce::String& d
         return KnownDevices::iPhone14Plus;
     if (deviceDescription == "iPhone15,3") // iPhone 14 Pro Max
         return KnownDevices::iPhone14ProMax;
+    if (deviceDescription == "iPhone15,4") // iPhone 15
+        return KnownDevices::iPhone15;
+    if (deviceDescription == "iPhone16,1") // iPhone 15 Pro
+        return KnownDevices::iPhone15Pro;
+    if (deviceDescription == "iPhone15,5") // iPhone 15 Plus
+        return KnownDevices::iPhone15Plus;
+    if (deviceDescription == "iPhone16,2") // iPhone 15 Pro Max
+        return KnownDevices::iPhone15ProMax;
     if (deviceDescription.contains("iPhone"))
         return KnownDevices::GenericiPhone;
     
@@ -537,6 +545,10 @@ JUCEAppBasics::iOS_utils::KnownDevices getGenericDeviceType()
     case iPhone14Plus:
     case iPhone14Pro:
     case iPhone14ProMax:
+    case iPhone15:
+    case iPhone15Plus:
+    case iPhone15Pro:
+    case iPhone15ProMax:
         return GenericiPhone;
     case GenericiPad:
     case iPad:
@@ -613,26 +625,39 @@ int getDeviceDisplayNotchIndent()
         displayNotchIndent = 0;
         break;
     case iPhoneX:
-    case iPhoneXR:
     case iPhoneXS:
+        displayNotchIndent = 31;
+        break;
     case iPhoneXSMax:
-    case iPhone11:
     case iPhone11Pro:
     case iPhone11ProMax:
+        displayNotchIndent = 32;
+        break;
     case iPhone12:
-    case iPhone12Mini:
     case iPhone12Pro:
     case iPhone12ProMax:
+        displayNotchIndent = 34;
+        break;
+    case iPhoneXR:
+    case iPhone11:
+    case iPhone12Mini:
     case iPhone13:
-    case iPhone13Mini:
     case iPhone13Pro:
+    case iPhone13ProMax:
     case iPhone14:
     case iPhone14Plus:
     case GenericiPhone:
         displayNotchIndent = 35;
         break;
+    case iPhone13Mini:
+        displayNotchIndent = 39;
+        break;
     case iPhone14Pro:
     case iPhone14ProMax:
+    case iPhone15:
+    case iPhone15Plus:
+    case iPhone15Pro:
+    case iPhone15ProMax:
         displayNotchIndent = 50;
         break;
     case iPad:
@@ -719,6 +744,10 @@ int getDeviceDisplaySlideBarIndent()
     case iPhone14Plus:
     case iPhone14Pro:
     case iPhone14ProMax:
+    case iPhone15:
+    case iPhone15Plus:
+    case iPhone15Pro:
+    case iPhone15ProMax:
         slideBarIndent = 20;
         break;
     case iPad:
