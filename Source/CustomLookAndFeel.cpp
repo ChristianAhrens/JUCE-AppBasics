@@ -96,6 +96,9 @@ void CustomLookAndFeel::setPaletteStyle(PaletteStyle style)
         setColour(ToggleButton::ColourIds::tickColourId, Colours::black);
         setColour(ToggleButton::ColourIds::tickDisabledColourId, Colours::black.brighter());
 
+        setColour(Label::ColourIds::textColourId, Colours::black);
+        setColour(Label::ColourIds::textWhenEditingColourId, Colours::black);
+
         break;
     case PS_Dark:
     default:
@@ -181,6 +184,9 @@ void CustomLookAndFeel::setPaletteStyle(PaletteStyle style)
         setColour(ToggleButton::ColourIds::textColourId, Colours::white);
         setColour(ToggleButton::ColourIds::tickColourId, Colours::white);
         setColour(ToggleButton::ColourIds::tickDisabledColourId, Colours::white.darker());
+
+        setColour(Label::ColourIds::textColourId, Colours::white);
+        setColour(Label::ColourIds::textWhenEditingColourId, Colours::white);
 
         break;
     }
