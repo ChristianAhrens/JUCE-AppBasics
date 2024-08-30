@@ -23,7 +23,9 @@ void CustomLookAndFeel::setPaletteStyle(PaletteStyle style)
         setColour(ColourScheme::highlightedFill, Colours::grey);
         setColour(ColourScheme::menuText, Colours::slategrey);
 
-        setColour(ResizableWindow::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(ResizableWindow::ColourIds::backgroundColourId, Colours::lightgrey.brighter());
+
+        setColour(AlertWindow::ColourIds::backgroundColourId, Colours::lightgrey);
 
         setColour(TextEditor::ColourIds::backgroundColourId, Colours::lightgrey);
         setColour(TextEditor::ColourIds::textColourId, Colours::black);
@@ -112,7 +114,9 @@ void CustomLookAndFeel::setPaletteStyle(PaletteStyle style)
         setColour(ColourScheme::highlightedFill, Colours::grey);
         setColour(ColourScheme::menuText, Colours::dimgrey);
 
-        setColour(ResizableWindow::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(ResizableWindow::ColourIds::backgroundColourId, Colours::darkgrey.darker());
+
+        setColour(AlertWindow::ColourIds::backgroundColourId, Colours::darkgrey);
 
         setColour(TextEditor::ColourIds::backgroundColourId, Colours::darkgrey);
         setColour(TextEditor::ColourIds::textColourId, Colours::white);
