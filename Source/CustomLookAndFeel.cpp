@@ -13,85 +13,85 @@ void CustomLookAndFeel::setPaletteStyle(PaletteStyle style)
     switch (style)
     {
     case PS_Light:
-        setColour(ColourScheme::windowBackground, Colours::lightgrey);
-        setColour(ColourScheme::widgetBackground, Colours::grey);
-        setColour(ColourScheme::menuBackground, Colours::lightgrey.brighter());
+        setColour(ColourScheme::windowBackground, Colours::lightgrey.brighter());
+        setColour(ColourScheme::widgetBackground, Colours::grey.brighter());
+        setColour(ColourScheme::menuBackground, Colours::lightgrey.brighter().brighter());
         setColour(ColourScheme::outline, Colours::darkgrey);
         setColour(ColourScheme::defaultText, Colours::darkgrey);
-        setColour(ColourScheme::defaultFill, Colours::grey);
+        setColour(ColourScheme::defaultFill, Colours::grey.brighter());
         setColour(ColourScheme::highlightedText, Colours::black);
-        setColour(ColourScheme::highlightedFill, Colours::grey);
+        setColour(ColourScheme::highlightedFill, Colours::grey.brighter());
         setColour(ColourScheme::menuText, Colours::slategrey);
 
-        setColour(ResizableWindow::ColourIds::backgroundColourId, Colours::lightgrey.brighter());
+        setColour(ResizableWindow::ColourIds::backgroundColourId, Colours::lightgrey.brighter().brighter());
 
-        setColour(AlertWindow::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(AlertWindow::ColourIds::backgroundColourId, Colours::lightgrey.brighter());
 
-        setColour(TextEditor::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(TextEditor::ColourIds::backgroundColourId, Colours::lightgrey.brighter());
         setColour(TextEditor::ColourIds::textColourId, Colours::black);
-        setColour(TextEditor::ColourIds::highlightColourId, Colours::slategrey);
+        setColour(TextEditor::ColourIds::highlightColourId, Colours::slategrey.brighter());
         setColour(TextEditor::ColourIds::highlightedTextColourId, Colours::darkgrey);
         setColour(TextEditor::ColourIds::outlineColourId, Colours::darkgrey);
         setColour(TextEditor::ColourIds::focusedOutlineColourId, Colours::darkgrey);
-        setColour(TextEditor::ColourIds::shadowColourId, Colours::grey);
+        setColour(TextEditor::ColourIds::shadowColourId, Colours::grey.brighter());
 
         setColour(ComboBox::ColourIds::arrowColourId, Colours::darkgrey);
-        setColour(ComboBox::ColourIds::backgroundColourId, Colours::lightgrey);
-        setColour(ComboBox::ColourIds::buttonColourId, Colours::grey);
+        setColour(ComboBox::ColourIds::backgroundColourId, Colours::lightgrey.brighter());
+        setColour(ComboBox::ColourIds::buttonColourId, Colours::grey.brighter());
         setColour(ComboBox::ColourIds::focusedOutlineColourId, Colours::lightgrey);
         setColour(ComboBox::ColourIds::outlineColourId, Colours::darkgrey);
         setColour(ComboBox::ColourIds::textColourId, Colours::black);
 
-        setColour(PopupMenu::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(PopupMenu::ColourIds::backgroundColourId, Colours::lightgrey.brighter());
         setColour(PopupMenu::ColourIds::textColourId, Colours::black);
         setColour(PopupMenu::ColourIds::headerTextColourId, Colours::darkgrey);
-        setColour(PopupMenu::ColourIds::highlightedBackgroundColourId, Colours::black);
+        setColour(PopupMenu::ColourIds::highlightedBackgroundColourId, Colours::black.brighter());
         setColour(PopupMenu::ColourIds::highlightedTextColourId, Colours::darkgrey);
 
-        setColour(TextButton::ColourIds::buttonColourId, Colours::grey); // this applies for DrawableButton as well
-        setColour(TextButton::ColourIds::buttonOnColourId, Colours::darkgrey); // this applies for DrawableButton as well
+        setColour(TextButton::ColourIds::buttonColourId, Colours::grey.brighter()); // this applies for DrawableButton as well
+        setColour(TextButton::ColourIds::buttonOnColourId, Colours::darkgrey.brighter()); // this applies for DrawableButton as well
         setColour(TextButton::ColourIds::textColourOffId, Colours::black);
         setColour(TextButton::ColourIds::textColourOnId, Colours::black);
 
         setColour(DrawableButton::ColourIds::textColourId, Colours::black);
         setColour(DrawableButton::ColourIds::textColourOnId, Colours::black);
-        setColour(DrawableButton::ColourIds::backgroundColourId, Colours::lightgrey);
-        setColour(DrawableButton::ColourIds::backgroundOnColourId, Colours::lightgrey);
+        setColour(DrawableButton::ColourIds::backgroundColourId, Colours::lightgrey.brighter());
+        setColour(DrawableButton::ColourIds::backgroundOnColourId, Colours::lightgrey.brighter());
 
-        setColour(ListBox::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(ListBox::ColourIds::backgroundColourId, Colours::lightgrey.brighter());
         setColour(ListBox::ColourIds::outlineColourId, Colours::darkgrey);
         setColour(ListBox::ColourIds::textColourId, Colours::black);
 
         setColour(TableHeaderComponent::ColourIds::textColourId, Colours::black);
-        setColour(TableHeaderComponent::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(TableHeaderComponent::ColourIds::backgroundColourId, Colours::lightgrey.brighter());
         setColour(TableHeaderComponent::ColourIds::outlineColourId, Colours::grey);
-        setColour(TableHeaderComponent::ColourIds::highlightColourId, Colours::grey);
+        setColour(TableHeaderComponent::ColourIds::highlightColourId, Colours::grey.brighter());
 
-        setColour(ScrollBar::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(ScrollBar::ColourIds::backgroundColourId, Colours::lightgrey.brighter());
         setColour(ScrollBar::ColourIds::thumbColourId, Colours::grey);
         setColour(ScrollBar::ColourIds::trackColourId, Colours::grey);
 
-        setColour(TableListBox::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(TableListBox::ColourIds::backgroundColourId, Colours::lightgrey.brighter());
         setColour(TableListBox::ColourIds::outlineColourId, Colours::darkgrey);
         setColour(TableListBox::ColourIds::textColourId, Colours::black);
 
-        setColour(CodeEditorComponent::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(CodeEditorComponent::ColourIds::backgroundColourId, Colours::lightgrey.brighter());
         setColour(CodeEditorComponent::ColourIds::defaultTextColourId, Colours::black);
-        setColour(CodeEditorComponent::ColourIds::highlightColourId, Colours::darkgrey);
-        setColour(CodeEditorComponent::ColourIds::lineNumberBackgroundId, Colours::grey);
+        setColour(CodeEditorComponent::ColourIds::highlightColourId, Colours::darkgrey.brighter());
+        setColour(CodeEditorComponent::ColourIds::lineNumberBackgroundId, Colours::grey.brighter());
         setColour(CodeEditorComponent::ColourIds::lineNumberTextId, Colours::black);
 
-        setColour(Slider::ColourIds::backgroundColourId, Colours::lightgrey.brighter().brighter());
+        setColour(Slider::ColourIds::backgroundColourId, Colours::lightgrey.brighter().brighter().brighter());
         setColour(Slider::ColourIds::thumbColourId, Colours::grey);
         setColour(Slider::ColourIds::trackColourId, Colours::lightgrey.brighter());
         setColour(Slider::ColourIds::rotarySliderFillColourId, Colours::lightgrey.brighter());
         setColour(Slider::ColourIds::rotarySliderOutlineColourId, Colours::lightgrey.brighter().brighter());
         setColour(Slider::ColourIds::textBoxTextColourId, Colours::black);
-        setColour(Slider::ColourIds::textBoxBackgroundColourId, Colours::lightgrey);
-        setColour(Slider::ColourIds::textBoxHighlightColourId, Colours::slategrey);
+        setColour(Slider::ColourIds::textBoxBackgroundColourId, Colours::lightgrey.brighter());
+        setColour(Slider::ColourIds::textBoxHighlightColourId, Colours::slategrey.brighter());
         setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::darkgrey);
 
-        setColour(ColourSelector::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(ColourSelector::ColourIds::backgroundColourId, Colours::lightgrey.brighter());
         setColour(ColourSelector::ColourIds::labelTextColourId, Colours::black);
 
         setColour(ToggleButton::ColourIds::textColourId, Colours::black);
@@ -104,85 +104,85 @@ void CustomLookAndFeel::setPaletteStyle(PaletteStyle style)
         break;
     case PS_Dark:
     default:
-        setColour(ColourScheme::windowBackground, Colours::darkgrey);
-        setColour(ColourScheme::widgetBackground, Colours::grey);
-        setColour(ColourScheme::menuBackground, Colours::darkgrey.darker());
+        setColour(ColourScheme::windowBackground, Colours::darkgrey.darker());
+        setColour(ColourScheme::widgetBackground, Colours::grey.darker());
+        setColour(ColourScheme::menuBackground, Colours::darkgrey.darker().darker());
         setColour(ColourScheme::outline, Colours::lightgrey);
         setColour(ColourScheme::defaultText, Colours::lightgrey);
-        setColour(ColourScheme::defaultFill, Colours::grey);
+        setColour(ColourScheme::defaultFill, Colours::grey.darker());
         setColour(ColourScheme::highlightedText, Colours::white);
-        setColour(ColourScheme::highlightedFill, Colours::grey);
+        setColour(ColourScheme::highlightedFill, Colours::grey.darker());
         setColour(ColourScheme::menuText, Colours::dimgrey);
 
-        setColour(ResizableWindow::ColourIds::backgroundColourId, Colours::darkgrey.darker());
+        setColour(ResizableWindow::ColourIds::backgroundColourId, Colours::darkgrey.darker().darker());
 
-        setColour(AlertWindow::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(AlertWindow::ColourIds::backgroundColourId, Colours::darkgrey.darker());
 
-        setColour(TextEditor::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(TextEditor::ColourIds::backgroundColourId, Colours::darkgrey.darker());
         setColour(TextEditor::ColourIds::textColourId, Colours::white);
-        setColour(TextEditor::ColourIds::highlightColourId, Colours::dimgrey);
+        setColour(TextEditor::ColourIds::highlightColourId, Colours::dimgrey.darker());
         setColour(TextEditor::ColourIds::highlightedTextColourId, Colours::lightgrey);
         setColour(TextEditor::ColourIds::outlineColourId, Colours::lightgrey);
         setColour(TextEditor::ColourIds::focusedOutlineColourId, Colours::lightgrey);
-        setColour(TextEditor::ColourIds::shadowColourId, Colours::grey);
+        setColour(TextEditor::ColourIds::shadowColourId, Colours::grey.darker());
 
-        setColour(ComboBox::ColourIds::arrowColourId, Colours::lightgrey);
-        setColour(ComboBox::ColourIds::backgroundColourId, Colours::darkgrey);
-        setColour(ComboBox::ColourIds::buttonColourId, Colours::grey);
+        setColour(ComboBox::ColourIds::arrowColourId, Colours::lightgrey.darker());
+        setColour(ComboBox::ColourIds::backgroundColourId, Colours::darkgrey.darker());
+        setColour(ComboBox::ColourIds::buttonColourId, Colours::grey.darker());
         setColour(ComboBox::ColourIds::focusedOutlineColourId, Colours::darkgrey);
         setColour(ComboBox::ColourIds::outlineColourId, Colours::lightgrey);
         setColour(ComboBox::ColourIds::textColourId, Colours::white);
 
-        setColour(PopupMenu::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(PopupMenu::ColourIds::backgroundColourId, Colours::darkgrey.darker());
         setColour(PopupMenu::ColourIds::textColourId, Colours::white);
         setColour(PopupMenu::ColourIds::headerTextColourId, Colours::lightgrey);
-        setColour(PopupMenu::ColourIds::highlightedBackgroundColourId, Colours::white);
+        setColour(PopupMenu::ColourIds::highlightedBackgroundColourId, Colours::white.darker());
         setColour(PopupMenu::ColourIds::highlightedTextColourId, Colours::lightgrey);
 
-        setColour(TextButton::ColourIds::buttonColourId, Colours::grey); // this applies for DrawableButton as well
-        setColour(TextButton::ColourIds::buttonOnColourId, Colours::lightgrey); // this applies for DrawableButton as well
+        setColour(TextButton::ColourIds::buttonColourId, Colours::grey.darker()); // this applies for DrawableButton as well
+        setColour(TextButton::ColourIds::buttonOnColourId, Colours::lightgrey.darker()); // this applies for DrawableButton as well
         setColour(TextButton::ColourIds::textColourOffId, Colours::white);
         setColour(TextButton::ColourIds::textColourOnId, Colours::white);
 
         setColour(DrawableButton::ColourIds::textColourId, Colours::white);
         setColour(DrawableButton::ColourIds::textColourOnId, Colours::white);
-        setColour(DrawableButton::ColourIds::backgroundColourId, Colours::darkgrey);
-        setColour(DrawableButton::ColourIds::backgroundOnColourId, Colours::darkgrey);
+        setColour(DrawableButton::ColourIds::backgroundColourId, Colours::darkgrey.darker());
+        setColour(DrawableButton::ColourIds::backgroundOnColourId, Colours::darkgrey.darker());
 
-        setColour(ListBox::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(ListBox::ColourIds::backgroundColourId, Colours::darkgrey.darker());
         setColour(ListBox::ColourIds::outlineColourId, Colours::lightgrey);
         setColour(ListBox::ColourIds::textColourId, Colours::white);
 
         setColour(TableHeaderComponent::ColourIds::textColourId, Colours::white);
-        setColour(TableHeaderComponent::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(TableHeaderComponent::ColourIds::backgroundColourId, Colours::darkgrey.darker());
         setColour(TableHeaderComponent::ColourIds::outlineColourId, Colours::grey);
-        setColour(TableHeaderComponent::ColourIds::highlightColourId, Colours::grey);
+        setColour(TableHeaderComponent::ColourIds::highlightColourId, Colours::grey.darker());
 
-        setColour(ScrollBar::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(ScrollBar::ColourIds::backgroundColourId, Colours::darkgrey.darker());
         setColour(ScrollBar::ColourIds::thumbColourId, Colours::grey);
         setColour(ScrollBar::ColourIds::trackColourId, Colours::grey);
 
-        setColour(TableListBox::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(TableListBox::ColourIds::backgroundColourId, Colours::darkgrey.darker());
         setColour(TableListBox::ColourIds::outlineColourId, Colours::lightgrey);
         setColour(TableListBox::ColourIds::textColourId, Colours::white);
 
-        setColour(CodeEditorComponent::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(CodeEditorComponent::ColourIds::backgroundColourId, Colours::darkgrey.darker());
         setColour(CodeEditorComponent::ColourIds::defaultTextColourId, Colours::white);
-        setColour(CodeEditorComponent::ColourIds::highlightColourId, Colours::lightgrey);
-        setColour(CodeEditorComponent::ColourIds::lineNumberBackgroundId, Colours::grey);
+        setColour(CodeEditorComponent::ColourIds::highlightColourId, Colours::lightgrey.darker());
+        setColour(CodeEditorComponent::ColourIds::lineNumberBackgroundId, Colours::grey.darker());
         setColour(CodeEditorComponent::ColourIds::lineNumberTextId, Colours::white);
 
-        setColour(Slider::ColourIds::backgroundColourId, Colours::darkgrey.darker().darker());
+        setColour(Slider::ColourIds::backgroundColourId, Colours::darkgrey.darker().darker().darker());
         setColour(Slider::ColourIds::thumbColourId, Colours::grey);
         setColour(Slider::ColourIds::trackColourId, Colours::darkgrey.darker());
         setColour(Slider::ColourIds::rotarySliderFillColourId, Colours::darkgrey.darker());
         setColour(Slider::ColourIds::rotarySliderOutlineColourId, Colours::darkgrey.darker().darker());
         setColour(Slider::ColourIds::textBoxTextColourId, Colours::white);
-        setColour(Slider::ColourIds::textBoxBackgroundColourId, Colours::darkgrey);
-        setColour(Slider::ColourIds::textBoxHighlightColourId, Colours::dimgrey);
+        setColour(Slider::ColourIds::textBoxBackgroundColourId, Colours::darkgrey.darker());
+        setColour(Slider::ColourIds::textBoxHighlightColourId, Colours::dimgrey.darker());
         setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::lightgrey);
 
-        setColour(ColourSelector::ColourIds::backgroundColourId, Colours::darkgrey);
+        setColour(ColourSelector::ColourIds::backgroundColourId, Colours::darkgrey.darker());
         setColour(ColourSelector::ColourIds::labelTextColourId, Colours::white);
 
         setColour(ToggleButton::ColourIds::textColourId, Colours::white);
