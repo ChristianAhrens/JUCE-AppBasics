@@ -181,6 +181,14 @@ JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPhone(const juce::String& d
         return KnownDevices::iPhone15Plus;
     if (deviceDescription == "iPhone16,2") // iPhone 15 Pro Max
         return KnownDevices::iPhone15ProMax;
+    if (deviceDescription == "iPhone17,1") // iPhone 16 Pro
+        return KnownDevices::iPhone16Pro;
+    if (deviceDescription == "iPhone17,2") // iPhone 16 Pro Max
+        return KnownDevices::iPhone16ProMax;
+    if (deviceDescription == "iPhone17,3") // iPhone 16
+        return KnownDevices::iPhone16;
+    if (deviceDescription == "iPhone17,4") // iPhone 16 Plus
+        return KnownDevices::iPhone16Plus;
     if (deviceDescription.contains("iPhone"))
         return KnownDevices::GenericiPhone;
     
@@ -549,6 +557,10 @@ JUCEAppBasics::iOS_utils::KnownDevices getGenericDeviceType()
     case iPhone15Plus:
     case iPhone15Pro:
     case iPhone15ProMax:
+    case iPhone16:
+    case iPhone16Plus:
+    case iPhone16Pro:
+    case iPhone16ProMax:
         return GenericiPhone;
     case GenericiPad:
     case iPad:
@@ -658,6 +670,10 @@ int getDeviceDisplayNotchIndent()
     case iPhone15Plus:
     case iPhone15Pro:
     case iPhone15ProMax:
+    case iPhone16:
+    case iPhone16Plus:
+    case iPhone16Pro:
+    case iPhone16ProMax:
         displayNotchIndent = 50;
         break;
     case iPad:
@@ -748,6 +764,10 @@ int getDeviceDisplaySlideBarIndent()
     case iPhone15Plus:
     case iPhone15Pro:
     case iPhone15ProMax:
+    case iPhone16:
+    case iPhone16Plus:
+    case iPhone16Pro:
+    case iPhone16ProMax:
         slideBarIndent = 20;
         break;
     case iPad:
