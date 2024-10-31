@@ -232,7 +232,7 @@ void CustomLookAndFeel::drawGroupComponentOutline(Graphics& g,
     const float indent = 3.0f;
     const float textEdgeGap = 4.0f;
 
-    Font f(textH);
+    auto f = Font(FontOptions(textH));
 
     Path p;
     auto x = indent;
@@ -243,7 +243,7 @@ void CustomLookAndFeel::drawGroupComponentOutline(Graphics& g,
     auto textW = text.isEmpty() ? 0
         : jlimit(0.0f,
             jmax(0.0f, w - textEdgeGap * 2),
-            (float)f.getStringWidth(text) + textEdgeGap * 2.0f);
+            juce::GlyphArrangement::getStringWidth(f, text)+ textEdgeGap * 2.0f);
     auto textX = textEdgeGap;
 
     if (position.testFlags(Justification::horizontallyCentred))
