@@ -135,6 +135,33 @@ public:
         return false;
     }
 
+    juce::String GetStringInfoOnVersionsBelow(const VersionNumber& otherVersion)
+    {
+        jassert(!m_versionEntries.isEmpty());
+
+        juce::StringArray additions;
+        juce::StringArray changes;
+        juce::StringArray fixes;
+        for (auto const& versionEntry : m_versionEntries)
+        {
+            if (versionEntry._version > otherVersion)
+            {
+                for (auto const& addInfo : versionEntry._additions)
+                    additions.add(addInfo);
+                for (auto const& changeInfo : versionEntry._changes)
+                    changes.add(changeInfo);
+                for (auto const& fixInfo : versionEntry._fixes)
+                    fixes.add(fixInfo);
+            }
+        }
+
+        auto addedString = juce::String(additions.isEmpty() ? juce::String("") : juce::String("Added:\n") + additions.joinIntoString("\n"));
+        auto changedString = juce::String(changes.isEmpty() ? juce::String("") : juce::String("Changed:\n") + changes.joinIntoString("\n"));
+        auto fixedString = juce::String(fixes.isEmpty() ? juce::String("") : juce::String("Fixed:\n") + fixes.joinIntoString("\n"));
+
+        return addedString + (addedString.isEmpty() ? "" : "\n") + changedString + (changedString.isEmpty() ? "" : "\n") + fixedString;
+    }
+
     const juce::Array<VersionEntry>& GetVersions() { return m_versionEntries; }
 
 private:
@@ -202,28 +229,51 @@ private:
 };
 
 //==============================================================================
-
+/**
+ * @brief Constructor. Thread base class is initialized but not started here.
+ */
 WebUpdateDetector::WebUpdateDetector()
     : juce::Thread("WebUpdateDetectorThread")
 {
 }
 
+/**
+ * @brief Destructor. Base class thread is stopped and singleton cleaned up.
+ */
 WebUpdateDetector::~WebUpdateDetector()
 {
     stopThread(5000);
     clearSingletonInstance();
 }
 
+/**
+ * @brief Sets the internal member m_referenceVersion value.
+ *
+ * @param referenceVersion String defining the current version in semantic versioning format major.minor.fixlevel.
+ */
 void WebUpdateDetector::SetReferenceVersion(const juce::String& referenceVersion)
 {
     m_referenceVersion = referenceVersion;
 }
 
+/**
+ * @brief Sets the internal member m_downloadUpdateWebAddress value.
+ *
+ * @param downloadUpdateWebAddress String defining the web address to offer to the user as download location for new versions.
+ */
 void WebUpdateDetector::SetDownloadUpdateWebAddress(const juce::String& downloadUpdateWebAddress)
 {
     m_downloadUpdateWebAddress = downloadUpdateWebAddress;
 }
 
+/**
+ * @brief Method to start the base class thread for version checking.
+ *
+ * @details Calling this with a new webUpdateServerAddress when already started before results in an assert.
+ * This is due to the running thread not being thread-secured for runtime modification.
+ * @param   isBackgroundCheck  Flag to set if the check should round in background mode (not verbose - no info popups)
+ * @param   webUpdateServerAddress  The address of the webserver to use to check for updates.
+ */
 void WebUpdateDetector::CheckForNewVersion(bool isBackgroundCheck, const juce::String& webUpdateServerAddress)
 {
     if(!isThreadRunning())
@@ -236,6 +286,13 @@ void WebUpdateDetector::CheckForNewVersion(bool isBackgroundCheck, const juce::S
         jassert(webUpdateServerAddress.isEmpty()); // restarting the check with new webupdate address while thread is already running is not supported!
 }
 
+/**
+ * @brief Thread callback function for webserver version checking and notification
+ *
+ * @details Reimplemented thread callback function that cyclically checks the webserver
+ * for availability of new versions, downloads asset information and prompts
+ * the user with a notification on new versions if any were found.
+ */
 void WebUpdateDetector::run()
 {
     auto info = std::make_unique<ChangeLogInfo>();
@@ -258,7 +315,8 @@ void WebUpdateDetector::run()
     }
     else
     {
-        auto availableUpdateInfo = juce::String("A new version of " + juce::String(ProjectInfo::projectName) + " is available.");
+        auto availableUpdateInfo = juce::String("A new version " + m_referenceVersion + " of " + juce::String(ProjectInfo::projectName) + " is available.");
+        availableUpdateInfo << "\n\n" << info->GetStringInfoOnVersionsBelow(m_referenceVersion);
         std::cout << __FUNCTION__ << " " << availableUpdateInfo.toStdString() << std::endl;
         auto options = juce::MessageBoxOptions()
             .withIconType(juce::MessageBoxIconType::NoIcon)
@@ -281,6 +339,12 @@ void WebUpdateDetector::run()
     }
 }
 
+/**
+ * @brief Sets whether the checkbox in the popup dialog should be shown as checked or not.
+ *
+ * @details This function determines whether the checkbox in the popup dialog should be shown as checked or unchecked.
+ * @param checkForUpdates Boolean value indicating whether to check for updates at program start.
+ */
 void WebUpdateDetector::SetToggleStateForUpdatesPopup(const bool checkForUpdates)
 {
     m_checkForUpdatesAtProgramStart = checkForUpdates;
