@@ -103,6 +103,11 @@ void CustomLookAndFeel::setPaletteStyle(PaletteStyle style)
         setColour(Label::ColourIds::textColourId, Colours::black);
         setColour(Label::ColourIds::textWhenEditingColourId, Colours::black);
 
+        setColour(FileSearchPathListComponent::ColourIds::backgroundColourId, Colours::lightgrey);
+
+        setColour(ProgressBar::ColourIds::foregroundColourId, Colours::darkgrey);
+        setColour(ProgressBar::ColourIds::backgroundColourId, Colours::lightgrey);
+
         break;
     case PS_Dark:
     default:
@@ -195,6 +200,11 @@ void CustomLookAndFeel::setPaletteStyle(PaletteStyle style)
 
         setColour(Label::ColourIds::textColourId, Colours::white);
         setColour(Label::ColourIds::textWhenEditingColourId, Colours::white);
+
+        setColour(FileSearchPathListComponent::ColourIds::backgroundColourId, Colours::darkgrey.darker().darker());
+
+        setColour(ProgressBar::ColourIds::foregroundColourId, Colours::lightgrey);
+        setColour(ProgressBar::ColourIds::backgroundColourId, Colours::darkgrey);
 
         break;
     }
