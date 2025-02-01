@@ -336,4 +336,25 @@ void CustomLookAndFeel::drawComboBox(Graphics& g, int width, int height, bool,
     g.strokePath(path, PathStrokeType(2.0f));
 }
 
+void CustomLookAndFeel::drawCallOutBoxBackground(CallOutBox& box, Graphics& g,
+    const Path& path, Image& cachedImage)
+{
+    if (cachedImage.isNull())
+    {
+        cachedImage = Image(Image::ARGB, box.getWidth(), box.getHeight(), true);
+        Graphics g2(cachedImage);
+
+        DropShadow(Colours::black.withAlpha(0.7f), 8, Point<int>(0, 2)).drawForPath(g2, path);
+    }
+
+    g.setColour(Colours::black);
+    g.drawImageAt(cachedImage, 0, 0);
+
+    g.setColour(findColour(ResizableWindow::ColourIds::backgroundColourId));// Colour::greyLevel(0.23f).withAlpha(0.9f));
+    g.fillPath(path);
+
+    g.setColour(Colours::white.withAlpha(0.8f));
+    g.strokePath(path, PathStrokeType(2.0f));
+}
+
 }

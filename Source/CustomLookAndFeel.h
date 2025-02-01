@@ -40,6 +40,10 @@ public:
 		int buttonX, int buttonY, int buttonW, int buttonH,
 		ComboBox&) override;
 
+	//==============================================================================
+	void drawCallOutBoxBackground(CallOutBox& box, Graphics& g,
+		const Path& path, Image& cachedImage) override;
+
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CustomLookAndFeel)
 };
