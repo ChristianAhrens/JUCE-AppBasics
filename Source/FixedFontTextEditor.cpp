@@ -26,9 +26,10 @@ namespace JUCEAppBasics
 /**
  * Constructor that simply acts as proxy to TextEditor base class constructor
  */
-FixedFontTextEditor::FixedFontTextEditor(const juce::String& componentName, juce_wchar passwordCharacter)
+FixedFontTextEditor::FixedFontTextEditor(const juce::String& componentName, juce_wchar passwordCharacter, bool autoResizeFont)
 	: juce::TextEditor(componentName, passwordCharacter)
 {
+	m_autoResizeFont = autoResizeFont;
 }
 
 /**
@@ -37,6 +38,17 @@ FixedFontTextEditor::FixedFontTextEditor(const juce::String& componentName, juce
 FixedFontTextEditor::~FixedFontTextEditor()
 {
 
+}
+
+/**
+ * Reimplemented to optionally also resize the texteditor font used
+ */
+void FixedFontTextEditor::resized()
+{
+	if (m_autoResizeFont)
+		applyFontToAllText(getFont().withHeight(getLocalBounds().getHeight() * 0.9f));
+
+	juce::TextEditor::resized();
 }
 
 /**

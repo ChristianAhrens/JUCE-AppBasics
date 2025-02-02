@@ -33,12 +33,16 @@ class FixedFontTextEditor : public juce::TextEditor
 {
 public:    
     explicit FixedFontTextEditor(const juce::String& componentName = String(),
-        juce_wchar passwordCharacter = 0);
+        juce_wchar passwordCharacter = 0, bool autoResizeFont = false);
     virtual ~FixedFontTextEditor() override;
 
     //==============================================================================
+    void resized() override;
     void lookAndFeelChanged() override;
 
+private:
+    //==============================================================================
+    bool m_autoResizeFont = false;
 };
 
 }
