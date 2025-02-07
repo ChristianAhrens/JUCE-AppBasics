@@ -3,13 +3,19 @@
 namespace JUCEAppBasics
 {
 
-CustomLookAndFeel::CustomLookAndFeel(PaletteStyle style)
+CustomLookAndFeel::CustomLookAndFeel(CustomLookAndFeel::PaletteStyle style)
 {
     setPaletteStyle(style);
 }
 
-void CustomLookAndFeel::setPaletteStyle(PaletteStyle style)
+CustomLookAndFeel::~CustomLookAndFeel()
 {
+}
+
+void CustomLookAndFeel::setPaletteStyle(CustomLookAndFeel::PaletteStyle style)
+{
+    m_paletteStyle = style;
+
     switch (style)
     {
     case PS_Light:
@@ -107,6 +113,10 @@ void CustomLookAndFeel::setPaletteStyle(PaletteStyle style)
 
         setColour(ProgressBar::ColourIds::foregroundColourId, Colours::darkgrey);
         setColour(ProgressBar::ColourIds::backgroundColourId, Colours::lightgrey);
+
+        setColour(CustomLookAndFeel::MeteringPeakColourId, Colours::forestgreen.brighter());
+        setColour(CustomLookAndFeel::MeteringRmsColourId, Colours::forestgreen);
+        setColour(CustomLookAndFeel::MeteringHoldColourId, Colours::grey);
 
         break;
     case PS_Dark:
@@ -206,13 +216,18 @@ void CustomLookAndFeel::setPaletteStyle(PaletteStyle style)
         setColour(ProgressBar::ColourIds::foregroundColourId, Colours::lightgrey);
         setColour(ProgressBar::ColourIds::backgroundColourId, Colours::darkgrey);
 
+        setColour(CustomLookAndFeel::MeteringPeakColourId, Colours::forestgreen.darker());
+        setColour(CustomLookAndFeel::MeteringRmsColourId, Colours::forestgreen);
+        setColour(CustomLookAndFeel::MeteringHoldColourId, Colours::grey);
+
         break;
     }
-	
+
 }
 
-CustomLookAndFeel::~CustomLookAndFeel()
+const CustomLookAndFeel::PaletteStyle& CustomLookAndFeel::getPaletteStyle()
 {
+    return m_paletteStyle;
 }
 
 void CustomLookAndFeel::drawButtonBackground(Graphics& g,
