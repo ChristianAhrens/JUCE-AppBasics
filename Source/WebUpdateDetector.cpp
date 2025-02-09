@@ -78,6 +78,7 @@ public:
 
         bool IsValid() { return !(_Major == 0 && _Minor == 0 && _Fixlevel == 0); };
         void Clear() { _Major = 0; _Minor = 0; _Fixlevel = 0; };
+        const juce::String ToString() const { return juce::StringArray(juce::String(_Major), juce::String(_Minor), juce::String(_Fixlevel)).joinIntoString("."); };
     };
     struct VersionEntry
     {
@@ -135,6 +136,16 @@ public:
         return false;
     }
 
+    const VersionNumber GetLatestContainedVersion()
+    {
+        auto version = VersionNumber();
+        for (auto const& versionEntry : m_versionEntries)
+            if (versionEntry._version > version)
+                version = versionEntry._version;
+
+        return version;
+    }
+
     juce::String GetStringInfoOnVersionsBelow(const VersionNumber& otherVersion)
     {
         jassert(!m_versionEntries.isEmpty());
@@ -155,9 +166,9 @@ public:
             }
         }
 
-        auto addedString = juce::String(additions.isEmpty() ? juce::String("") : juce::String("Added:\n") + additions.joinIntoString("\n"));
-        auto changedString = juce::String(changes.isEmpty() ? juce::String("") : juce::String("Changed:\n") + changes.joinIntoString("\n"));
-        auto fixedString = juce::String(fixes.isEmpty() ? juce::String("") : juce::String("Fixed:\n") + fixes.joinIntoString("\n"));
+        auto addedString = juce::String(additions.isEmpty() ? juce::String("") : juce::String("Added:\n") + additions.joinIntoString("\n") + juce::String("\n"));
+        auto changedString = juce::String(changes.isEmpty() ? juce::String("") : juce::String("Changed:\n") + changes.joinIntoString("\n") + juce::String("\n"));
+        auto fixedString = juce::String(fixes.isEmpty() ? juce::String("") : juce::String("Fixed:\n") + fixes.joinIntoString("\n") + juce::String("\n"));
 
         return addedString + (addedString.isEmpty() ? "" : "\n") + changedString + (changedString.isEmpty() ? "" : "\n") + fixedString;
     }
@@ -315,11 +326,11 @@ void WebUpdateDetector::run()
     }
     else
     {
-        auto availableUpdateInfo = juce::String("A new version " + m_referenceVersion + " of " + juce::String(ProjectInfo::projectName) + " is available.");
+        auto availableUpdateInfo = juce::String("A new version " + info->GetLatestContainedVersion().ToString() + " of " + juce::String(ProjectInfo::projectName) + " is available.");
         availableUpdateInfo << "\n\n" << info->GetStringInfoOnVersionsBelow(m_referenceVersion);
         std::cout << __FUNCTION__ << " " << availableUpdateInfo.toStdString() << std::endl;
         auto options = juce::MessageBoxOptions()
-            .withIconType(juce::MessageBoxIconType::NoIcon)
+            .withIconType(juce::MessageBoxIconType::InfoIcon)
             .withTitle("New Version Available")
             .withMessage(availableUpdateInfo)
             .withButton("Download")
