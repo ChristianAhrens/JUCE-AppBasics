@@ -6,6 +6,7 @@ namespace JUCEAppBasics
 CustomLookAndFeel::CustomLookAndFeel(CustomLookAndFeel::PaletteStyle style)
 {
     setPaletteStyle(style);
+    setMouseCursor(juce::MouseCursor(juce::MouseCursor::StandardCursorType::NoCursor));
 }
 
 CustomLookAndFeel::~CustomLookAndFeel()
@@ -228,6 +229,21 @@ void CustomLookAndFeel::setPaletteStyle(CustomLookAndFeel::PaletteStyle style)
 const CustomLookAndFeel::PaletteStyle& CustomLookAndFeel::getPaletteStyle()
 {
     return m_paletteStyle;
+}
+
+void CustomLookAndFeel::setMouseCursor(const juce::MouseCursor& mouseCursor)
+{
+    m_mouseCursor = mouseCursor;
+
+    juce::Desktop::getInstance().getMainMouseSource().forceMouseCursorUpdate();
+}
+
+juce::MouseCursor CustomLookAndFeel::getMouseCursorFor(juce::Component& c)
+{
+    if (m_mouseCursor != juce::MouseCursor(juce::MouseCursor::StandardCursorType::NoCursor) && m_mouseCursor != c.getMouseCursor())
+        return m_mouseCursor;
+    else
+        return c.getMouseCursor();
 }
 
 void CustomLookAndFeel::drawButtonBackground(Graphics& g,

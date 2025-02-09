@@ -52,8 +52,14 @@ public:
 	void drawCallOutBoxBackground(CallOutBox& box, Graphics& g,
 		const Path& path, Image& cachedImage) override;
 
+	//==============================================================================
+	void setMouseCursor(const juce::MouseCursor& mouseCursor);
+	juce::MouseCursor getMouseCursorFor(juce::Component& c) override;
+
 private:
 	PaletteStyle m_paletteStyle = PS_Dark;
+	
+	juce::MouseCursor m_mouseCursor;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CustomLookAndFeel)
 };
