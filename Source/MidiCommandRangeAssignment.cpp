@@ -795,7 +795,7 @@ bool MidiCommandRangeAssignment::deserializeFromHexString(const juce::String& se
         m_commandData.resize(newCommandDataByteLength);
 
         // Determine if the byte data contains four extra bytes for min-max range
-        auto rangeDataLength = byteDataLength - newCommandDataByteLength;
+        int rangeDataLength = byteDataLength - newCommandDataByteLength;
         if (rangeDataLength != 0)
         {
             auto valRangeByteCount = 4;
