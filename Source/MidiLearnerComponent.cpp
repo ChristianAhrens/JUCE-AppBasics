@@ -130,7 +130,7 @@ void MidiLearnerComponent::handleMessage(const Message& msg)
         DBG(String(__FUNCTION__) + " MIDI received: " + midiMessage.getDescription());
 
         // sanity check if the incoming message comes from the device we want to listen to
-        if (m_deviceIdentifier.isEmpty() || (m_deviceIdentifier != callbackMessage->_source->getDeviceInfo().identifier))
+        if (m_deviceIdentifier.isEmpty() || nullptr == callbackMessage->_source || (m_deviceIdentifier != callbackMessage->_source->getDeviceInfo().identifier))
             return;
 
         // start handling of the incoming data
