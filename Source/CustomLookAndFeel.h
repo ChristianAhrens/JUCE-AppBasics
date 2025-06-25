@@ -2,6 +2,9 @@
 
 #include <JuceHeader.h>
 
+#include <ToggleStateSlider.h>
+
+
 namespace JUCEAppBasics
 {
 
@@ -30,27 +33,33 @@ public:
 	const PaletteStyle& getPaletteStyle();
 
 	//==============================================================================
-	void drawButtonBackground(Graphics&, Button&, const Colour& backgroundColour,
+	void drawButtonBackground(juce::Graphics&, juce::Button&, const juce::Colour& backgroundColour,
 		bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
 
 	//==============================================================================
-	void drawGroupComponentOutline(Graphics&, int w, int h, const String& text,
-		const Justification&, GroupComponent&) override;
+	void drawGroupComponentOutline(juce::Graphics&, int w, int h, const juce::String& text,
+		const juce::Justification&, juce::GroupComponent&) override;
 
 	//==============================================================================
-	void drawTickBox(Graphics&, Component&,
+	void drawTickBox(juce::Graphics&, juce::Component&,
 		float x, float y, float w, float h,
 		bool ticked, bool isEnabled,
 		bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
 
 	//==============================================================================
-	void drawComboBox(Graphics&, int width, int height, bool isButtonDown,
+	void drawComboBox(juce::Graphics&, int width, int height, bool isButtonDown,
 		int buttonX, int buttonY, int buttonW, int buttonH,
-		ComboBox&) override;
+		juce::ComboBox&) override;
 
 	//==============================================================================
-	void drawCallOutBoxBackground(CallOutBox& box, Graphics& g,
-		const Path& path, Image& cachedImage) override;
+	void drawCallOutBoxBackground(juce::CallOutBox& box, Graphics& g,
+		const juce::Path& path, juce::Image& cachedImage) override;
+
+	//==============================================================================
+	int getSliderThumbRadius(juce::Slider&) override;
+	void drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height,
+		float sliderPos, float minSliderPos, float maxSliderPos,
+		juce::Slider::SliderStyle style, juce::Slider& slider) override;
 
 	//==============================================================================
 	void setMouseCursor(const juce::MouseCursor& mouseCursor);

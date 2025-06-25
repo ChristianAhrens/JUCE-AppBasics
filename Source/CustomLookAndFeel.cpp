@@ -388,4 +388,93 @@ void CustomLookAndFeel::drawCallOutBoxBackground(CallOutBox& box, Graphics& g,
     g.strokePath(path, PathStrokeType(2.0f));
 }
 
+int CustomLookAndFeel::getSliderThumbRadius(juce::Slider& slider)
+{
+    return slider.isHorizontal() ? static_cast<int> ((float)slider.getHeight() * 0.5f)
+        : static_cast<int> ((float)slider.getWidth() * 0.5f);
+}
+
+void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height,
+    float sliderPos, float minSliderPos, float maxSliderPos,
+    const juce::Slider::SliderStyle style, juce::Slider& slider)
+{
+    auto isTwoVal = (style == juce::Slider::SliderStyle::TwoValueVertical || style == juce::Slider::SliderStyle::TwoValueHorizontal);
+    auto isThreeVal = (style == juce::Slider::SliderStyle::ThreeValueVertical || style == juce::Slider::SliderStyle::ThreeValueHorizontal);
+    auto tss = reinterpret_cast<ToggleStateSlider*>(&slider);
+    if (tss && !(isTwoVal || isThreeVal || slider.isBar()))
+    {
+        // oval surrounding frame
+        juce::Path framing, framingOutline;
+        if (slider.isHorizontal())
+        {
+            framing.startNewSubPath({ (float)x + 1, (float)y + (float)height * 0.5f });
+            framing.lineTo({ (float)x + (float)width - 2, (float)y + (float)height * 0.5f });
+            juce::PathStrokeType opt((float)height - 2, juce::PathStrokeType::curved, juce::PathStrokeType::rounded);
+            opt.createStrokedPath(framingOutline, framing);
+        }
+        else
+        {
+            framing.startNewSubPath({ (float)x + (float)width * 0.5f, (float)y + 1 });
+            framing.lineTo({ (float)x + (float)width * 0.5f, (float)y + (float)height - 2 });
+            juce::PathStrokeType opt((float)width - 2, juce::PathStrokeType::curved, juce::PathStrokeType::rounded);
+            opt.createStrokedPath(framingOutline, framing);
+        }
+        g.setColour(slider.findColour(juce::Slider::thumbColourId));
+        g.strokePath(framingOutline, juce::PathStrokeType(1.0f));
+
+        // slider itself
+        auto trackWidth = slider.isHorizontal() ? (float)height * 0.25f : (float)width * 0.25f;
+
+        juce::Point<float> startPoint(slider.isHorizontal() ? (float)x : (float)x + (float)width * 0.5f,
+            slider.isHorizontal() ? (float)y + (float)height * 0.5f : (float)(height + y));
+
+        juce::Point<float> endPoint(slider.isHorizontal() ? (float)(width + x) : startPoint.x,
+            slider.isHorizontal() ? startPoint.y : (float)y);
+
+        juce::Path backgroundTrack;
+        backgroundTrack.startNewSubPath(startPoint);
+        backgroundTrack.lineTo(endPoint);
+        g.setColour(slider.findColour(juce::Slider::backgroundColourId));
+        g.strokePath(backgroundTrack, { trackWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded });
+
+        juce::Path valueTrack;
+        juce::Point<float> minPoint, maxPoint, thumbPoint;
+
+        auto kx = slider.isHorizontal() ? sliderPos : ((float)x + (float)width * 0.5f);
+        auto ky = slider.isHorizontal() ? ((float)y + (float)height * 0.5f) : sliderPos;
+
+        minPoint = startPoint;
+        maxPoint = { kx, ky };
+
+        auto thumbWidth = getSliderThumbRadius(slider);
+
+        if (tss->getToggleState())
+        {
+            valueTrack.startNewSubPath(minPoint);
+            valueTrack.lineTo(maxPoint);
+            g.setColour(slider.findColour(juce::Slider::trackColourId));
+            g.strokePath(valueTrack, { trackWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded });
+            g.setColour(slider.findColour(juce::Slider::thumbColourId));
+            g.fillEllipse(juce::Rectangle<float>(static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre(maxPoint));
+        }
+        else
+        {
+            valueTrack.startNewSubPath(minPoint);
+            valueTrack.lineTo(maxPoint);
+            auto valueTrackOutline = valueTrack;
+            juce::PathStrokeType pt(trackWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded);
+            pt.createStrokedPath(valueTrackOutline, valueTrack);
+            g.setColour(slider.findColour(juce::Slider::trackColourId));
+            g.strokePath(valueTrackOutline, juce::PathStrokeType(1.0f));
+            g.setColour(slider.findColour(juce::ResizableWindow::ColourIds::backgroundColourId));
+            g.fillEllipse(juce::Rectangle<float>(static_cast<float> (thumbWidth-1), static_cast<float> (thumbWidth-1)).withCentre(maxPoint));
+            g.setColour(slider.findColour(juce::Slider::thumbColourId));
+            g.drawEllipse(juce::Rectangle<float>(static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre(maxPoint), 1.0f);
+        }
+    }
+    else
+        juce::LookAndFeel_V4::drawLinearSlider(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
+}
+
+
 }
