@@ -81,7 +81,16 @@ bool ToggleStateSlider::getToggleState() const noexcept
 }
 
 /**
- * Reimplemented to optionally also resize the texteditor font used
+ * Getter for the boolean is-dragging state
+ * @return True if the fader is currently being dragged, false if not
+ */
+bool ToggleStateSlider::isDragging() const
+{
+	return m_isDragging;
+}
+
+/**
+ * Reimplemented for fun
  */
 void ToggleStateSlider::paint(juce::Graphics& g)
 {
@@ -89,7 +98,7 @@ void ToggleStateSlider::paint(juce::Graphics& g)
 }
 
 /**
- * Reimplemented to optionally also resize the texteditor font used
+ * Reimplemented for fun
  */
 void ToggleStateSlider::resized()
 {
@@ -107,7 +116,8 @@ void ToggleStateSlider::lookAndFeelChanged()
 
 /**
  * Reimplemented to catch the drag distance and if it is considerably small
- * initiate a toggle state flip
+ * initiate a toggle state flip.
+ * Also ends any is-dragging states
  * @param	e	The mouse event for the mouseup
  */
 void ToggleStateSlider::mouseUp(const MouseEvent& e)
@@ -115,7 +125,24 @@ void ToggleStateSlider::mouseUp(const MouseEvent& e)
 	if (e.getDistanceFromDragStart() <= 1)
 		setToggleState(!getToggleState(), juce::sendNotification);
 
+    if (m_isDragging)
+        m_isDragging = false;
+
 	juce::Slider::mouseUp(e);
+}
+
+/**
+ * Reimplemented to catch the drag distance and if it is considerably large
+ * set the is-dragging status.
+ * @param	e	The mouse event for the mouseDrag
+ */
+void ToggleStateSlider::mouseDrag(const MouseEvent& e)
+{
+    auto offset = e.getOffsetFromDragStart();
+    if (std::abs(offset.getDistanceFromOrigin()) > 1)
+        m_isDragging = true;
+
+	juce::Slider::mouseDrag(e);
 }
 
 

@@ -455,10 +455,10 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
             g.setColour(slider.findColour(juce::Slider::trackColourId));
             g.strokePath(valueTrack, { trackWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded });
             g.setColour(slider.findColour(juce::Slider::thumbColourId));
-            g.fillEllipse(juce::Rectangle<float>(static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre(maxPoint));
+            g.fillEllipse(juce::Rectangle<float>(static_cast<float>(thumbWidth), static_cast<float>(thumbWidth)).withCentre(maxPoint));
 
             g.setColour(slider.findColour(juce::TextButton::textColourOnId));
-            g.drawText(tss->getTitle(), juce::Rectangle<float>(static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre(maxPoint), juce::Justification::centred);
+            g.drawText(tss->getTitle(), juce::Rectangle<float>(static_cast<float>(thumbWidth), static_cast<float>(thumbWidth)).withCentre(maxPoint), juce::Justification::centred);
         }
         else
         {
@@ -470,11 +470,31 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
             g.setColour(slider.findColour(juce::Slider::trackColourId));
             g.strokePath(valueTrackOutline, juce::PathStrokeType(1.0f));
             g.setColour(slider.findColour(juce::ResizableWindow::ColourIds::backgroundColourId));
-            g.fillEllipse(juce::Rectangle<float>(static_cast<float> (thumbWidth-1), static_cast<float> (thumbWidth-1)).withCentre(maxPoint));
+            g.fillEllipse(juce::Rectangle<float>(static_cast<float>(thumbWidth - 1), static_cast<float>(thumbWidth - 1)).withCentre(maxPoint));
             g.setColour(slider.findColour(juce::Slider::thumbColourId));
-            g.drawEllipse(juce::Rectangle<float>(static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre(maxPoint), 1.0f);
+            g.drawEllipse(juce::Rectangle<float>(static_cast<float>(thumbWidth), static_cast<float>(thumbWidth)).withCentre(maxPoint), 1.0f);
 
             g.drawText(tss->getTitle(), juce::Rectangle<float>(static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre(maxPoint), juce::Justification::centred);
+        }
+
+        if (tss->isDragging())
+        {
+            juce::Rectangle<int> area;
+            if (slider.isHorizontal())
+            {
+                auto centerPoint = maxPoint.withX(maxPoint.getX() + slider.getHeight()).toInt();
+                if (maxPoint.getX() >= (slider.getWidth() - 2 * slider.getHeight()))
+                    centerPoint = maxPoint.withX(maxPoint.getX() - slider.getHeight()).toInt();
+                area = juce::Rectangle<int>(slider.getHeight(), slider.getHeight()).withCentre(centerPoint);
+            }
+            else
+            {
+                area = juce::Rectangle<int>(slider.getWidth(), slider.getWidth()).withCentre(maxPoint.withY(maxPoint.getY() - slider.getWidth() / 2).toInt());
+            }
+            g.setColour(slider.findColour(juce::TextButton::textColourOnId));
+            g.drawFittedText(tss->displayValueConverter ? tss->displayValueConverter(tss->getValue()) : juce::String(tss->getValue()),
+                area,
+                juce::Justification::centred, 1);
         }
 
     }

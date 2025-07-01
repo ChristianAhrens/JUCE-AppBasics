@@ -41,6 +41,8 @@ public:
     void setToggleState(bool shouldBeOn, NotificationType notification);
     bool getToggleState() const noexcept;
 
+    bool isDragging() const;
+
     //==============================================================================
     std::function<void()> onToggleStateChange;
 
@@ -51,10 +53,15 @@ public:
 
     //==============================================================================
     void mouseUp(const MouseEvent& e) override;
+    void mouseDrag(const MouseEvent& e) override;
+
+    //==============================================================================
+    std::function<juce::String(double)>   displayValueConverter;
 
 private:
     //==============================================================================
     bool m_isToggledOn = true;
+    bool m_isDragging = false;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ToggleStateSlider)
 };
