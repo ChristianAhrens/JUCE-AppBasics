@@ -390,8 +390,8 @@ void CustomLookAndFeel::drawCallOutBoxBackground(CallOutBox& box, Graphics& g,
 
 int CustomLookAndFeel::getSliderThumbRadius(juce::Slider& slider)
 {
-    return slider.isHorizontal() ? static_cast<int> ((float)slider.getHeight() * 0.5f)
-        : static_cast<int> ((float)slider.getWidth() * 0.5f);
+    return slider.isHorizontal() ? static_cast<int> ((float)slider.getHeight() * 0.6f)
+        : static_cast<int> ((float)slider.getWidth() * 0.6f);
 }
 
 void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height,
@@ -456,6 +456,9 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
             g.strokePath(valueTrack, { trackWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded });
             g.setColour(slider.findColour(juce::Slider::thumbColourId));
             g.fillEllipse(juce::Rectangle<float>(static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre(maxPoint));
+
+            g.setColour(slider.findColour(juce::TextButton::textColourOnId));
+            g.drawText(tss->getTitle(), juce::Rectangle<float>(static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre(maxPoint), juce::Justification::centred);
         }
         else
         {
@@ -470,7 +473,10 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
             g.fillEllipse(juce::Rectangle<float>(static_cast<float> (thumbWidth-1), static_cast<float> (thumbWidth-1)).withCentre(maxPoint));
             g.setColour(slider.findColour(juce::Slider::thumbColourId));
             g.drawEllipse(juce::Rectangle<float>(static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre(maxPoint), 1.0f);
+
+            g.drawText(tss->getTitle(), juce::Rectangle<float>(static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre(maxPoint), juce::Justification::centred);
         }
+
     }
     else
         juce::LookAndFeel_V4::drawLinearSlider(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
