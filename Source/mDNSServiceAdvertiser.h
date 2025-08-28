@@ -56,7 +56,6 @@ public:
 	#define MDNS_QUESTIONS_COUNT_NONE 0
 	#define MDNS_ANSWER_RESOURCE_RECORD_COUNT_ONE 1
 	#define MDNS_AUTHORITY_RESOURCE_RECORD_COUNT_NONE 0
-	#define MDNS_ADDITIONAL_RESOURCE_RECORD_COUNT_WOTXT 4
 
 	enum mdns_record_type {
 		MDNS_RECORDTYPE_IGNORE = 0,
@@ -96,8 +95,8 @@ public:
 #endif
 
 	struct mdns_string_t {
-		const char* str;
-		size_t length;
+		const char* str = nullptr;
+		size_t length = 0;
 	};
 
 	struct mdns_string_pair_t {
@@ -113,9 +112,9 @@ public:
 	};
 
 	struct mdns_record_srv_t {
-		uint16_t priority;
-		uint16_t weight;
-		uint16_t port;
+		std::uint16_t priority;
+		std::uint16_t weight;
+		std::uint16_t port;
 		mdns_string_t name;
 	};
 
@@ -136,27 +135,29 @@ public:
 		mdns_string_t value;
 	};
 
+	struct mdns_record_data_t {
+		mdns_record_ptr_t ptr;
+		mdns_record_srv_t srv;
+		mdns_record_a_t a;
+		mdns_record_aaaa_t aaaa;
+		mdns_record_txt_t txt;
+	};
+
 	struct mdns_record_t {
 		mdns_string_t name;
 		mdns_record_type_t type;
-		union mdns_record_data {
-			mdns_record_ptr_t ptr;
-			mdns_record_srv_t srv;
-			mdns_record_a_t a;
-			mdns_record_aaaa_t aaaa;
-			mdns_record_txt_t txt;
-		} data;
-		uint16_t rclass;
-		uint32_t ttl;
+		mdns_record_data_t data;
+		std::uint16_t rclass;
+		std::uint32_t ttl;
 	};
 
 	struct mdns_header_t {
-		uint16_t query_id;
-		uint16_t flags;
-		uint16_t questions;
-		uint16_t answer_rrs;
-		uint16_t authority_rrs;
-		uint16_t additional_rrs;
+		std::uint16_t query_id;
+		std::uint16_t flags;
+		std::uint16_t questions;
+		std::uint16_t answer_rrs;
+		std::uint16_t authority_rrs;
+		std::uint16_t additional_rrs;
 	};
 
 	struct mdns_query_t {
@@ -167,7 +168,7 @@ public:
 
     // Data for our service including the mDNS records
     struct service_t {
-        mdns_string_t service;
+		mdns_string_t service;
         mdns_string_t hostname;
         mdns_string_t service_instance;
         mdns_string_t hostname_qualified;
@@ -194,6 +195,8 @@ public:
 	//==============================================================================
 	static sockaddr_in makeSockAddrIn(const juce::IPAddress& ip, std::uint16_t port);
 	static sockaddr_in6 makeSockAddrIn6(const juce::IPAddress& ip, std::uint16_t port);
+	static void mallocMDNSString(const juce::String& inputString, mdns_string_t& outputString);
+	static void freeMDNSString(mdns_string_t& string);
 
 private:
     //==============================================================================
@@ -206,12 +209,14 @@ private:
 
     //==============================================================================
 	juce::String m_serviceTypeUID;
-	service_t m_service;
     std::uint16_t m_broadcastPort;
     std::uint16_t m_connectionPort;
 	std::map<std::string, std::string>	m_txtRecords;
     const juce::RelativeTime m_minInterval;
     juce::DatagramSocket m_socket{ true };
+
+	std::mutex m_serviceMutex;
+	service_t m_service{ 0 };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(mDNSServiceAdvertiser);
 };
