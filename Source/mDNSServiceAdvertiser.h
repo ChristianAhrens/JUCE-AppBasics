@@ -53,9 +53,6 @@ public:
 
 	#define MDNS_UNSOLICITED_QUERY_ID 0
 	#define MDNS_AUTHORITATIVE_RESPONSE_FLAG 0x8400U
-	#define MDNS_QUESTIONS_COUNT_NONE 0
-	#define MDNS_ANSWER_RESOURCE_RECORD_COUNT_ONE 1
-	#define MDNS_AUTHORITY_RESOURCE_RECORD_COUNT_NONE 0
 
 	enum mdns_record_type {
 		MDNS_RECORDTYPE_IGNORE = 0,
@@ -183,6 +180,25 @@ public:
 		size_t txt_record_cnt;
     };
 
+	static void append(const std::vector<uint8_t>& dataIn, std::vector<uint8_t>& bufferOut)
+	{
+		bufferOut.insert(bufferOut.end(), dataIn.begin(), dataIn.end());
+	};
+	static void append16(std::uint16_t val, std::vector<uint8_t>& dataOut)
+	{
+		// append data in network byteorder
+		dataOut.push_back(static_cast<std::uint8_t>(val >> 8));
+		dataOut.push_back(static_cast<std::uint8_t>(val & 0xFF));
+	};
+	static void append32(std::uint32_t val, std::vector<uint8_t>& dataOut)
+	{
+		// append data in network byteorder
+		dataOut.push_back(static_cast<std::uint8_t>(val >> 24));
+		dataOut.push_back(static_cast<std::uint8_t>((val >> 16) & 0xFF));
+		dataOut.push_back(static_cast<std::uint8_t>((val >> 8) & 0xFF));
+		dataOut.push_back(static_cast<std::uint8_t>(val & 0xFF));
+	};
+
 public:
     //==============================================================================
     mDNSServiceAdvertiser(const juce::String& serviceTypeUID, std::uint16_t servicePort, juce::RelativeTime minTimeBetweenBroadcasts = juce::RelativeTime::seconds(1.5));
@@ -192,12 +208,6 @@ public:
 	void addTxtRecords(const std::map<std::string, std::string>& txtRecords);
 	void removeTxtRecord(const std::string& key);
 
-	//==============================================================================
-	static sockaddr_in makeSockAddrIn(const juce::IPAddress& ip, std::uint16_t port);
-	static sockaddr_in6 makeSockAddrIn6(const juce::IPAddress& ip, std::uint16_t port);
-	static void mallocMDNSString(const juce::String& inputString, mdns_string_t& outputString);
-	static void freeMDNSString(mdns_string_t& string);
-
 private:
     //==============================================================================
     void run() override;
@@ -206,6 +216,15 @@ private:
     juce::IPAddress getInterfaceBroadcastAddress(const juce::IPAddress& address);
     void buildService();
     void sendBroadcast();
+
+	//==============================================================================
+	std::vector<uint8_t> makeDnsLabel(std::string_view name);
+	std::vector<uint8_t> serializeMDNSRecord(const mDNSServiceAdvertiser::mdns_record_t& record);
+	std::vector<std::uint8_t> serializeMDNSTxtRecords(const mDNSServiceAdvertiser::mdns_record_t* records, size_t record_count);
+	sockaddr_in makeSockAddrIn(const juce::IPAddress& ip, std::uint16_t port);
+	sockaddr_in6 makeSockAddrIn6(const juce::IPAddress& ip, std::uint16_t port);
+	void mallocMDNSString(const juce::String& inputString, mdns_string_t& outputString);
+	void freeMDNSString(mdns_string_t& string);
 
     //==============================================================================
 	juce::String m_serviceTypeUID;

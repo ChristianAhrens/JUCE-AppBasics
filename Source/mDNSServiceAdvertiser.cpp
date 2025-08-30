@@ -47,10 +47,10 @@ mDNSServiceAdvertiser::~mDNSServiceAdvertiser()
     stopThread(2000);
     m_socket.shutdown();
 
-    freeMDNSString(m_service.record_ptr.name);
-    freeMDNSString(m_service.record_srv.name);
-    freeMDNSString(m_service.record_a.name);
-    freeMDNSString(m_service.record_aaaa.name);
+    //freeMDNSString(m_service.record_ptr.name);
+    //freeMDNSString(m_service.record_srv.name);
+    //freeMDNSString(m_service.record_a.name);
+    //freeMDNSString(m_service.record_aaaa.name);
 }
 
 /**
@@ -89,9 +89,9 @@ void mDNSServiceAdvertiser::removeTxtRecord(const std::string& key)
  */
 void mDNSServiceAdvertiser::buildService()
 {
-    auto hostDescription = juce::JUCEApplication::getInstance()->getApplicationName() + "@" + juce::SystemStats::getComputerName() + "\0";
+    auto hostDescription = juce::SystemStats::getComputerName() + "\0";
     auto serviceType = m_serviceTypeUID + ".local.\0";
-    auto serviceInstanceString = hostDescription + "." + serviceType + "\0";
+    auto serviceInstanceString = juce::JUCEApplication::getInstance()->getApplicationName().removeCharacters(".") + "." + serviceType + "\0";
     auto hostnameQualifiedString = hostDescription + ".local.\0";
 
     service_t service = { 0 };
@@ -101,7 +101,7 @@ void mDNSServiceAdvertiser::buildService()
     mallocMDNSString(hostnameQualifiedString, service.hostname_qualified);
     service.address_ipv4 = makeSockAddrIn(juce::IPAddress::getLocalAddress(), m_connectionPort);
     service.address_ipv6 = makeSockAddrIn6(juce::IPAddress::getLocalAddress(), m_connectionPort);
-    service.port = m_broadcastPort;
+    service.port = m_connectionPort;
 
     // Setup our mDNS records
     constexpr std::uint16_t DNS_CLASS_IN = 0x0001;
@@ -195,7 +195,7 @@ void mDNSServiceAdvertiser::run()
 /**
  * @brief   Serialize a given string to mDNS label compliant byte string vector
  */
-inline std::vector<uint8_t> makeDnsLabel(std::string_view name)
+inline std::vector<uint8_t> mDNSServiceAdvertiser::makeDnsLabel(std::string_view name)
 {
     std::vector<uint8_t> result;
     size_t start = 0;
@@ -225,7 +225,7 @@ inline std::vector<uint8_t> makeDnsLabel(std::string_view name)
 /**
  * @brief   Serialize a single Resource record (PTR, SRV, A, AAAA, TXT)
  */
-std::vector<uint8_t> mdnsSerializeRecord(const mDNSServiceAdvertiser::mdns_record_t& record)
+std::vector<uint8_t> mDNSServiceAdvertiser::serializeMDNSRecord(const mDNSServiceAdvertiser::mdns_record_t& record)
 {
     std::vector<uint8_t> data;
 
@@ -233,23 +233,9 @@ std::vector<uint8_t> mdnsSerializeRecord(const mDNSServiceAdvertiser::mdns_recor
     auto nameLabel = makeDnsLabel(std::string_view(record.name.str, record.name.length));
     data.insert(data.end(), nameLabel.begin(), nameLabel.end());
 
-    // Type, Classe, TTL
-    auto append16 = [&](std::uint16_t v) {
-        // append data in network byteorder
-        data.push_back(static_cast<std::uint8_t>(v >> 8));
-        data.push_back(static_cast<std::uint8_t>(v & 0xFF));
-    };
-    auto append32 = [&](std::uint32_t v) {
-        // append data in network byteorder
-        data.push_back(static_cast<std::uint8_t>(v >> 24));
-        data.push_back(static_cast<std::uint8_t>((v >> 16) & 0xFF));
-        data.push_back(static_cast<std::uint8_t>((v >> 8) & 0xFF));
-        data.push_back(static_cast<std::uint8_t>(v & 0xFF));
-    };
-
-    append16(static_cast<uint16_t>(record.type));
-    append16(record.rclass);
-    append32(record.ttl);
+    append16(static_cast<uint16_t>(record.type), data);
+    append16(record.rclass, data);
+    append32(record.ttl, data);
 
     // RDATA prep
     std::vector<std::uint8_t> rdata;
@@ -291,7 +277,7 @@ std::vector<uint8_t> mdnsSerializeRecord(const mDNSServiceAdvertiser::mdns_recor
     }
 
     // RDATA length insertion in front of RDATA itelsef
-    append16(static_cast<std::uint16_t>(rdata.size()));
+    append16(static_cast<std::uint16_t>(rdata.size()), data);
     data.insert(data.end(), rdata.begin(), rdata.end());
 
     return data;
@@ -300,7 +286,7 @@ std::vector<uint8_t> mdnsSerializeRecord(const mDNSServiceAdvertiser::mdns_recor
 /**
  * @brief   Serialize all TXT records to a single entry
  */
-std::vector<std::uint8_t> mdnsSerializeTxtRecords(const mDNSServiceAdvertiser::mdns_record_t* records, size_t record_count)
+std::vector<std::uint8_t> mDNSServiceAdvertiser::serializeMDNSTxtRecords(const mDNSServiceAdvertiser::mdns_record_t* records, size_t record_count)
 {
     std::vector<std::uint8_t> data;
     bool headerWritten = false;
@@ -318,22 +304,9 @@ std::vector<std::uint8_t> mdnsSerializeTxtRecords(const mDNSServiceAdvertiser::m
             data.insert(data.end(), nameLabel.begin(), nameLabel.end());
 
             // Type, Classe, TTL
-            auto append16 = [&](std::uint16_t v) {
-                // append data in network byteorder
-                data.push_back(static_cast<std::uint8_t>(v >> 8));
-                data.push_back(static_cast<std::uint8_t>(v & 0xFF));
-                };
-            auto append32 = [&](std::uint32_t v) {
-                // append data in network byteorder
-                data.push_back(static_cast<std::uint8_t>(v >> 24));
-                data.push_back(static_cast<std::uint8_t>((v >> 16) & 0xFF));
-                data.push_back(static_cast<std::uint8_t>((v >> 8) & 0xFF));
-                data.push_back(static_cast<std::uint8_t>(v & 0xFF));
-                };
-
-            append16(static_cast<std::uint16_t>(records[i].type));
-            append16(records[i].rclass);
-            append32(records[i].ttl);
+            append16(static_cast<std::uint16_t>(records[i].type), data);
+            append16(records[i].rclass, data);
+            append32(records[i].ttl, data);
 
             // reserve place for data length field
             lengthPos = data.size();
@@ -443,28 +416,26 @@ void mDNSServiceAdvertiser::sendBroadcast()
         auto hasIPv6 = serviceDataLocalCopy.address_ipv6.sin6_family == AF_INET6;
 
         auto broadcastAddress = getInterfaceBroadcastAddress(address);
+        DBG(juce::String(__FUNCTION__) + " Addr:" + address.toString() + " -> Broadcast:" + broadcastAddress.toString());
 
         std::vector<uint8_t> buffer(sizeof(mdns_header_t));
 
         auto header = reinterpret_cast<mdns_header_t*>(buffer.data());
         header->query_id = MDNS_UNSOLICITED_QUERY_ID;
         header->flags = htons(MDNS_AUTHORITATIVE_RESPONSE_FLAG);
-        header->questions = MDNS_QUESTIONS_COUNT_NONE;
-        header->answer_rrs = htons(MDNS_ANSWER_RESOURCE_RECORD_COUNT_ONE);
-        header->authority_rrs = MDNS_AUTHORITY_RESOURCE_RECORD_COUNT_NONE;
-        header->additional_rrs = htons(2 + (hasIPv4 ? 1 : 0) + (hasIPv6 ? 1 : 0) + std::uint8_t(serviceDataLocalCopy.txt_record_cnt));
 
-        auto append = [&](const std::vector<uint8_t>& data) {
-            buffer.insert(buffer.end(), data.begin(), data.end());
-        };
+        header->questions = htons(0);
+        header->answer_rrs = htons(1/*PTR*/ + 1/*SRV*/ + 1/*TXT*/);
+        header->authority_rrs = htons(0);
+        header->additional_rrs = htons((hasIPv4 ? 1 : 0) + (hasIPv6 ? 1 : 0));
 
-        append(mdnsSerializeRecord(serviceDataLocalCopy.record_ptr));
-        append(mdnsSerializeRecord(serviceDataLocalCopy.record_srv));
+        append(serializeMDNSRecord(serviceDataLocalCopy.record_ptr), buffer);
+        append(serializeMDNSRecord(serviceDataLocalCopy.record_srv), buffer);
+        append(serializeMDNSTxtRecords(serviceDataLocalCopy.txt_record, serviceDataLocalCopy.txt_record_cnt), buffer);
         if (hasIPv4)
-            append(mdnsSerializeRecord(serviceDataLocalCopy.record_a));
+            append(serializeMDNSRecord(serviceDataLocalCopy.record_a), buffer);
         if (hasIPv6)
-            append(mdnsSerializeRecord(serviceDataLocalCopy.record_aaaa));
-        append(mdnsSerializeTxtRecords(serviceDataLocalCopy.txt_record, serviceDataLocalCopy.txt_record_cnt));
+            append(serializeMDNSRecord(serviceDataLocalCopy.record_aaaa), buffer);
 
         int datalen = static_cast<int>(buffer.size());
 
