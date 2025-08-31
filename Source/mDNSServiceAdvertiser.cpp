@@ -30,7 +30,6 @@ namespace JUCEAppBasics
 mDNSServiceAdvertiser::mDNSServiceAdvertiser(const juce::String& serviceTypeUID, std::uint16_t servicePort, juce::RelativeTime minTimeBetweenBroadcasts)
     : juce::Thread(juce::JUCEApplication::getInstance()->getApplicationName() + ": mDNS_Discovery_broadcast"),
     m_serviceTypeUID(serviceTypeUID),
-    m_broadcastPort(MDNS_PORT),
     m_connectionPort(servicePort),
     m_minInterval(minTimeBetweenBroadcasts)
 {
@@ -162,16 +161,19 @@ void mDNSServiceAdvertiser::buildService()
 }
 
 /**
- * @brief Gets the broadcast address for an interface with the given assigned IP
+ * @brief Gets the multicast address relevant for mDNS
  */
-juce::IPAddress mDNSServiceAdvertiser::getInterfaceBroadcastAddress(const juce::IPAddress& address)
+juce::String mDNSServiceAdvertiser::getMulticastDNSAddress()
 {
-    if (address.isIPv6)
-        // TODO
-        return {};
+    return juce::String("224.0.0.251");
+}
 
-    juce::String broadcastAddress = address.toString().upToLastOccurrenceOf(".", true, false) + "255";
-    return juce::IPAddress(broadcastAddress);
+/**
+ * @brief Gets the multicast port relevant for mDNS
+ */
+int mDNSServiceAdvertiser::getMulticastDNSPort()
+{
+    return MDNS_PORT;
 }
 
 /*
@@ -179,16 +181,20 @@ juce::IPAddress mDNSServiceAdvertiser::getInterfaceBroadcastAddress(const juce::
  */
 void mDNSServiceAdvertiser::run()
 {
-    if (!m_socket.bindToPort(0))
+    if (m_socket.bindToPort(getMulticastDNSPort()) && m_socket.joinMulticast(getMulticastDNSAddress()))
+    {
+        while (!threadShouldExit())
+        {
+            sendMulticast();
+            juce::Thread::wait((int)m_minInterval.inMilliseconds());
+        }
+
+        m_socket.leaveMulticast(getMulticastDNSAddress());
+    }
+    else
     {
         jassertfalse;
         return;
-    }
-
-    while (!threadShouldExit())
-    {
-        sendBroadcast();
-        juce::Thread::wait((int)m_minInterval.inMilliseconds());
     }
 }
 
@@ -394,9 +400,9 @@ void mDNSServiceAdvertiser::freeMDNSString(mDNSServiceAdvertiser::mdns_string_t&
 }
 
 /**
- * @brief Sends a single broadcast to all available addresses
+ * @brief Sends a single multicast to multicast address and mDNS port
  */
-void mDNSServiceAdvertiser::sendBroadcast()
+void mDNSServiceAdvertiser::sendMulticast()
 {
     static juce::IPAddress local = juce::IPAddress::local();
 
@@ -407,39 +413,37 @@ void mDNSServiceAdvertiser::sendBroadcast()
         serviceDataLocalCopy = m_service;
     }
 
-    for (auto& address : juce::IPAddress::getAllAddresses())
-    {
-        if (address == local)
-            continue;
+    auto hasIPv4 = serviceDataLocalCopy.address_ipv4.sin_family == AF_INET;
+    auto hasIPv6 = serviceDataLocalCopy.address_ipv6.sin6_family == AF_INET6;
+    auto hasTxtRecs = serviceDataLocalCopy.txt_record_cnt > 0;
 
-        auto hasIPv4 = serviceDataLocalCopy.address_ipv4.sin_family == AF_INET;
-        auto hasIPv6 = serviceDataLocalCopy.address_ipv6.sin6_family == AF_INET6;
+    std::vector<uint8_t> buffer(sizeof(mdns_header_t));
 
-        auto broadcastAddress = getInterfaceBroadcastAddress(address);
-        DBG(juce::String(__FUNCTION__) + " Addr:" + address.toString() + " -> Broadcast:" + broadcastAddress.toString());
+    auto header = reinterpret_cast<mdns_header_t*>(buffer.data());
+    header->query_id = MDNS_UNSOLICITED_QUERY_ID;
+    header->flags = htons(MDNS_AUTHORITATIVE_RESPONSE_FLAG);
 
-        std::vector<uint8_t> buffer(sizeof(mdns_header_t));
+    header->questions = htons(0);
+    header->answer_rrs = htons(1/*PTR*/ + 1/*SRV*/ + (hasTxtRecs ? 1 : 0)/*TXT*/ + (hasIPv4 ? 1 : 0)/*A*/ + (hasIPv6 ? 1 : 0)/*AAAA*/);
+    header->authority_rrs = htons(0);
+    header->additional_rrs = htons(0);
 
-        auto header = reinterpret_cast<mdns_header_t*>(buffer.data());
-        header->query_id = MDNS_UNSOLICITED_QUERY_ID;
-        header->flags = htons(MDNS_AUTHORITATIVE_RESPONSE_FLAG);
-
-        header->questions = htons(0);
-        header->answer_rrs = htons(1/*PTR*/ + 1/*SRV*/ + 1/*TXT*/);
-        header->authority_rrs = htons(0);
-        header->additional_rrs = htons((hasIPv4 ? 1 : 0) + (hasIPv6 ? 1 : 0));
-
-        append(serializeMDNSRecord(serviceDataLocalCopy.record_ptr), buffer);
-        append(serializeMDNSRecord(serviceDataLocalCopy.record_srv), buffer);
+    append(serializeMDNSRecord(serviceDataLocalCopy.record_ptr), buffer);
+    append(serializeMDNSRecord(serviceDataLocalCopy.record_srv), buffer);
+    if (hasTxtRecs)
         append(serializeMDNSTxtRecords(serviceDataLocalCopy.txt_record, serviceDataLocalCopy.txt_record_cnt), buffer);
-        if (hasIPv4)
-            append(serializeMDNSRecord(serviceDataLocalCopy.record_a), buffer);
-        if (hasIPv6)
-            append(serializeMDNSRecord(serviceDataLocalCopy.record_aaaa), buffer);
+    if (hasIPv4)
+        append(serializeMDNSRecord(serviceDataLocalCopy.record_a), buffer);
+    if (hasIPv6)
+        append(serializeMDNSRecord(serviceDataLocalCopy.record_aaaa), buffer);
 
-        int datalen = static_cast<int>(buffer.size());
+    int datalen = static_cast<int>(buffer.size());
 
-        m_socket.write(broadcastAddress.toString(), m_broadcastPort, reinterpret_cast<const char*>(buffer.data()), datalen);
+    auto numBytesWritten = m_socket.write(getMulticastDNSAddress(), getMulticastDNSPort(), reinterpret_cast<const char*>(buffer.data()), datalen);
+    if (numBytesWritten < 0)
+    {
+        jassertfalse;
+        DBG(juce::String(__FUNCTION__) + " unable to write to socket!");
     }
 }
 

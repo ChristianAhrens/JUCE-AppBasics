@@ -213,9 +213,10 @@ private:
     void run() override;
 
     //==============================================================================
-    juce::IPAddress getInterfaceBroadcastAddress(const juce::IPAddress& address);
+    juce::String getMulticastDNSAddress();
+	int getMulticastDNSPort();
     void buildService();
-    void sendBroadcast();
+    void sendMulticast();
 
 	//==============================================================================
 	std::vector<uint8_t> makeDnsLabel(std::string_view name);
@@ -228,7 +229,6 @@ private:
 
     //==============================================================================
 	juce::String m_serviceTypeUID;
-    std::uint16_t m_broadcastPort;
     std::uint16_t m_connectionPort;
 	std::map<std::string, std::string>	m_txtRecords;
     const juce::RelativeTime m_minInterval;
