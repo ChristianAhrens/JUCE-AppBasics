@@ -176,6 +176,25 @@ int mDNSServiceAdvertiser::getMulticastDNSPort()
     return MDNS_PORT;
 }
 
+/**
+ * @brief Sets the datagram sockets' options to use a mDNS compliant TTL value of 255
+ */
+void mDNSServiceAdvertiser::setMulticastTTL(int ttl)
+{
+    int fd = m_socket.getRawSocketHandle();
+    if (fd > 0)
+    {
+        // IP_MULTICAST_TTL erwartet einen unsigned char auf Windows, int auf Linux
+#ifdef _WIN32
+        DWORD ttlValue = static_cast<DWORD>(ttl);
+        setsockopt(fd, IPPROTO_IP, IP_MULTICAST_TTL, (const char*)&ttlValue, sizeof(ttlValue));
+#else
+        int ttlValue = ttl;
+        setsockopt(fd, IPPROTO_IP, IP_MULTICAST_TTL, &ttlValue, sizeof(ttlValue));
+#endif
+    }
+}
+
 /*
  * @brief Starts the thread and triggers broadcasting
  */
@@ -183,6 +202,8 @@ void mDNSServiceAdvertiser::run()
 {
     if (m_socket.bindToPort(getMulticastDNSPort()) && m_socket.joinMulticast(getMulticastDNSAddress()))
     {
+        setMulticastTTL();
+
         while (!threadShouldExit())
         {
             sendMulticast();

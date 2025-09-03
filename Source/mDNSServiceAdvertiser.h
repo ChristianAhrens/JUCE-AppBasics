@@ -215,6 +215,7 @@ private:
     //==============================================================================
     juce::String getMulticastDNSAddress();
 	int getMulticastDNSPort();
+	void setMulticastTTL(int ttl = 255);
     void buildService();
     void sendMulticast();
 
