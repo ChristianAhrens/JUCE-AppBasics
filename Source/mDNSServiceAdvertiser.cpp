@@ -90,12 +90,14 @@ void mDNSServiceAdvertiser::buildService()
 {
     auto hostDescription = juce::SystemStats::getComputerName() + "\0";
     auto serviceType = m_serviceTypeUID + ".local.\0";
-    auto serviceInstanceString = juce::JUCEApplication::getInstance()->getApplicationName().removeCharacters(".") + "." + serviceType + "\0";
-    auto hostnameQualifiedString = hostDescription + ".local.\0";
+    auto servicesName = "_services._dns-sd._udp.local.\0";
+    auto serviceInstanceString = juce::JUCEApplication::getInstance()->getApplicationName().removeCharacters(".") + "." + m_serviceTypeUID + ".local.\0";
+    auto hostnameQualifiedString = juce::SystemStats::getComputerName() + ".local.\0";
 
     service_t service = { 0 };
     mallocMDNSString(serviceType, service.service);
     mallocMDNSString(hostDescription, service.hostname);
+    mallocMDNSString(servicesName, service.services_name);
     mallocMDNSString(serviceInstanceString, service.service_instance);
     mallocMDNSString(hostnameQualifiedString, service.hostname_qualified);
     service.address_ipv4 = makeSockAddrIn(juce::IPAddress::getLocalAddress(), m_connectionPort);
@@ -113,6 +115,13 @@ void mDNSServiceAdvertiser::buildService()
     service.record_ptr.data.ptr.name = service.service_instance;
     service.record_ptr.rclass = DNS_CLASS_IN;
     service.record_ptr.ttl = 0;
+
+    // PTR record for _services._dns-sd._udp.local
+    service.record_ptr_service.name = service.services_name;
+    service.record_ptr_service.type = MDNS_RECORDTYPE_PTR;
+    service.record_ptr_service.data.ptr.name = service.service;
+    service.record_ptr_service.rclass = DNS_CLASS_IN;
+    service.record_ptr_service.ttl = 4500;
 
     // SRV record mapping "<hostname>.<_service-name>._tcp.local." to
     // "<hostname>.local." with port. Set weight & priority to 0.
@@ -445,11 +454,12 @@ void mDNSServiceAdvertiser::sendMulticast()
     header->flags = htons(MDNS_AUTHORITATIVE_RESPONSE_FLAG);
 
     header->questions = htons(0);
-    header->answer_rrs = htons(1/*PTR*/ + 1/*SRV*/ + (hasTxtRecs ? 1 : 0)/*TXT*/ + (hasIPv4 ? 1 : 0)/*A*/ + (hasIPv6 ? 1 : 0)/*AAAA*/);
+    header->answer_rrs = htons(1/*PTR*/ + 1/*PTR services*/ + 1/*SRV*/ + (hasTxtRecs ? 1 : 0)/*TXT*/ + (hasIPv4 ? 1 : 0)/*A*/ + (hasIPv6 ? 1 : 0)/*AAAA*/);
     header->authority_rrs = htons(0);
     header->additional_rrs = htons(0);
 
     append(serializeMDNSRecord(serviceDataLocalCopy.record_ptr), buffer);
+    append(serializeMDNSRecord(serviceDataLocalCopy.record_ptr_service), buffer);
     append(serializeMDNSRecord(serviceDataLocalCopy.record_srv), buffer);
     if (hasTxtRecs)
         append(serializeMDNSTxtRecords(serviceDataLocalCopy.txt_record, serviceDataLocalCopy.txt_record_cnt), buffer);

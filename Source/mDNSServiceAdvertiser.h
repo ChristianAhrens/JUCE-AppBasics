@@ -167,12 +167,14 @@ public:
     struct service_t {
 		mdns_string_t service;
         mdns_string_t hostname;
+		mdns_string_t services_name;
         mdns_string_t service_instance;
         mdns_string_t hostname_qualified;
         struct sockaddr_in address_ipv4;
         struct sockaddr_in6 address_ipv6;
         int port;
         mdns_record_t record_ptr;
+		mdns_record_t record_ptr_service;
         mdns_record_t record_srv;
         mdns_record_t record_a;
         mdns_record_t record_aaaa;
