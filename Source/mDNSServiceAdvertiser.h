@@ -91,32 +91,15 @@ public:
 	typedef ssize_t mdns_ssize_t;
 #endif
 
-	struct mdns_string_t {
-		const char* str = nullptr;
-		size_t length = 0;
-	};
-
-	struct mdns_string_pair_t {
-		size_t offset;
-		size_t length;
-		int ref;
-	};
-
-	struct mdns_string_table_t {
-		size_t offset[16];
-		size_t count;
-		size_t next;
-	};
-
 	struct mdns_record_srv_t {
 		std::uint16_t priority;
 		std::uint16_t weight;
 		std::uint16_t port;
-		mdns_string_t name;
+		std::string name;
 	};
 
 	struct mdns_record_ptr_t {
-		mdns_string_t name;
+		std::string name;
 	};
 
 	struct mdns_record_a_t {
@@ -128,8 +111,8 @@ public:
 	};
 
 	struct mdns_record_txt_t {
-		mdns_string_t key;
-		mdns_string_t value;
+		std::string key;
+		std::string value;
 	};
 
 	struct mdns_record_data_t {
@@ -141,7 +124,7 @@ public:
 	};
 
 	struct mdns_record_t {
-		mdns_string_t name;
+		std::string name;
 		mdns_record_type_t type;
 		mdns_record_data_t data;
 		std::uint16_t rclass;
@@ -165,11 +148,11 @@ public:
 
     // Data for our service including the mDNS records
     struct service_t {
-		mdns_string_t service;
-        mdns_string_t hostname;
-		mdns_string_t services_name;
-        mdns_string_t service_instance;
-        mdns_string_t hostname_qualified;
+		std::string service;
+		std::string hostname;
+		std::string services_name;
+		std::string service_instance;
+		std::string hostname_qualified;
         struct sockaddr_in address_ipv4;
         struct sockaddr_in6 address_ipv6;
         int port;
@@ -203,7 +186,7 @@ public:
 
 public:
     //==============================================================================
-    mDNSServiceAdvertiser(const juce::String& serviceTypeUID, std::uint16_t servicePort, juce::RelativeTime minTimeBetweenBroadcasts = juce::RelativeTime::seconds(1.5));
+    mDNSServiceAdvertiser(const std::string& serviceTypeUID, std::uint16_t servicePort, juce::RelativeTime minTimeBetweenBroadcasts = juce::RelativeTime::seconds(1.5));
     ~mDNSServiceAdvertiser() override;
 
 	void addTxtRecord(const std::string& key, const std::string& value);
@@ -215,30 +198,28 @@ private:
     void run() override;
 
     //==============================================================================
-    juce::String getMulticastDNSAddress();
+    std::string getMulticastDNSAddress();
 	int getMulticastDNSPort();
 	void setMulticastTTL(int ttl = 255);
     void buildService();
     void sendMulticast();
 
 	//==============================================================================
-	std::vector<uint8_t> makeDnsLabel(std::string_view name);
+	std::vector<uint8_t> makeDnsLabel(std::string name);
 	std::vector<uint8_t> serializeMDNSRecord(const mDNSServiceAdvertiser::mdns_record_t& record);
 	std::vector<std::uint8_t> serializeMDNSTxtRecords(const mDNSServiceAdvertiser::mdns_record_t* records, size_t record_count);
 	sockaddr_in makeSockAddrIn(const juce::IPAddress& ip, std::uint16_t port);
 	sockaddr_in6 makeSockAddrIn6(const juce::IPAddress& ip, std::uint16_t port);
-	void mallocMDNSString(const juce::String& inputString, mdns_string_t& outputString);
-	void freeMDNSString(mdns_string_t& string);
 
     //==============================================================================
-	juce::String m_serviceTypeUID;
+	std::string m_serviceTypeUID;
     std::uint16_t m_connectionPort;
 	std::map<std::string, std::string>	m_txtRecords;
     const juce::RelativeTime m_minInterval;
     juce::DatagramSocket m_socket{ true };
 
 	std::mutex m_serviceMutex;
-	service_t m_service{ 0 };
+	service_t m_service;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(mDNSServiceAdvertiser);
 };

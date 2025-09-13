@@ -27,7 +27,7 @@ namespace JUCEAppBasics
 /**
  * @brief Constructor. Thread base class is initialized but not started here.
  */
-mDNSServiceAdvertiser::mDNSServiceAdvertiser(const juce::String& serviceTypeUID, std::uint16_t servicePort, juce::RelativeTime minTimeBetweenBroadcasts)
+mDNSServiceAdvertiser::mDNSServiceAdvertiser(const std::string& serviceTypeUID, std::uint16_t servicePort, juce::RelativeTime minTimeBetweenBroadcasts)
     : juce::Thread(juce::JUCEApplication::getInstance()->getApplicationName() + ": mDNS_Discovery_broadcast"),
     m_serviceTypeUID(serviceTypeUID),
     m_connectionPort(servicePort),
@@ -45,11 +45,6 @@ mDNSServiceAdvertiser::~mDNSServiceAdvertiser()
 {
     stopThread(2000);
     m_socket.shutdown();
-
-    //freeMDNSString(m_service.record_ptr.name);
-    //freeMDNSString(m_service.record_srv.name);
-    //freeMDNSString(m_service.record_a.name);
-    //freeMDNSString(m_service.record_aaaa.name);
 }
 
 /**
@@ -88,21 +83,16 @@ void mDNSServiceAdvertiser::removeTxtRecord(const std::string& key)
  */
 void mDNSServiceAdvertiser::buildService()
 {
-    auto hostDescription = juce::SystemStats::getComputerName() + "\0";
-    auto serviceType = m_serviceTypeUID + ".local.\0";
-    auto servicesName = "_services._dns-sd._udp.local.\0";
-    auto serviceInstanceString = juce::JUCEApplication::getInstance()->getApplicationName().removeCharacters(".") + "." + m_serviceTypeUID + ".local.\0";
-    auto hostnameQualifiedString = juce::SystemStats::getComputerName() + ".local.\0";
+    std::lock_guard<std::mutex> l(m_serviceMutex);
 
-    service_t service = { 0 };
-    mallocMDNSString(serviceType, service.service);
-    mallocMDNSString(hostDescription, service.hostname);
-    mallocMDNSString(servicesName, service.services_name);
-    mallocMDNSString(serviceInstanceString, service.service_instance);
-    mallocMDNSString(hostnameQualifiedString, service.hostname_qualified);
-    service.address_ipv4 = makeSockAddrIn(juce::IPAddress::getLocalAddress(), m_connectionPort);
-    service.address_ipv6 = makeSockAddrIn6(juce::IPAddress::getLocalAddress(), m_connectionPort);
-    service.port = m_connectionPort;
+    m_service.service = m_serviceTypeUID + ".local.\0";
+    m_service.hostname = juce::SystemStats::getComputerName().toStdString() + "\0";
+    m_service.services_name = "_services._dns-sd._udp.local.\0";
+    m_service.service_instance = juce::JUCEApplication::getInstance()->getApplicationName().removeCharacters(".").toStdString() + "." + m_serviceTypeUID + ".local.\0";
+    m_service.hostname_qualified = juce::SystemStats::getComputerName().toStdString() + ".local.\0";
+    m_service.address_ipv4 = makeSockAddrIn(juce::IPAddress::getLocalAddress(), m_connectionPort);
+    m_service.address_ipv6 = makeSockAddrIn6(juce::IPAddress::getLocalAddress(), m_connectionPort);
+    m_service.port = m_connectionPort;
 
     // Setup our mDNS records
     constexpr std::uint16_t DNS_CLASS_IN = 0x0001;
@@ -110,42 +100,42 @@ void mDNSServiceAdvertiser::buildService()
 
     // PTR record reverse mapping "<_service-name>._tcp.local." to
     // "<hostname>.<_service-name>._tcp.local."
-    service.record_ptr.name = service.service;
-    service.record_ptr.type = MDNS_RECORDTYPE_PTR;
-    service.record_ptr.data.ptr.name = service.service_instance;
-    service.record_ptr.rclass = DNS_CLASS_IN;
-    service.record_ptr.ttl = 0;
+    m_service.record_ptr.name = m_service.service;
+    m_service.record_ptr.type = MDNS_RECORDTYPE_PTR;
+    m_service.record_ptr.data.ptr.name = m_service.service_instance;
+    m_service.record_ptr.rclass = DNS_CLASS_IN;
+    m_service.record_ptr.ttl = 0;
 
     // PTR record for _services._dns-sd._udp.local
-    service.record_ptr_service.name = service.services_name;
-    service.record_ptr_service.type = MDNS_RECORDTYPE_PTR;
-    service.record_ptr_service.data.ptr.name = service.service;
-    service.record_ptr_service.rclass = DNS_CLASS_IN;
-    service.record_ptr_service.ttl = 4500;
+    m_service.record_ptr_service.name = m_service.services_name;
+    m_service.record_ptr_service.type = MDNS_RECORDTYPE_PTR;
+    m_service.record_ptr_service.data.ptr.name = m_service.service;
+    m_service.record_ptr_service.rclass = DNS_CLASS_IN;
+    m_service.record_ptr_service.ttl = 4500;
 
     // SRV record mapping "<hostname>.<_service-name>._tcp.local." to
     // "<hostname>.local." with port. Set weight & priority to 0.
-    service.record_srv.name = service.service_instance;
-    service.record_srv.type = MDNS_RECORDTYPE_SRV;
-    service.record_srv.data.srv.name = service.hostname_qualified;
-    service.record_srv.data.srv.port = (std::uint16_t)service.port;
-    service.record_srv.data.srv.priority = 0;
-    service.record_srv.data.srv.weight = 0;
-    service.record_srv.rclass = DNS_CLASS_IN | MDNS_CLASS_CACHE_FLUSH;
-    service.record_srv.ttl = 0;
+    m_service.record_srv.name = m_service.service_instance;
+    m_service.record_srv.type = MDNS_RECORDTYPE_SRV;
+    m_service.record_srv.data.srv.name = m_service.hostname_qualified;
+    m_service.record_srv.data.srv.port = (std::uint16_t)m_service.port;
+    m_service.record_srv.data.srv.priority = 0;
+    m_service.record_srv.data.srv.weight = 0;
+    m_service.record_srv.rclass = DNS_CLASS_IN | MDNS_CLASS_CACHE_FLUSH;
+    m_service.record_srv.ttl = 0;
 
     // A/AAAA records mapping "<hostname>.local." to IPv4/IPv6 addresses
-    service.record_a.name = service.hostname_qualified;
-    service.record_a.type = MDNS_RECORDTYPE_A;
-    service.record_a.data.a.addr = service.address_ipv4;
-    service.record_a.rclass = DNS_CLASS_IN | MDNS_CLASS_CACHE_FLUSH;
-    service.record_a.ttl = 0;
+    m_service.record_a.name = m_service.hostname_qualified;
+    m_service.record_a.type = MDNS_RECORDTYPE_A;
+    m_service.record_a.data.a.addr = m_service.address_ipv4;
+    m_service.record_a.rclass = DNS_CLASS_IN | MDNS_CLASS_CACHE_FLUSH;
+    m_service.record_a.ttl = 0;
 
-    service.record_aaaa.name = service.hostname_qualified;
-    service.record_aaaa.type = MDNS_RECORDTYPE_AAAA;
-    service.record_aaaa.data.aaaa.addr = service.address_ipv6;
-    service.record_aaaa.rclass = DNS_CLASS_IN | MDNS_CLASS_CACHE_FLUSH;
-    service.record_aaaa.ttl = 0;
+    m_service.record_aaaa.name = m_service.hostname_qualified;
+    m_service.record_aaaa.type = MDNS_RECORDTYPE_AAAA;
+    m_service.record_aaaa.data.aaaa.addr = m_service.address_ipv6;
+    m_service.record_aaaa.rclass = DNS_CLASS_IN | MDNS_CLASS_CACHE_FLUSH;
+    m_service.record_aaaa.ttl = 0;
 
     jassert(MDNS_MAX_TXTRECORDS >= m_txtRecords.size());
     if (MDNS_MAX_TXTRECORDS >= m_txtRecords.size())
@@ -153,28 +143,26 @@ void mDNSServiceAdvertiser::buildService()
         int i = 0;
         for (auto const& record : m_txtRecords)
         {
-            service.txt_record[i].name = service.service_instance;
-            service.txt_record[i].type = MDNS_RECORDTYPE_TXT;
-            service.txt_record[i].data.txt.key = { record.first.c_str(), record.first.size() };
-            service.txt_record[i].data.txt.value = { record.second.c_str(), record.second.size() };
-            service.txt_record[i].rclass = DNS_CLASS_IN | MDNS_CLASS_CACHE_FLUSH;
-            service.txt_record[i].ttl = 0;
+            m_service.txt_record[i].name = m_service.service_instance;
+            m_service.txt_record[i].type = MDNS_RECORDTYPE_TXT;
+            m_service.txt_record[i].data.txt.key = { record.first.c_str(), record.first.size() };
+            m_service.txt_record[i].data.txt.value = { record.second.c_str(), record.second.size() };
+            m_service.txt_record[i].rclass = DNS_CLASS_IN | MDNS_CLASS_CACHE_FLUSH;
+            m_service.txt_record[i].ttl = 0;
             i++;
         }
-        service.txt_record_cnt = m_txtRecords.size();
+        m_service.txt_record_cnt = m_txtRecords.size();
     }
 
-    std::lock_guard<std::mutex> l(m_serviceMutex);
-    m_service = service;
-    DBG(juce::String(__FUNCTION__) + " " + juce::String(m_service.record_ptr.name.str, m_service.record_ptr.name.length));
+    DBG(juce::String(__FUNCTION__) + " " + juce::String(m_service.record_ptr.name));
 }
 
 /**
  * @brief Gets the multicast address relevant for mDNS
  */
-juce::String mDNSServiceAdvertiser::getMulticastDNSAddress()
+std::string mDNSServiceAdvertiser::getMulticastDNSAddress()
 {
-    return juce::String("224.0.0.251");
+    return "224.0.0.251";
 }
 
 /**
@@ -231,18 +219,18 @@ void mDNSServiceAdvertiser::run()
 /**
  * @brief   Serialize a given string to mDNS label compliant byte string vector
  */
-inline std::vector<uint8_t> mDNSServiceAdvertiser::makeDnsLabel(std::string_view name)
+inline std::vector<uint8_t> mDNSServiceAdvertiser::makeDnsLabel(std::string name)
 {
     std::vector<uint8_t> result;
     size_t start = 0;
 
     // Eliminate trailing dot
     if (!name.empty() && name.back() == '.')
-        name.remove_suffix(1);
+        name.pop_back();
 
     while (start < name.size()) {
         size_t dot = name.find('.', start);
-        if (dot == std::string_view::npos)
+        if (dot == std::string::npos)
             dot = name.size();
         size_t labelLen = dot - start;
         if (labelLen > 63)
@@ -266,7 +254,7 @@ std::vector<uint8_t> mDNSServiceAdvertiser::serializeMDNSRecord(const mDNSServic
     std::vector<uint8_t> data;
 
     // Name in mDNS label format
-    auto nameLabel = makeDnsLabel(std::string_view(record.name.str, record.name.length));
+    auto nameLabel = makeDnsLabel(record.name);
     data.insert(data.end(), nameLabel.begin(), nameLabel.end());
 
     append16(static_cast<uint16_t>(record.type), data);
@@ -280,7 +268,7 @@ std::vector<uint8_t> mDNSServiceAdvertiser::serializeMDNSRecord(const mDNSServic
     {
         case mDNSServiceAdvertiser::MDNS_RECORDTYPE_PTR:
             {
-                auto ptrLabel = makeDnsLabel(std::string_view(record.data.ptr.name.str, record.data.ptr.name.length));
+                auto ptrLabel = makeDnsLabel(record.data.ptr.name);
                 rdata.insert(rdata.end(), ptrLabel.begin(), ptrLabel.end());
             }
             break;
@@ -292,7 +280,7 @@ std::vector<uint8_t> mDNSServiceAdvertiser::serializeMDNSRecord(const mDNSServic
                 rdata.insert(rdata.end(), reinterpret_cast<std::uint8_t*>(&priority), reinterpret_cast<std::uint8_t*>(&priority) + 2);
                 rdata.insert(rdata.end(), reinterpret_cast<std::uint8_t*>(&weight), reinterpret_cast<std::uint8_t*>(&weight) + 2);
                 rdata.insert(rdata.end(), reinterpret_cast<std::uint8_t*>(&port), reinterpret_cast<std::uint8_t*>(&port) + 2);
-                auto srvLabel = makeDnsLabel(std::string_view(record.data.srv.name.str, record.data.srv.name.length));
+                auto srvLabel = makeDnsLabel(record.data.srv.name);
                 rdata.insert(rdata.end(), srvLabel.begin(), srvLabel.end());
             }
             break;
@@ -336,7 +324,7 @@ std::vector<std::uint8_t> mDNSServiceAdvertiser::serializeMDNSTxtRecords(const m
         if (!headerWritten)
         {
             // Name in mDNS label format
-            auto nameLabel = makeDnsLabel(std::string_view(records[i].name.str, records[i].name.length));
+            auto nameLabel = makeDnsLabel(records[i].name);
             data.insert(data.end(), nameLabel.begin(), nameLabel.end());
 
             // Type, Classe, TTL
@@ -352,8 +340,8 @@ std::vector<std::uint8_t> mDNSServiceAdvertiser::serializeMDNSTxtRecords(const m
         }
 
         // TXT-string: <len>key=value
-        std::string key(records[i].data.txt.key.str, records[i].data.txt.key.length);
-        std::string value(records[i].data.txt.value.str, records[i].data.txt.value.length);
+        const std::string& key = records[i].data.txt.key;
+        const std::string& value = records[i].data.txt.value;
         std::string txt = key + "=" + value;
         if (txt.size() > 255)
         {
@@ -402,44 +390,16 @@ sockaddr_in6 mDNSServiceAdvertiser::makeSockAddrIn6(const juce::IPAddress& ip, s
 }
 
 /**
- * @brief   juce::String to mdns_string_t conversion.
- *          Includes allocation of new memory and deallocation of previously used memory.
- */
-void mDNSServiceAdvertiser::mallocMDNSString(const juce::String& inputString, mDNSServiceAdvertiser::mdns_string_t& outputString)
-{
-    freeMDNSString(outputString);
-
-    auto str = inputString.toRawUTF8();
-    auto strl = inputString.getNumBytesAsUTF8();
-
-    outputString.str = (const char*)std::malloc(strl);
-    std::memcpy((void*)outputString.str, str, strl);
-    outputString.length = strl;
-}
-
-/**
- * @brief   Cleanup mdns_string_t data
- */
-void mDNSServiceAdvertiser::freeMDNSString(mDNSServiceAdvertiser::mdns_string_t& string)
-{
-    if (string.length >= 0)
-    {
-        std::free((void*)string.str);
-        string.length = 0;
-    }
-}
-
-/**
  * @brief Sends a single multicast to multicast address and mDNS port
  */
 void mDNSServiceAdvertiser::sendMulticast()
 {
     static juce::IPAddress local = juce::IPAddress::local();
 
-    service_t serviceDataLocalCopy{ 0 };
+    service_t serviceDataLocalCopy;
     {
         std::lock_guard<std::mutex> l(m_serviceMutex);
-        DBG(juce::String(__FUNCTION__) + " " + juce::String(m_service.record_ptr.name.str, m_service.record_ptr.name.length));
+        DBG(juce::String(__FUNCTION__) + " " + juce::String(m_service.record_ptr.name));
         serviceDataLocalCopy = m_service;
     }
 
