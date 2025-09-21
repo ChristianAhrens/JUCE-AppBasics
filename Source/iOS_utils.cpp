@@ -189,6 +189,16 @@ JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPhone(const juce::String& d
         return KnownDevices::iPhone16;
     if (deviceDescription == "iPhone17,4") // iPhone 16 Plus
         return KnownDevices::iPhone16Plus;
+    if (deviceDescription == "iPhone17,5") // iPhone 16e
+        return KnownDevices::iPhone16e;
+    if (deviceDescription == "iPhone18,1") // iPhone 17 Pro
+        return KnownDevices::iPhone17Pro;
+    if (deviceDescription == "iPhone18,2") // iPhone 17 Pro Max
+        return KnownDevices::iPhone17ProMax;
+    if (deviceDescription == "iPhone18,3") // iPhone 17
+        return KnownDevices::iPhone17;
+    if (deviceDescription == "iPhone18,4") // iPhone Air
+        return KnownDevices::iPhoneAir;
     if (deviceDescription.contains("iPhone"))
         return KnownDevices::GenericiPhone;
     
@@ -369,6 +379,18 @@ JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPad(const juce::String& dev
         return KnownDevices::iPadPro1104;
     if (deviceDescription == "iPad14,5") // iPad Pro 12.9 inch 6th Gen
         return KnownDevices::iPadPro1296;
+    if (deviceDescription == "iPad15,3") // iPad Air 11-inch 8th Gen (WiFi)
+        return KnownDevices::iPadAir811;
+    if (deviceDescription == "iPad15,4") // iPad Air 11-inch 8th Gen (WiFi+Cellular)
+        return KnownDevices::iPadAir811;
+    if (deviceDescription == "iPad15,5") // iPad Air 13-inch 8th Gen (WiFi)
+        return KnownDevices::iPadAir813;
+    if (deviceDescription == "iPad15,6") // iPad Air 13-inch 8th Gen (WiFi+Cellular)
+        return KnownDevices::iPadAir813;
+    if (deviceDescription == "iPad15,7") // iPad 11th Gen (WiFi)
+        return KnownDevices::iPad11;
+    if (deviceDescription == "iPad15,8") // iPad 11th Gen (WiFi+Cellular)
+        return KnownDevices::iPad11;
     if (deviceDescription.contains("iPad"))
         return KnownDevices::GenericiPad;
 
@@ -561,6 +583,11 @@ JUCEAppBasics::iOS_utils::KnownDevices getGenericDeviceType()
     case iPhone16Plus:
     case iPhone16Pro:
     case iPhone16ProMax:
+    case iPhone16e:
+    case iPhone17Pro:
+    case iPhone17ProMax:
+    case iPhone17:
+    case iPhoneAir:
         return GenericiPhone;
     case GenericiPad:
     case iPad:
@@ -587,6 +614,9 @@ JUCEAppBasics::iOS_utils::KnownDevices getGenericDeviceType()
     case iPadPro1102:
     case iPadPro1294:
     case iPadPro1296:
+    case iPadAir811:
+    case iPadAir813:
+    case iPad11:
     case iPadmini:
     case iPadmini2:
     case iPadmini3:
@@ -658,6 +688,7 @@ int getDeviceDisplayNotchIndent()
     case iPhone13ProMax:
     case iPhone14:
     case iPhone14Plus:
+    case iPhone16e:
     case GenericiPhone:
         displayNotchIndent = 35;
         break;
@@ -675,6 +706,14 @@ int getDeviceDisplayNotchIndent()
     case iPhone16Pro:
     case iPhone16ProMax:
         displayNotchIndent = 50;
+        break;
+    case iPhone17Pro:
+    case iPhone17ProMax:
+    case iPhone17:
+        displayNotchIndent = 52;
+        break;
+    case iPhoneAir:
+        displayNotchIndent = 58;
         break;
     case iPad:
     case iPad2:
@@ -768,7 +807,16 @@ int getDeviceDisplaySlideBarIndent()
     case iPhone16Plus:
     case iPhone16Pro:
     case iPhone16ProMax:
+    case iPhone16e:
         slideBarIndent = 20;
+        break;
+    case iPhone17Pro:
+    case iPhone17ProMax:
+    case iPhone17:
+        slideBarIndent = 30;
+        break;
+    case iPhoneAir:
+        slideBarIndent = 36;
         break;
     case iPad:
     case iPad2:
