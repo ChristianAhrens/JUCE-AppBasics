@@ -175,7 +175,11 @@ ServiceTopologyManager::ServiceTopologyManager(const juce::String& serviceTypeUI
     startThread(juce::Thread::Priority::background);
 
     m_serviceDiscovery = std::make_unique<ServiceDiscovery>(serviceTypeUIDBase, broadcastPort);
-    m_serviceDiscovery->onChange = [=]() { updateKnownTopology(); };
+    m_serviceDiscovery->onChange = [=]() {
+        updateKnownTopology();
+        if (onDiscoveredTopologyChanged)
+            onDiscoveredTopologyChanged();
+    };
 }
 
 ServiceTopologyManager::~ServiceTopologyManager()
@@ -188,6 +192,11 @@ void ServiceTopologyManager::setSessionMasterServiceDescription(const juce::Stri
 {
     std::lock_guard<std::mutex> l(m_messagelock);
     m_message.setAttribute("master_name", sessionMasterServiceDescription);
+}
+
+const SessionServiceTopology& ServiceTopologyManager::getDiscoveredServiceTopology()
+{
+    return m_serviceTopology;
 }
 
 IPAddress ServiceTopologyManager::getInterfaceBroadcastAddress(const juce::IPAddress& address)
@@ -241,6 +250,49 @@ void ServiceTopologyManager::updateKnownTopology()
 {
     if (!m_serviceDiscovery)
         return;
+
+    auto currentServices = m_serviceDiscovery->getServices();
+
+    // derive currently present session masters
+    auto currentSessionMasters = std::vector<SessionMasterAwareService>();
+    for (auto const& service : currentServices)
+    {
+        if (service.sessionMasterDescription == service.description)
+        {
+            currentSessionMasters.push_back(service);
+            m_serviceTopology[service] = {};
+        }
+    }
+    // fill in the session participants
+    for (auto const& service : currentServices)
+    {
+        if (service.sessionMasterDescription != service.description)
+        {
+            bool foundAndProcessed = false;
+            for (auto& session : m_serviceTopology)
+            {
+                if (session.first.description == service.sessionMasterDescription)
+                {
+                    if (std::find(session.second.begin(), session.second.end(), service) == session.second.end())
+                    {
+                        session.second.push_back(service);
+                        foundAndProcessed = true;
+                        break;
+                    }
+                }
+            }
+            jassert(foundAndProcessed);// if we hit this, a service was found that contains a sessionMaster that itself is not detected on the net?!
+        }
+    }
+    // delete any stale sessionMasters
+    auto staleSessions = std::vector<SessionMasterAwareService>();
+    for (auto const& sessionMaster : m_serviceTopology)
+    {
+        if (std::find(currentSessionMasters.begin(), currentSessionMasters.end(), sessionMaster.first) == currentSessionMasters.end())
+            staleSessions.push_back(sessionMaster.first);
+    }
+    for (auto const& staleSession : staleSessions)
+        m_serviceTopology.erase(staleSession);
 
     DBG(juce::String(__FUNCTION__) + " " + m_serviceDiscovery->knownServicesToString());
 }

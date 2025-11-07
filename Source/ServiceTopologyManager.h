@@ -40,7 +40,38 @@ struct SessionMasterAwareService
     juce::IPAddress address;                /**< The IP address of the advertiser */
     int port;                               /**< The port number of the advertiser */
     juce::Time lastSeen;                    /**< The time of the last ping received from the advertiser */
+
+    bool operator<(const SessionMasterAwareService& other) const noexcept
+    {
+        int cmp = instanceID.compare(other.instanceID);
+        if (cmp != 0)
+            return cmp < 0;
+
+        cmp = description.compare(other.description);
+        if (cmp != 0)
+            return cmp < 0;
+
+        cmp = type.compare(other.type);
+        if (cmp != 0)
+            return cmp < 0;
+
+        cmp = address.toString().compare(other.address.toString());
+        if (cmp != 0)
+            return cmp < 0;
+
+        return port < other.port;
+    }
+
+    bool operator==(const SessionMasterAwareService& other) const noexcept
+    {
+        return instanceID == other.instanceID
+            && description == other.description
+            && type == other.type
+            && address.toString() == other.address.toString()
+            && port == other.port;
+    }
 };
+using SessionServiceTopology = std::map<SessionMasterAwareService, std::vector<SessionMasterAwareService>>;
 
 
 /**
@@ -54,8 +85,7 @@ public:
     /**
      * JUCEs' AvailableServiceList has the used listening socket in non-reuse mode, therefor onyl one of our MemaClients can listen on a single machine at a time
      * (applies for JUCE 8.0.8 and is only a problem on UNIX systems)
-     * To overcome this, the ServiceDiscovery is a code clone of JUCEs' AvailableServiceList, with only a single adapted line of code - adding a call
-     * to socket.setEnablePortReuse(true) in the constructor. As soon as the JUCE implemenation is changed, we should roll back to the original implementation if possible.
+     * To overcome this, the ServiceDiscovery is an adaption of JUCEs' AvailableServiceList. As soon as the JUCE implemenation is changed, we should sync again with the original implementation if possible.
      * See e.g.: https://forum.juce.com/t/networkservicediscovery-multiple-listeners-on-same-machine/66306
      */
     struct ServiceDiscovery : private juce::Thread,
@@ -102,6 +132,10 @@ public:
 
     void setSessionMasterServiceDescription(const juce::String& sessionMasterServiceDescription);
 
+    const SessionServiceTopology& getDiscoveredServiceTopology();
+
+    std::function<void()> onDiscoveredTopologyChanged;
+
 protected:
 	IPAddress getInterfaceBroadcastAddress(const IPAddress& address);
 	void run() override;
@@ -117,6 +151,8 @@ private:
 	juce::DatagramSocket m_socket{ true };
 
     std::unique_ptr<ServiceDiscovery> m_serviceDiscovery;
+
+    SessionServiceTopology  m_serviceTopology;
 
 };
 
