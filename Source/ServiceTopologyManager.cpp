@@ -121,19 +121,17 @@ void ServiceTopologyManager::ServiceDiscovery::handleMessage(const SessionMaster
 {
     const juce::ScopedLock sl(m_listLock);
 
-    for (auto& s : m_services)
+    for (auto& refService : m_services)
     {
-        if (s.instanceID == service.instanceID)
+        if (refService.instanceID == service.instanceID)
         {
-            if (s.description != service.description
-                || s.address != service.address
-                || s.port != service.port)
+            if (refService != service)
             {
-                s = service;
+                refService = service;
                 triggerAsyncUpdate();
             }
 
-            s.lastSeen = service.lastSeen;
+            refService.lastSeen = service.lastSeen;
             return;
         }
     }
@@ -186,6 +184,26 @@ ServiceTopologyManager::~ServiceTopologyManager()
 {
     stopThread(2000);
     m_socket.shutdown();
+}
+
+void ServiceTopologyManager::showServiceTopologyMenu(const SessionServiceTopology& topology, std::function<void(const SessionMasterAwareService&)> onServiceSelected)
+{
+    bool allowSelection = onServiceSelected != nullptr;
+
+    juce::PopupMenu topologyMenu;
+    for (auto const& session : topology)
+    {
+        topologyMenu.addSectionHeader(session.first.description);
+        for (auto const& service : session.second)
+        {
+            if (allowSelection)
+                topologyMenu.addItem(service.description, [=]() {});
+            else
+                topologyMenu.addItem(service.description);
+        }
+        topologyMenu.addSeparator();
+    }
+    topologyMenu.showMenuAsync(juce::PopupMenu::Options());
 }
 
 void ServiceTopologyManager::setSessionMasterServiceDescription(const juce::String& sessionMasterServiceDescription)
@@ -266,7 +284,7 @@ void ServiceTopologyManager::updateKnownTopology()
     // fill in the session participants
     for (auto const& service : currentServices)
     {
-        if (service.sessionMasterDescription != service.description)
+        if (service.sessionMasterDescription != service.description && service.sessionMasterDescription.isNotEmpty())
         {
             bool foundAndProcessed = false;
             for (auto& session : m_serviceTopology)
@@ -281,7 +299,6 @@ void ServiceTopologyManager::updateKnownTopology()
                     }
                 }
             }
-            jassert(foundAndProcessed);// if we hit this, a service was found that contains a sessionMaster that itself is not detected on the net?!
         }
     }
     // delete any stale sessionMasters

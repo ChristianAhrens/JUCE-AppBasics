@@ -70,6 +70,11 @@ struct SessionMasterAwareService
             && address.toString() == other.address.toString()
             && port == other.port;
     }
+
+    bool operator!=(const SessionMasterAwareService& other) const noexcept
+    {
+        return !(*this == other);
+    }
 };
 using SessionServiceTopology = std::map<SessionMasterAwareService, std::vector<SessionMasterAwareService>>;
 
@@ -124,6 +129,8 @@ public:
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ServiceDiscovery)
     };
+
+    static void showServiceTopologyMenu(const SessionServiceTopology& topology, std::function<void(const SessionMasterAwareService&)> onServiceSelected = nullptr);
 
 public:
 	ServiceTopologyManager(const juce::String& serviceTypeUIDBase, const juce::String& serviceTypeUID, const juce::String& serviceDescription, const juce::String& sessionMasterServiceDescription,
