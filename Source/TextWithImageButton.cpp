@@ -56,7 +56,7 @@ void TextWithImageButton::paint(Graphics& g)
     DrawableButton::paint(g);
 
     // text drawing taken from LookAndFeel_V2::drawButtonText
-    Font font(jmin(15.0f, static_cast<float>(getHeight()) * 0.6f));
+    juce::Font font(juce::FontOptions(jmin(15.0f, static_cast<float>(getHeight()) * 0.6f)));
     g.setFont(font);
     g.setColour(findColour(getToggleState() ? TextButton::textColourOnId
         : TextButton::textColourOffId)

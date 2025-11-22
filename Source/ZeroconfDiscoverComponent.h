@@ -105,7 +105,8 @@ private:
         };
         void getIdealSize(int& idealWidth, int& idealHeight) override {
             auto margin = 8;
-            idealWidth = m_label->getFont().getStringWidth(m_label->getText()) + margin;
+            idealWidth = juce::GlyphArrangement::getStringWidthInt(m_label->getFont(), m_label->getText()) + margin;
+
             idealHeight = static_cast<int>(m_label->getFont().getHeight()) + margin;
         };
         void resized() override {
