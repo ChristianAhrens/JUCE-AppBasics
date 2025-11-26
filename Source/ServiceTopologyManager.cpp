@@ -18,6 +18,8 @@
 
 #include "ServiceTopologyManager.h"
 
+#include <ServiceTopologyTreeView.h>
+
 namespace JUCEAppBasics
 {
 
@@ -189,20 +191,38 @@ ServiceTopologyManager::~ServiceTopologyManager()
 void ServiceTopologyManager::showServiceTopologyMenu(const SessionServiceTopology& topology, std::function<void(const SessionMasterAwareService&)> onServiceSelected)
 {
     bool allowSelection = onServiceSelected != nullptr;
+    
+    class CustomPopupTopologyComponent : public juce::PopupMenu::CustomComponent
+    {
+    public:
+        CustomPopupTopologyComponent(const SessionServiceTopology& topology, bool allowSelection) : juce::PopupMenu::CustomComponent()
+        {
+            m_topologyTree = std::make_unique<ServiceTopologyTreeView>(allowSelection);
+            m_topologyTree->setServiceTopology(topology);
+            m_topologyTree->setDefaultOpenness(true);
+            addAndMakeVisible(m_topologyTree.get());
+        };
+        ~CustomPopupTopologyComponent() override {};
+
+        void resized() override
+        {
+            if (m_topologyTree)
+                m_topologyTree->setBounds(getLocalBounds());
+        };
+
+        void getIdealSize(int& idealWidth, int& idealHeight)
+        {
+            auto idealSize = m_topologyTree->getIdealSize();
+            idealWidth = idealSize.first;
+            idealHeight = idealSize.second;
+        };
+
+    private:
+        std::unique_ptr<ServiceTopologyTreeView>    m_topologyTree;
+    };
 
     juce::PopupMenu topologyMenu;
-    for (auto const& session : topology)
-    {
-        topologyMenu.addSectionHeader(session.first.description);
-        for (auto const& service : session.second)
-        {
-            if (allowSelection)
-                topologyMenu.addItem(service.description, [=]() {});
-            else
-                topologyMenu.addItem(service.description);
-        }
-        topologyMenu.addSeparator();
-    }
+    topologyMenu.addCustomItem(1, std::make_unique<CustomPopupTopologyComponent>(topology, allowSelection), nullptr, "Detected service topology tree");
     topologyMenu.showMenuAsync(juce::PopupMenu::Options());
 }
 
@@ -257,7 +277,7 @@ void ServiceTopologyManager::sendBroadcast()
             std::lock_guard<std::mutex> l(m_messagelock);
             m_message.setAttribute("address", address.toString());
             data = m_message.toString(juce::XmlElement::TextFormat().singleLine().withoutHeader());
-            DBG(juce::String(__FUNCTION__) + " " + data);
+            //DBG(juce::String(__FUNCTION__) + " " + data);
         }
 
         m_socket.write(broadcastAddress.toString(), m_broadcastPort, data.toRawUTF8(), (int)data.getNumBytesAsUTF8());

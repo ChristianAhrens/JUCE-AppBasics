@@ -8,7 +8,7 @@
 namespace JUCEAppBasics
 {
 
-class CustomLookAndFeel : public LookAndFeel_V4
+class CustomLookAndFeel : public juce::LookAndFeel_V4
 {
 
 public:
@@ -64,6 +64,12 @@ public:
 	//==============================================================================
 	void setMouseCursor(const juce::MouseCursor& mouseCursor);
 	juce::MouseCursor getMouseCursorFor(juce::Component& c) override;
+
+	//==============================================================================
+	void drawTreeviewPlusMinusBox(Graphics& g, const Rectangle<float>& area,
+		Colour backgroundColour, bool isOpen, bool isMouseOver) override;
+	bool areLinesDrawnForTreeView(TreeView&) override;
+	int getTreeViewIndentSize(TreeView&) override;
 
 private:
 	PaletteStyle m_paletteStyle = PS_Dark;

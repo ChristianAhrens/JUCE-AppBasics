@@ -502,5 +502,25 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
         juce::LookAndFeel_V4::drawLinearSlider(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
 }
 
+void CustomLookAndFeel::drawTreeviewPlusMinusBox(Graphics& g, const Rectangle<float>& area,
+    Colour backgroundColour, bool isOpen, bool isMouseOver)
+{
+    juce::Path p;
+    p.addTriangle(0.0f, 0.0f, 1.0f, isOpen ? 0.0f : 0.5f, isOpen ? 0.5f : 0.0f, 1.0f);
+    p = p.createPathWithRoundedCorners(1);
+    g.setColour(backgroundColour.contrasting().withAlpha(isMouseOver ? 0.5f : 0.3f));
+    g.strokePath(p, juce::PathStrokeType(2), p.getTransformToScaleToFit(area.reduced(2, area.getHeight() / 4), true));
+}
+
+bool CustomLookAndFeel::areLinesDrawnForTreeView(TreeView&)
+{
+    return true;
+}
+
+int CustomLookAndFeel::getTreeViewIndentSize(TreeView&)
+{
+    return 15;
+}
+
 
 }
