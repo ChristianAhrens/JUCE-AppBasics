@@ -23,92 +23,90 @@ namespace JUCEAppBasics
 
 
 //==============================================================================
-class ServiceTreeViewItem : public juce::TreeViewItem
+ServiceTreeViewItem::ServiceTreeViewItem(bool canBeSelected) : juce::TreeViewItem()
 {
-public:
-    //==============================================================================
-    ServiceTreeViewItem() : juce::TreeViewItem()
-    {
-    };
-    ~ServiceTreeViewItem() override
-    {
-    };
+    m_canBeSelected = canBeSelected;
+}
 
-    void setServiceInfo(const SessionMasterAwareService& service)
-    {
-        m_service = service;
-    };
-    const SessionMasterAwareService& getServiceInfo()
-    {
-        return m_service;
-    };
-
-    virtual bool mightContainSubItems() override
-    {
-        return false;
-    };
-
-    virtual std::unique_ptr<Component> createItemComponent() override
-    {
-        auto label = std::make_unique<juce::Label>("ServiceTreeViewItem", getServiceInfo().description);
-        label->setJustificationType(juce::Justification::centredLeft);
-        return std::move(label);
-    };
-    int getItemHeight() const override
-    {
-        return ServiceTreeViewItem::getHeight();
-    };
-
-    static int getHeight();
-
-protected:
-    //==============================================================================
-
-private:
-    //==============================================================================
-    SessionMasterAwareService  m_service;
-};
-int ServiceTreeViewItem::getHeight() { return 25; };
-
-class MasterServiceTreeViewItem : public ServiceTreeViewItem
+ServiceTreeViewItem::~ServiceTreeViewItem()
 {
-public:
-    //==============================================================================
-    MasterServiceTreeViewItem() : ServiceTreeViewItem()
-    {
-    };
-    ~MasterServiceTreeViewItem() override
-    {
-    };
+}
 
-    bool mightContainSubItems() override
-    {
-        return true;
-    };
+void ServiceTreeViewItem::setServiceInfo(const SessionMasterAwareService& service)
+{
+    m_service = service;
+}
 
-    virtual std::unique_ptr<Component> createItemComponent() override
-    {
-        auto label = std::make_unique<juce::Label>("MasterServiceTreeViewItem", getServiceInfo().description);
-        auto font = label->getFont();
-        font.setBold(true);
-        label->setFont(font);
-        label->setJustificationType(juce::Justification::centredLeft);
-        return std::move(label);
-    };
-    int getItemHeight() const override
-    {
-        return MasterServiceTreeViewItem::getHeight();
-    };
+const SessionMasterAwareService& ServiceTreeViewItem::getServiceInfo()
+{
+    return m_service;
+}
 
-    static int getHeight();
+bool ServiceTreeViewItem::mightContainSubItems()
+{
+    return false;
+}
 
-protected:
-    //==============================================================================
+std::unique_ptr<Component> ServiceTreeViewItem::createItemComponent()
+{
+    auto label = std::make_unique<juce::Label>("ServiceTreeViewItem", getServiceInfo().description);
+    label->setJustificationType(juce::Justification::centredLeft);
+    return std::move(label);
+}
 
-private:
-    //==============================================================================
+int ServiceTreeViewItem::getItemHeight() const
+{
+    return ServiceTreeViewItem::getHeight();
+}
+
+bool ServiceTreeViewItem::canBeSelected() const
+{
+    return m_canBeSelected;
+}
+
+bool ServiceTreeViewItem::customComponentUsesTreeViewMouseHandler() const
+{
+    return true;
+}
+
+int ServiceTreeViewItem::getHeight()
+{
+    return 25;
+}
+
+//==============================================================================
+MasterServiceTreeViewItem::MasterServiceTreeViewItem(bool canBeSelected) : ServiceTreeViewItem(canBeSelected)
+{
+}
+
+MasterServiceTreeViewItem::~MasterServiceTreeViewItem()
+{
+}
+
+bool MasterServiceTreeViewItem::mightContainSubItems()
+{
+    return true;
+}
+
+std::unique_ptr<Component> MasterServiceTreeViewItem::createItemComponent()
+{
+    auto label = std::make_unique<juce::Label>("MasterServiceTreeViewItem", getServiceInfo().description);
+    auto font = label->getFont();
+    font.setBold(true);
+    label->setFont(font);
+    label->setJustificationType(juce::Justification::centredLeft);
+    return std::move(label);
+}
+
+int MasterServiceTreeViewItem::getItemHeight() const
+{
+    return MasterServiceTreeViewItem::getHeight();
+}
+
+int MasterServiceTreeViewItem::getHeight()
+{
+    return 27;
 };
-int MasterServiceTreeViewItem::getHeight() { return 27; };
 
 
 //==============================================================================
@@ -139,11 +137,11 @@ void ServiceTopologyTreeView::setServiceTopology(const JUCEAppBasics::SessionSer
     m_rootItem->clearSubItems();
     for (auto const& masterService : m_serviceTopology)
     {
-        auto masterServiceItem = std::make_unique<MasterServiceTreeViewItem>();
+        auto masterServiceItem = std::make_unique<MasterServiceTreeViewItem>(m_allowSelection);
         masterServiceItem->setServiceInfo(masterService.first);
         for (auto const& service : masterService.second)
         {
-            auto serviceItem = std::make_unique<ServiceTreeViewItem>();
+            auto serviceItem = std::make_unique<ServiceTreeViewItem>(false);
             serviceItem->setServiceInfo(service);
             masterServiceItem->addSubItem(serviceItem.release());
         }

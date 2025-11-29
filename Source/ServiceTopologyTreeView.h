@@ -24,11 +24,62 @@
 namespace JUCEAppBasics
 {
 
+class ServiceTreeViewItem : public juce::TreeViewItem
+{
+public:
+    //==============================================================================
+    ServiceTreeViewItem(bool canBeSelected = false);
+    ~ServiceTreeViewItem() override;
+
+    void setServiceInfo(const SessionMasterAwareService& service);
+    const SessionMasterAwareService& getServiceInfo();
+
+    virtual bool mightContainSubItems() override;
+
+    virtual std::unique_ptr<Component> createItemComponent() override;
+    int getItemHeight() const override;
+
+    bool canBeSelected() const override;
+
+    bool customComponentUsesTreeViewMouseHandler() const override;
+
+    static int getHeight();
+
+protected:
+    //==============================================================================
+
+private:
+    //==============================================================================
+    SessionMasterAwareService  m_service;
+    bool m_canBeSelected = false;
+};
+
+class MasterServiceTreeViewItem : public ServiceTreeViewItem
+{
+public:
+    //==============================================================================
+    MasterServiceTreeViewItem(bool canBeSelected = false);
+    ~MasterServiceTreeViewItem() override;
+
+    bool mightContainSubItems() override;
+
+    virtual std::unique_ptr<Component> createItemComponent() override;
+    int getItemHeight() const override;
+
+    static int getHeight();
+
+protected:
+    //==============================================================================
+
+private:
+    //==============================================================================
+};
+
 /**
-    * ServiceTopologyTreeView is a class derived from juce::TreeVew
-    * to show the topology detected by ServiceTopologyManager and
-    * optionally to interact with it.
-    */
+ * ServiceTopologyTreeView is a class derived from juce::TreeVew
+ * to show the topology detected by ServiceTopologyManager and
+ * optionally to interact with it.
+ */
 class ServiceTopologyTreeView : public juce::TreeView
 {
 public:
