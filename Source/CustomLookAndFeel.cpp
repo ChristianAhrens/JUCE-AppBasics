@@ -539,5 +539,10 @@ int CustomLookAndFeel::getTreeViewIndentSize(TreeView&)
     return 15;
 }
 
+void CustomLookAndFeel::drawPopupMenuBackground(Graphics& g, [[maybe_unused]] int width, [[maybe_unused]] int height)
+{
+    g.fillAll(findColour(PopupMenu::backgroundColourId));
+}
+
 
 }

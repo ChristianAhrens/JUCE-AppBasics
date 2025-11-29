@@ -71,6 +71,9 @@ public:
 	bool areLinesDrawnForTreeView(TreeView&) override;
 	int getTreeViewIndentSize(TreeView&) override;
 
+	//==============================================================================
+	void drawPopupMenuBackground(Graphics& g, int width, int height) override;
+
 private:
 	PaletteStyle m_paletteStyle = PS_Dark;
 	
