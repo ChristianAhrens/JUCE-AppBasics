@@ -126,6 +126,9 @@ ServiceTopologyTreeView::~ServiceTopologyTreeView()
 
 void ServiceTopologyTreeView::setServiceTopology(const JUCEAppBasics::SessionServiceTopology& topology)
 {
+    if (m_serviceTopology == topology)
+        return;
+
     m_serviceTopology = topology;
 
     if (!m_rootItem)
@@ -137,7 +140,7 @@ void ServiceTopologyTreeView::setServiceTopology(const JUCEAppBasics::SessionSer
     m_rootItem->clearSubItems();
     for (auto const& masterService : m_serviceTopology)
     {
-        auto masterServiceItem = std::make_unique<MasterServiceTreeViewItem>(m_allowSelection);
+        auto masterServiceItem = std::make_unique<MasterServiceTreeViewItem>(m_allowSelection && masterService.first.description.contains("@"));
         masterServiceItem->setServiceInfo(masterService.first);
         for (auto const& service : masterService.second)
         {

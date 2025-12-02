@@ -291,6 +291,9 @@ void ServiceTopologyManager::updateKnownTopology()
 
     auto currentServices = m_serviceDiscovery->getServices();
 
+    auto sessionLessPlaceHolder = SessionMasterAwareService();
+    sessionLessPlaceHolder.description = "No session";
+
     // derive currently present session masters
     auto currentSessionMasters = std::vector<SessionMasterAwareService>();
     for (auto const& service : currentServices)
@@ -301,6 +304,8 @@ void ServiceTopologyManager::updateKnownTopology()
             m_serviceTopology[service] = {};
         }
     }
+    currentSessionMasters.push_back(sessionLessPlaceHolder);
+    m_serviceTopology[sessionLessPlaceHolder] = {};
     // fill in the session participants
     for (auto const& service : currentServices)
     {
@@ -320,6 +325,8 @@ void ServiceTopologyManager::updateKnownTopology()
                 }
             }
         }
+        else if (service.sessionMasterDescription.isEmpty())
+            m_serviceTopology[sessionLessPlaceHolder].push_back(service);
     }
     // delete any stale sessionMasters
     auto staleSessions = std::vector<SessionMasterAwareService>();
