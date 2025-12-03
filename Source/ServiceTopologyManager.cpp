@@ -32,8 +32,11 @@ ServiceTopologyManager::ServiceDiscovery::ServiceDiscovery(const juce::String& s
     acquireMulticastLock();
 #endif
 
-    m_socket.setEnablePortReuse(true);
-    m_socket.bindToPort(broadcastPort);
+    auto success = true;
+    success = success && m_socket.setEnablePortReuse(true);
+    jassert(success);
+    success = success && m_socket.bindToPort(broadcastPort);
+    jassert(success);
     startThread(juce::Thread::Priority::background);
 }
 
@@ -280,7 +283,8 @@ void ServiceTopologyManager::sendBroadcast()
             //DBG(juce::String(__FUNCTION__) + " " + data);
         }
 
-        m_socket.write(broadcastAddress.toString(), m_broadcastPort, data.toRawUTF8(), (int)data.getNumBytesAsUTF8());
+        auto retVal = m_socket.write(broadcastAddress.toString(), m_broadcastPort, data.toRawUTF8(), (int)data.getNumBytesAsUTF8());
+        jassert(-1 != retVal);
     }
 }
 
