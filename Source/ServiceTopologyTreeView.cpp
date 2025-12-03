@@ -22,6 +22,41 @@ namespace JUCEAppBasics
 {
 
 
+class DualLabelContainerComponent : public juce::Component
+{
+public:
+    //==============================================================================
+    DualLabelContainerComponent(juce::String labelString1, juce::String labelString2, float ratio = 0.5f)
+    {
+        m_ratio = ratio;
+
+        m_label1 = std::make_unique<juce::Label>("Label1", labelString1);
+        m_label1->setJustificationType(juce::Justification::centredLeft);
+        addAndMakeVisible(m_label1.get());
+        m_label2 = std::make_unique<juce::Label>("Label2", labelString2);
+        m_label2->setJustificationType(juce::Justification::centredLeft);
+        addAndMakeVisible(m_label2.get());
+    };
+    ~DualLabelContainerComponent() override {};
+
+    void resized() override
+    {
+        if (m_label1 && m_label2)
+        {
+            auto bounds = getLocalBounds();
+            auto halfWidth = int(bounds.getWidth() * m_ratio);
+            m_label1->setBounds(bounds.removeFromLeft(halfWidth));
+            m_label2->setBounds(bounds);
+        }
+    };
+
+private:
+    std::unique_ptr<juce::Label>    m_label1;
+    std::unique_ptr<juce::Label>    m_label2;
+
+    float m_ratio = 0.0f;
+};
+
 //==============================================================================
 ServiceTreeViewItem::ServiceTreeViewItem(bool canBeSelected) : juce::TreeViewItem()
 {
@@ -49,9 +84,9 @@ bool ServiceTreeViewItem::mightContainSubItems()
 
 std::unique_ptr<Component> ServiceTreeViewItem::createItemComponent()
 {
-    auto label = std::make_unique<juce::Label>("ServiceTreeViewItem", getServiceInfo().description);
-    label->setJustificationType(juce::Justification::centredLeft);
-    return std::move(label);
+    return std::make_unique<DualLabelContainerComponent>(
+        getServiceInfo().description.upToFirstOccurrenceOf("@",false, true),
+        getServiceInfo().description.fromFirstOccurrenceOf("@", true, true));
 }
 
 int ServiceTreeViewItem::getItemHeight() const
