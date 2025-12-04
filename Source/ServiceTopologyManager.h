@@ -70,6 +70,12 @@ struct SessionMasterAwareService
             && address.toString() == other.address.toString()
             && port == other.port;
     }
+    bool isEqualServiceAs(const SessionMasterAwareService& other) const noexcept
+    {
+        return instanceID == other.instanceID
+            && description == other.description
+            && type == other.type;
+    }
 
     bool operator!=(const SessionMasterAwareService& other) const noexcept
     {
@@ -77,6 +83,50 @@ struct SessionMasterAwareService
     }
 };
 using SessionServiceTopology = std::map<SessionMasterAwareService, std::vector<SessionMasterAwareService>>;
+inline bool operator==(const SessionServiceTopology& lhs,
+                       const SessionServiceTopology& rhs)
+{
+    if (lhs.size() != rhs.size())
+        return false;
+
+    auto it1 = lhs.begin();
+    auto it2 = rhs.begin();
+
+    for (; it1 != lhs.end(); ++it1, ++it2)
+    {
+        // Compare keys
+        if (!(it1->first.isEqualServiceAs(it2->first)))
+            return false;
+
+        // Compare value vectors
+        if (it1->second.size() != it2->second.size())
+            return false;
+
+        auto it1it = it1->second.begin();
+        auto it2it = it2->second.begin();
+        
+        for (; it1it != it1->second.end(); ++it1it, ++it2it)
+            if (!(it1it->isEqualServiceAs(*it2it)))
+                return false;
+    }
+
+    return true;
+}
+inline juce::String toString(const SessionServiceTopology& topo)
+{
+    juce::String s;
+    s << "{\n";
+
+    for (const auto& [key, vec] : topo) {
+        s << "  " << key.toString() << " -> [ ";
+        for (const auto& v : vec)
+            s << "(" << v.toString() << ") ";
+        s << "]\n";
+    }
+
+    s << "}";
+    return s;
+}
 
 
 /**
