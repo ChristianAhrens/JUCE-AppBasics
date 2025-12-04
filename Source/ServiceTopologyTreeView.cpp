@@ -26,35 +26,48 @@ class DualLabelContainerComponent : public juce::Component
 {
 public:
     //==============================================================================
-    DualLabelContainerComponent(juce::String labelString1, juce::String labelString2, float ratio = 0.5f)
+    DualLabelContainerComponent(juce::String labelString1, juce::String labelString2, int labe2Width = 200) :
+        m_label1("Label1", labelString1),
+        m_label2("Label2", labelString2)
     {
-        m_ratio = ratio;
+        m_labe2Width = labe2Width;
 
-        m_label1 = std::make_unique<juce::Label>("Label1", labelString1);
-        m_label1->setJustificationType(juce::Justification::centredLeft);
-        addAndMakeVisible(m_label1.get());
-        m_label2 = std::make_unique<juce::Label>("Label2", labelString2);
-        m_label2->setJustificationType(juce::Justification::centredLeft);
-        addAndMakeVisible(m_label2.get());
+        m_label1.setJustificationType(juce::Justification::centredLeft);
+        addAndMakeVisible(&m_label1);
+        
+        m_label2.setJustificationType(juce::Justification::centredLeft);
+        addAndMakeVisible(&m_label2);
     };
     ~DualLabelContainerComponent() override {};
 
     void resized() override
     {
-        if (m_label1 && m_label2)
-        {
-            auto bounds = getLocalBounds();
-            auto halfWidth = int(bounds.getWidth() * m_ratio);
-            m_label1->setBounds(bounds.removeFromLeft(halfWidth));
-            m_label2->setBounds(bounds);
-        }
+        auto bounds = getLocalBounds();
+        m_label1.setBounds(bounds.removeFromLeft(bounds.getWidth() - m_labe2Width));
+        m_label2.setBounds(bounds);
+    };
+    
+    const juce::Font getFont()
+    {
+        return m_label1.getFont();
+    };
+    void setFont (const Font& newFont)
+    {
+        m_label1.setFont(newFont);
+        m_label2.setFont(newFont);
+    };
+    
+    void setJustificationType(Justification justification)
+    {
+        m_label1.setJustificationType(justification);
+        m_label2.setJustificationType(justification);
     };
 
 private:
-    std::unique_ptr<juce::Label>    m_label1;
-    std::unique_ptr<juce::Label>    m_label2;
+    juce::Label m_label1;
+    juce::Label m_label2;
 
-    float m_ratio = 0.0f;
+    int m_labe2Width = 0;
 };
 
 //==============================================================================
@@ -125,12 +138,14 @@ bool MasterServiceTreeViewItem::mightContainSubItems()
 
 std::unique_ptr<Component> MasterServiceTreeViewItem::createItemComponent()
 {
-    auto label = std::make_unique<juce::Label>("MasterServiceTreeViewItem", getServiceInfo().description);
-    auto font = label->getFont();
+    auto item = std::make_unique<DualLabelContainerComponent>(
+        getServiceInfo().description.upToFirstOccurrenceOf("@",false, true),
+        getServiceInfo().description.fromFirstOccurrenceOf("@", true, true));
+    auto font = item->getFont();
     font.setBold(true);
-    label->setFont(font);
-    label->setJustificationType(juce::Justification::centredLeft);
-    return std::move(label);
+    item->setFont(font);
+    item->setJustificationType(juce::Justification::centredLeft);
+    return std::move(item);
 }
 
 int MasterServiceTreeViewItem::getItemHeight() const
