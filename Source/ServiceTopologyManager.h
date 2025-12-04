@@ -112,21 +112,6 @@ inline bool operator==(const SessionServiceTopology& lhs,
 
     return true;
 }
-inline juce::String toString(const SessionServiceTopology& topo)
-{
-    juce::String s;
-    s << "{\n";
-
-    for (const auto& [key, vec] : topo) {
-        s << "  " << key.toString() << " -> [ ";
-        for (const auto& v : vec)
-            s << "(" << v.toString() << ") ";
-        s << "]\n";
-    }
-
-    s << "}";
-    return s;
-}
 
 
 /**

@@ -284,7 +284,10 @@ void ServiceTopologyManager::sendBroadcast()
         }
 
         auto retVal = m_socket.write(broadcastAddress.toString(), m_broadcastPort, data.toRawUTF8(), (int)data.getNumBytesAsUTF8());
-        jassert(-1 != retVal);
+        if(-1 != retVal)
+        {
+            DBG(juce::String(__FUNCTION__) + " unable to write to " + broadcastAddress.toString());
+        }
     }
 }
 
