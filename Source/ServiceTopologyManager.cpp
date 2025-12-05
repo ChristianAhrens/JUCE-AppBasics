@@ -187,7 +187,7 @@ ServiceTopologyManager::ServiceTopologyManager(const juce::String& serviceTypeUI
 
 ServiceTopologyManager::~ServiceTopologyManager()
 {
-    stopThread(2000);
+    stopThread(int(m_minInterval.inMilliseconds()) + 100);
     m_socket.shutdown();
 }
 
