@@ -119,6 +119,13 @@ void CustomLookAndFeel::setPaletteStyle(CustomLookAndFeel::PaletteStyle style)
         setColour(CustomLookAndFeel::MeteringRmsColourId, Colours::forestgreen);
         setColour(CustomLookAndFeel::MeteringHoldColourId, Colours::grey);
 
+        setColour(TreeView::ColourIds::backgroundColourId, Colours::lightgrey);
+        setColour(TreeView::ColourIds::evenItemsColourId, Colours::lightgrey);
+        setColour(TreeView::ColourIds::oddItemsColourId, Colours::lightgrey);
+        setColour(TreeView::ColourIds::dragAndDropIndicatorColourId, Colours::lightgrey.brighter());
+        setColour(TreeView::ColourIds::linesColourId, Colours::darkgrey);
+        setColour(TreeView::ColourIds::selectedItemBackgroundColourId, Colours::grey.brighter());
+
         break;
     case PS_Dark:
     default:
@@ -220,6 +227,13 @@ void CustomLookAndFeel::setPaletteStyle(CustomLookAndFeel::PaletteStyle style)
         setColour(CustomLookAndFeel::MeteringPeakColourId, Colours::forestgreen.darker());
         setColour(CustomLookAndFeel::MeteringRmsColourId, Colours::forestgreen);
         setColour(CustomLookAndFeel::MeteringHoldColourId, Colours::grey);
+
+        setColour(TreeView::ColourIds::backgroundColourId, Colours::darkgrey.darker());
+        setColour(TreeView::ColourIds::evenItemsColourId, Colours::darkgrey.darker());
+        setColour(TreeView::ColourIds::oddItemsColourId, Colours::darkgrey.darker());
+        setColour(TreeView::ColourIds::dragAndDropIndicatorColourId, Colours::darkgrey);
+        setColour(TreeView::ColourIds::linesColourId, Colours::lightgrey);
+        setColour(TreeView::ColourIds::selectedItemBackgroundColourId, Colours::grey.darker());
 
         break;
     }
@@ -438,7 +452,7 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
         g.strokePath(backgroundTrack, { trackWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded });
 
         juce::Path valueTrack;
-        juce::Point<float> minPoint, maxPoint, thumbPoint;
+        juce::Point<float> minPoint, maxPoint;
 
         auto kx = slider.isHorizontal() ? sliderPos : ((float)x + (float)width * 0.5f);
         auto ky = slider.isHorizontal() ? ((float)y + (float)height * 0.5f) : sliderPos;
@@ -500,6 +514,34 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
     }
     else
         juce::LookAndFeel_V4::drawLinearSlider(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
+}
+
+void CustomLookAndFeel::drawTreeviewPlusMinusBox(Graphics& g, const Rectangle<float>& area,
+    Colour backgroundColour, bool isOpen, bool isMouseOver)
+{
+    ignoreUnused(backgroundColour);
+
+    juce::Path p;
+    p.addTriangle(0.0f, 0.0f, 1.0f, isOpen ? 0.0f : 0.5f, isOpen ? 0.5f : 0.0f, 1.0f);
+    //p = p.createPathWithRoundedCorners(1);
+    g.setColour(findColour(juce::TreeView::ColourIds::linesColourId).withAlpha(isMouseOver ? 0.7f : 1.0f));
+    //g.strokePath(p, juce::PathStrokeType(2), p.getTransformToScaleToFit(area.reduced(2, area.getHeight() / 4), true));
+    g.fillPath(p, p.getTransformToScaleToFit(area.reduced(2, area.getHeight() / 4), true));
+}
+
+bool CustomLookAndFeel::areLinesDrawnForTreeView(TreeView&)
+{
+    return true;
+}
+
+int CustomLookAndFeel::getTreeViewIndentSize(TreeView&)
+{
+    return 15;
+}
+
+void CustomLookAndFeel::drawPopupMenuBackground(Graphics& g, [[maybe_unused]] int width, [[maybe_unused]] int height)
+{
+    g.fillAll(findColour(PopupMenu::backgroundColourId));
 }
 
 
