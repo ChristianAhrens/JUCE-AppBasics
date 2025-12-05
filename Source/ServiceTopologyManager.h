@@ -43,11 +43,14 @@ struct SessionMasterAwareService
 
     bool operator<(const SessionMasterAwareService& other) const noexcept
     {
-        int cmp = instanceID.compare(other.instanceID);
+        if (!description.contains("@") && other.description.contains("@"))
+            return false;
+        
+        int cmp = description.compare(other.description);
         if (cmp != 0)
             return cmp < 0;
-
-        cmp = description.compare(other.description);
+        
+        cmp = instanceID.compare(other.instanceID);
         if (cmp != 0)
             return cmp < 0;
 

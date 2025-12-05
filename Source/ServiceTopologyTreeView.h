@@ -35,12 +35,9 @@ public:
     const SessionMasterAwareService& getServiceInfo();
 
     virtual bool mightContainSubItems() override;
-
     virtual std::unique_ptr<Component> createItemComponent() override;
     int getItemHeight() const override;
-
     bool canBeSelected() const override;
-
     bool customComponentUsesTreeViewMouseHandler() const override;
     
     void setLabelTextColour(const juce::Colour& labelTextColour);

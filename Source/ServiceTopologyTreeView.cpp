@@ -197,6 +197,7 @@ ServiceTopologyTreeView::ServiceTopologyTreeView(bool allowSelection)
     m_rootItem = std::make_unique<MasterServiceTreeViewItem>();
     setRootItem(m_rootItem.get());
     setRootItemVisible(false);
+    setMultiSelectEnabled(false);
 }
 
 ServiceTopologyTreeView::~ServiceTopologyTreeView()
