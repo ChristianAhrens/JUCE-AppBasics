@@ -240,7 +240,14 @@ const SessionServiceTopology& ServiceTopologyManager::getDiscoveredServiceTopolo
     return m_serviceTopology;
 }
 
-IPAddress ServiceTopologyManager::getInterfaceBroadcastAddress(const juce::IPAddress& address)
+const juce::String ServiceTopologyManager::getServiceDescription()
+{
+    return juce::JUCEApplication::getInstance()->getApplicationName()
++ "." + juce::JUCEApplication::getInstance()->getApplicationVersion()
++ "@" + juce::SystemStats::getComputerName();
+}
+
+juce::IPAddress ServiceTopologyManager::getInterfaceBroadcastAddress(const juce::IPAddress& address)
 {
     if (address.isIPv6)
         // TODO
@@ -298,11 +305,14 @@ void ServiceTopologyManager::updateKnownTopology()
 
     auto currentServices = m_serviceDiscovery->getServices();
 
-    auto sessionLessPlaceHolder = SessionMasterAwareService();
-    sessionLessPlaceHolder.description = "No session";
-
     // derive currently present session masters
     auto currentSessionMasters = std::vector<SessionMasterAwareService>();
+    // create 'No session' default sessionMaster dummy item
+    auto sessionLessPlaceHolder = SessionMasterAwareService();
+    sessionLessPlaceHolder.description = "No session";
+    currentSessionMasters.push_back(sessionLessPlaceHolder);
+    m_serviceTopology[sessionLessPlaceHolder] = {};
+    // walk the services and derive currently present sessionMasters
     for (auto const& service : currentServices)
     {
         if (service.sessionMasterDescription == service.description)
@@ -311,8 +321,6 @@ void ServiceTopologyManager::updateKnownTopology()
             m_serviceTopology[service] = {};
         }
     }
-    currentSessionMasters.push_back(sessionLessPlaceHolder);
-    m_serviceTopology[sessionLessPlaceHolder] = {};
     // fill in the session participants
     for (auto const& service : currentServices)
     {

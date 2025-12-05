@@ -42,16 +42,20 @@ public:
     bool canBeSelected() const override;
 
     bool customComponentUsesTreeViewMouseHandler() const override;
+    
+    void setLabelTextColour(const juce::Colour& labelTextColour);
 
     static int getHeight();
 
 protected:
     //==============================================================================
+    std::unique_ptr<Component> createItemComponent(bool bold);
 
 private:
     //==============================================================================
     SessionMasterAwareService  m_service;
     bool m_canBeSelected = false;
+    juce::Colour m_labelTextColour;
 };
 
 class MasterServiceTreeViewItem : public ServiceTreeViewItem

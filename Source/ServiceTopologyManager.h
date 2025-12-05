@@ -175,6 +175,8 @@ public:
     void setSessionMasterServiceDescription(const juce::String& sessionMasterServiceDescription);
 
     const SessionServiceTopology& getDiscoveredServiceTopology();
+    
+    static const juce::String getServiceDescription();
 
     std::function<void()> onDiscoveredTopologyChanged;
 

@@ -26,7 +26,7 @@ class DualLabelContainerComponent : public juce::Component
 {
 public:
     //==============================================================================
-    DualLabelContainerComponent(juce::String labelString1, juce::String labelString2, int labe2Width = 200) :
+    DualLabelContainerComponent(juce::String labelString1, juce::String labelString2, int labe2Width = s_refWidth) :
         m_label1("Label1", labelString1),
         m_label2("Label2", labelString2)
     {
@@ -43,8 +43,18 @@ public:
     void resized() override
     {
         auto bounds = getLocalBounds();
-        m_label1.setBounds(bounds.removeFromLeft(bounds.getWidth() - m_labe2Width));
-        m_label2.setBounds(bounds);
+        
+        if (bounds.getWidth() < int(1.5f * s_refWidth))
+        {
+            m_label1.setBounds(bounds);
+            m_label2.setVisible(false);
+        }
+        else
+        {
+            m_label1.setBounds(bounds.removeFromLeft(bounds.getWidth() - m_labe2Width));
+            m_label2.setVisible(true);
+            m_label2.setBounds(bounds);
+        }
     };
     
     const juce::Font getFont()
@@ -62,6 +72,14 @@ public:
         m_label1.setJustificationType(justification);
         m_label2.setJustificationType(justification);
     };
+    
+    void setLabelTextColour(const juce::Colour& colour)
+    {
+        m_label1.setColour(juce::Label::ColourIds::textColourId, colour);
+        m_label2.setColour(juce::Label::ColourIds::textColourId, colour);
+    };
+    
+    static constexpr int s_refWidth = 200;
 
 private:
     juce::Label m_label1;
@@ -95,11 +113,25 @@ bool ServiceTreeViewItem::mightContainSubItems()
     return false;
 }
 
+std::unique_ptr<Component> ServiceTreeViewItem::createItemComponent(bool bold)
+{
+    auto label1Text = getServiceInfo().description.upToFirstOccurrenceOf("@",false, true);
+    if (getServiceInfo().description == JUCEAppBasics::ServiceTopologyManager::getServiceDescription())
+        label1Text += " (this)";
+    auto label2Text = getServiceInfo().description.fromFirstOccurrenceOf("@", true, true);
+    
+    auto item = std::make_unique<DualLabelContainerComponent>(label1Text, label2Text);
+    auto font = item->getFont();
+    font.setBold(bold);
+    item->setLabelTextColour(m_labelTextColour);
+    item->setFont(font);
+    item->setJustificationType(juce::Justification::centredLeft);
+    return std::move(item);
+}
+
 std::unique_ptr<Component> ServiceTreeViewItem::createItemComponent()
 {
-    return std::make_unique<DualLabelContainerComponent>(
-        getServiceInfo().description.upToFirstOccurrenceOf("@",false, true),
-        getServiceInfo().description.fromFirstOccurrenceOf("@", true, true));
+    return createItemComponent(false);
 }
 
 int ServiceTreeViewItem::getItemHeight() const
@@ -115,6 +147,11 @@ bool ServiceTreeViewItem::canBeSelected() const
 bool ServiceTreeViewItem::customComponentUsesTreeViewMouseHandler() const
 {
     return true;
+}
+
+void ServiceTreeViewItem::setLabelTextColour(const juce::Colour& labelTextColour)
+{
+    m_labelTextColour = labelTextColour;
 }
 
 int ServiceTreeViewItem::getHeight()
@@ -138,14 +175,7 @@ bool MasterServiceTreeViewItem::mightContainSubItems()
 
 std::unique_ptr<Component> MasterServiceTreeViewItem::createItemComponent()
 {
-    auto item = std::make_unique<DualLabelContainerComponent>(
-        getServiceInfo().description.upToFirstOccurrenceOf("@",false, true),
-        getServiceInfo().description.fromFirstOccurrenceOf("@", true, true));
-    auto font = item->getFont();
-    font.setBold(true);
-    item->setFont(font);
-    item->setJustificationType(juce::Justification::centredLeft);
-    return std::move(item);
+    return ServiceTreeViewItem::createItemComponent(true);
 }
 
 int MasterServiceTreeViewItem::getItemHeight() const
@@ -192,10 +222,12 @@ void ServiceTopologyTreeView::setServiceTopology(const JUCEAppBasics::SessionSer
     {
         auto masterServiceItem = std::make_unique<MasterServiceTreeViewItem>(m_allowSelection && masterService.first.description.contains("@"));
         masterServiceItem->setServiceInfo(masterService.first);
+        masterServiceItem->setLabelTextColour(masterServiceItem->canBeSelected() ? getLookAndFeel().findColour(juce::TextButton::ColourIds::textColourOnId) : getLookAndFeel().findColour(juce::ToggleButton::ColourIds::tickDisabledColourId));
         for (auto const& service : masterService.second)
         {
             auto serviceItem = std::make_unique<ServiceTreeViewItem>(false);
             serviceItem->setServiceInfo(service);
+            serviceItem->setLabelTextColour(getLookAndFeel().findColour(juce::ToggleButton::ColourIds::tickDisabledColourId));
             masterServiceItem->addSubItem(serviceItem.release());
         }
 
@@ -216,7 +248,7 @@ std::pair<int, int> ServiceTopologyTreeView::getIdealSize()
         }
     }
 
-    return { 300, height };
+    return { 2 * DualLabelContainerComponent::s_refWidth, height };
 }
 
 
