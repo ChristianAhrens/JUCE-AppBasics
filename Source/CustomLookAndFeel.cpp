@@ -452,7 +452,7 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
         g.strokePath(backgroundTrack, { trackWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded });
 
         juce::Path valueTrack;
-        juce::Point<float> minPoint, maxPoint, thumbPoint;
+        juce::Point<float> minPoint, maxPoint;
 
         auto kx = slider.isHorizontal() ? sliderPos : ((float)x + (float)width * 0.5f);
         auto ky = slider.isHorizontal() ? ((float)y + (float)height * 0.5f) : sliderPos;

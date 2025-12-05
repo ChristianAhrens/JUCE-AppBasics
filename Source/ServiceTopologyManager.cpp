@@ -213,7 +213,7 @@ void ServiceTopologyManager::showServiceTopologyMenu(const SessionServiceTopolog
                 m_topologyTree->setBounds(getLocalBounds());
         };
 
-        void getIdealSize(int& idealWidth, int& idealHeight)
+        void getIdealSize(int& idealWidth, int& idealHeight) override
         {
             auto idealSize = m_topologyTree->getIdealSize();
             idealWidth = idealSize.first;
