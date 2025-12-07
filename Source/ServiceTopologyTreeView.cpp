@@ -249,7 +249,7 @@ std::pair<int, int> ServiceTopologyTreeView::getIdealSize()
         }
     }
 
-    return { 1.8 * DualLabelContainerComponent::s_refWidth, height };
+    return { int(1.8f * DualLabelContainerComponent::s_refWidth), height };
 }
 
 

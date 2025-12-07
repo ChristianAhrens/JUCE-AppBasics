@@ -62,6 +62,10 @@ struct SessionMasterAwareService
         if (cmp != 0)
             return cmp < 0;
 
+        cmp = sessionMasterDescription.compare(other.sessionMasterDescription);
+        if (cmp != 0)
+            return cmp < 0;
+
         return port < other.port;
     }
 
@@ -69,6 +73,7 @@ struct SessionMasterAwareService
     {
         return instanceID == other.instanceID
             && description == other.description
+            && sessionMasterDescription == other.sessionMasterDescription
             && type == other.type
             && address.toString() == other.address.toString()
             && port == other.port;

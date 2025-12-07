@@ -287,7 +287,6 @@ void ServiceTopologyManager::sendBroadcast()
             std::lock_guard<std::mutex> l(m_messagelock);
             m_message.setAttribute("address", address.toString());
             data = m_message.toString(juce::XmlElement::TextFormat().singleLine().withoutHeader());
-            //DBG(juce::String(__FUNCTION__) + " " + data);
         }
 
         auto retVal = m_socket.write(broadcastAddress.toString(), m_broadcastPort, data.toRawUTF8(), (int)data.getNumBytesAsUTF8());
@@ -353,7 +352,7 @@ void ServiceTopologyManager::updateKnownTopology()
     for (auto const& staleSession : staleSessions)
         m_serviceTopology.erase(staleSession);
 
-    DBG(juce::String(__FUNCTION__) + " " + m_serviceDiscovery->knownServicesToString());
+    //DBG(juce::String(__FUNCTION__) + " " + m_serviceDiscovery->knownServicesToString());
 }
 
 
