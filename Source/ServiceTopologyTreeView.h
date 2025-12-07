@@ -39,6 +39,7 @@ public:
     int getItemHeight() const override;
     bool canBeSelected() const override;
     bool customComponentUsesTreeViewMouseHandler() const override;
+    juce::String getTooltip() override;
     
     void setLabelTextColour(const juce::Colour& labelTextColour);
 
@@ -69,11 +70,6 @@ public:
 
     static int getHeight();
 
-protected:
-    //==============================================================================
-
-private:
-    //==============================================================================
 };
 
 /**
@@ -90,10 +86,11 @@ public:
 
     void setServiceTopology(const SessionServiceTopology& topology);
 
+    void recreateTree();
+
     std::pair<int, int> getIdealSize();
 
-protected:
-    //==============================================================================
+    void lookAndFeelChanged() override;
 
 private:
     //==============================================================================

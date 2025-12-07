@@ -108,6 +108,11 @@ const SessionMasterAwareService& ServiceTreeViewItem::getServiceInfo()
     return m_service;
 }
 
+juce::String ServiceTreeViewItem::getTooltip()
+{
+    return m_service.description;
+}
+
 bool ServiceTreeViewItem::mightContainSubItems()
 {
     return false;
@@ -205,6 +210,14 @@ ServiceTopologyTreeView::~ServiceTopologyTreeView()
     setRootItem(nullptr);
 }
 
+void ServiceTopologyTreeView::lookAndFeelChanged()
+{
+    if (!m_rootItem)
+        return;
+
+    recreateTree();
+}
+
 void ServiceTopologyTreeView::setServiceTopology(const JUCEAppBasics::SessionServiceTopology& topology)
 {
     if (m_serviceTopology == topology)
@@ -218,17 +231,25 @@ void ServiceTopologyTreeView::setServiceTopology(const JUCEAppBasics::SessionSer
         return;
     }
 
+    recreateTree();
+}
+
+void ServiceTopologyTreeView::recreateTree()
+{
+    auto onColour = getLookAndFeel().findColour(juce::TextButton::ColourIds::textColourOnId);
+    auto offColour = getLookAndFeel().findColour(juce::ToggleButton::ColourIds::tickDisabledColourId);
+
     m_rootItem->clearSubItems();
     for (auto const& masterService : m_serviceTopology)
     {
         auto masterServiceItem = std::make_unique<MasterServiceTreeViewItem>(m_allowSelection && masterService.first.description.contains("@"));
         masterServiceItem->setServiceInfo(masterService.first);
-        masterServiceItem->setLabelTextColour(masterServiceItem->canBeSelected() ? getLookAndFeel().findColour(juce::TextButton::ColourIds::textColourOnId) : getLookAndFeel().findColour(juce::ToggleButton::ColourIds::tickDisabledColourId));
+        masterServiceItem->setLabelTextColour(masterServiceItem->canBeSelected() ? onColour : offColour);
         for (auto const& service : masterService.second)
         {
             auto serviceItem = std::make_unique<ServiceTreeViewItem>(false);
             serviceItem->setServiceInfo(service);
-            serviceItem->setLabelTextColour(getLookAndFeel().findColour(juce::ToggleButton::ColourIds::tickDisabledColourId));
+            serviceItem->setLabelTextColour(offColour);
             masterServiceItem->addSubItem(serviceItem.release());
         }
 
