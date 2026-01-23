@@ -471,8 +471,12 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
             g.setColour(slider.findColour(juce::Slider::thumbColourId));
             g.fillEllipse(juce::Rectangle<float>(static_cast<float>(thumbWidth), static_cast<float>(thumbWidth)).withCentre(maxPoint));
 
-            g.setColour(slider.findColour(juce::TextButton::textColourOnId));
-            g.drawText(tss->getTitle(), juce::Rectangle<float>(static_cast<float>(thumbWidth), static_cast<float>(thumbWidth)).withCentre(maxPoint), juce::Justification::centred);
+            // Draw title on thumb
+            if (tss->getTitle().isNotEmpty())
+            {
+                g.setColour(slider.findColour(juce::TextButton::textColourOnId));
+                g.drawText(tss->getTitle(), juce::Rectangle<float>(static_cast<float>(thumbWidth), static_cast<float>(thumbWidth)).withCentre(maxPoint), juce::Justification::centred);
+            }
         }
         else
         {
@@ -487,8 +491,12 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
             g.fillEllipse(juce::Rectangle<float>(static_cast<float>(thumbWidth - 1), static_cast<float>(thumbWidth - 1)).withCentre(maxPoint));
             g.setColour(slider.findColour(juce::Slider::thumbColourId));
             g.drawEllipse(juce::Rectangle<float>(static_cast<float>(thumbWidth), static_cast<float>(thumbWidth)).withCentre(maxPoint), 1.0f);
-
-            g.drawText(tss->getTitle(), juce::Rectangle<float>(static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre(maxPoint), juce::Justification::centred);
+            
+            // Draw title on thumb
+            if (tss->getTitle().isNotEmpty())
+            {
+                g.drawText(tss->getTitle(), juce::Rectangle<float>(static_cast<float> (thumbWidth), static_cast<float> (thumbWidth)).withCentre(maxPoint), juce::Justification::centred);
+            }
         }
 
         if (tss->isDragging())
@@ -513,7 +521,109 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
 
     }
     else
+    {
+        // Fallback to default JUCE rotary slider
         juce::LookAndFeel_V4::drawLinearSlider(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
+    }
+}
+
+void CustomLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
+    float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider)
+{
+    auto tss = reinterpret_cast<ToggleStateSlider*>(&slider);
+    if (tss)
+    {
+        auto bounds = juce::Rectangle<int>(x, y, width, height).toFloat().reduced(2.0f);
+        auto radius = juce::jmin(bounds.getWidth(), bounds.getHeight()) / 2.0f;
+        auto toAngle = rotaryStartAngle + sliderPosProportional * (rotaryEndAngle - rotaryStartAngle);
+        auto center = bounds.getCentre();
+        auto arcRadius = radius - radius * 0.25f;
+        auto thumbRadius = radius * 0.4f;
+
+        // Draw outer frame (like the oval surrounding frame in linear slider)
+        juce::Path outerArc;
+        outerArc.addEllipse(bounds);
+        g.setColour(slider.findColour(juce::Slider::thumbColourId));
+        g.strokePath(outerArc, juce::PathStrokeType(1.0f));
+
+        // Draw background track
+        juce::Path backgroundArc;
+        backgroundArc.addCentredArc(center.x, center.y, arcRadius, arcRadius, 0.0f,
+            rotaryStartAngle, rotaryEndAngle, true);
+        g.setColour(slider.findColour(juce::Slider::backgroundColourId));
+        g.strokePath(backgroundArc, juce::PathStrokeType(radius * 0.3f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+
+        // Draw value track
+        if (tss->getToggleState())
+        {
+            // Filled track mode
+            juce::Path valueArc;
+            valueArc.addCentredArc(center.x, center.y, arcRadius, arcRadius, 0.0f,
+                rotaryStartAngle, toAngle, true);
+            g.setColour(slider.findColour(juce::Slider::trackColourId));
+            g.strokePath(valueArc, juce::PathStrokeType(radius * 0.3f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+        }
+        else
+        {
+            // Outline track mode
+            juce::Path valueArc;
+            valueArc.addCentredArc(center.x, center.y, arcRadius, arcRadius, 0.0f,
+                rotaryStartAngle, toAngle, true);
+            g.setColour(slider.findColour(juce::Slider::trackColourId));
+            g.strokePath(valueArc, juce::PathStrokeType(1.0f));
+        }
+
+        // Calculate thumb position
+        auto thumbPoint = center.getPointOnCircumference(arcRadius, toAngle);
+
+        // Draw thumb
+        if (tss->getToggleState())
+        {
+            // Filled thumb
+            g.setColour(slider.findColour(juce::Slider::thumbColourId));
+            g.fillEllipse(juce::Rectangle<float>(thumbRadius * 2.0f, thumbRadius * 2.0f).withCentre(thumbPoint));
+
+            // Draw title on thumb
+            if (tss->getTitle().isNotEmpty())
+            {
+                g.setColour(slider.findColour(juce::TextButton::textColourOnId));
+                g.drawText(tss->getTitle(),
+                    juce::Rectangle<float>(thumbRadius * 2.0f, thumbRadius * 2.0f).withCentre(thumbPoint),
+                    juce::Justification::centred);
+            }
+        }
+        else
+        {
+            // Outline thumb with background fill
+            g.setColour(slider.findColour(juce::ResizableWindow::ColourIds::backgroundColourId));
+            g.fillEllipse(juce::Rectangle<float>((thumbRadius - 0.5f) * 2.0f, (thumbRadius - 0.5f) * 2.0f).withCentre(thumbPoint));
+
+            g.setColour(slider.findColour(juce::Slider::thumbColourId));
+            g.drawEllipse(juce::Rectangle<float>(thumbRadius * 2.0f, thumbRadius * 2.0f).withCentre(thumbPoint), 1.0f);
+
+            // Draw title on thumb
+            g.drawText(tss->getTitle(),
+                juce::Rectangle<float>(thumbRadius * 2.0f, thumbRadius * 2.0f).withCentre(thumbPoint),
+                juce::Justification::centred);
+        }
+
+        // Draw value when dragging
+        if (tss->isDragging())
+        {
+            auto valueText = tss->displayValueConverter ? tss->displayValueConverter(tss->getValue()) : juce::String(tss->getValue());
+
+            // Position the value display in the center of the rotary slider
+            auto valueArea = juce::Rectangle<float>(radius * 1.2f, radius * 0.4f).withCentre(center);
+
+            g.setColour(slider.findColour(juce::TextButton::textColourOnId));
+            g.drawFittedText(valueText, valueArea.toNearestInt(), juce::Justification::centred, 1);
+        }
+    }
+    else
+    {
+        // Fallback to default JUCE rotary slider
+        juce::LookAndFeel_V4::drawRotarySlider(g, x, y, width, height, sliderPosProportional, rotaryStartAngle, rotaryEndAngle, slider);
+    }
 }
 
 void CustomLookAndFeel::drawTreeviewPlusMinusBox(Graphics& g, const Rectangle<float>& area,
