@@ -723,17 +723,31 @@ int getDeviceDisplayNotchIndent()
     case iPad6:
     case iPad7:
     case iPad10:
+    case iPad11:
+    case iPad3G:
+    case iPad1027:
+    case iPad2017:
     case iPadAir:
     case iPadAir2:
     case iPadAir3:
     case iPadAir4:
     case iPadAir5:
+    case iPadAir811:
+    case iPadAir813:
     case iPadPro:
     case iPadPro2:
     case iPadPro3:
     case iPadPro4:
-    case iPadPro1296:
+    case iPadPro970:
+    case iPadPro1050:
+    case iPadPro1101:
+    case iPadPro1102:
     case iPadPro1104:
+    case iPadPro1120:
+    case iPadPro1290:
+    case iPadPro1293:
+    case iPadPro1294:
+    case iPadPro1296:
     case iPadmini:
     case iPadmini2:
     case iPadmini3:
@@ -826,17 +840,31 @@ int getDeviceDisplaySlideBarIndent()
     case iPad6:
     case iPad7:
     case iPad10:
+    case iPad11:
+    case iPad3G:
+    case iPad1027:
+    case iPad2017:
     case iPadAir:
     case iPadAir2:
     case iPadAir3:
     case iPadAir4:
     case iPadAir5:
+    case iPadAir811:
+    case iPadAir813:
     case iPadPro:
     case iPadPro2:
     case iPadPro3:
     case iPadPro4:
-    case iPadPro1296:
+    case iPadPro970:
+    case iPadPro1050:
+    case iPadPro1101:
+    case iPadPro1102:
     case iPadPro1104:
+    case iPadPro1120:
+    case iPadPro1290:
+    case iPadPro1293:
+    case iPadPro1294:
+    case iPadPro1296:
     case iPadmini:
     case iPadmini2:
     case iPadmini3:
