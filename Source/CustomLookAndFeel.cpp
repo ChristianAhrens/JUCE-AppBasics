@@ -534,11 +534,15 @@ void CustomLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wi
     if (tss)
     {
         auto bounds = juce::Rectangle<int>(x, y, width, height).toFloat().reduced(2.0f);
+        if (bounds.getAspectRatio() > 1.0f)
+            bounds.reduce((bounds.getWidth() - bounds.getHeight()) / 2, 0.0f);
+        else if (bounds.getAspectRatio() < 1.0f)
+            bounds.reduce(0.0f, (bounds.getHeight() - bounds.getWidth()) / 2);
         auto radius = juce::jmin(bounds.getWidth(), bounds.getHeight()) / 2.0f;
         auto toAngle = rotaryStartAngle + sliderPosProportional * (rotaryEndAngle - rotaryStartAngle);
         auto center = bounds.getCentre();
-        auto arcRadius = radius - radius * 0.25f;
-        auto thumbRadius = radius * 0.4f;
+        auto arcRadius = radius - radius * 0.35f;
+        auto thumbRadius = radius * 0.32f;
 
         // Draw outer frame (like the oval surrounding frame in linear slider)
         juce::Path outerArc;

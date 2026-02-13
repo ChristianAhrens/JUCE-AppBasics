@@ -41,6 +41,8 @@ public:
     void setToggleState(bool shouldBeOn, NotificationType notification);
     bool getToggleState() const noexcept;
 
+    void setTogglalbe(bool isTogglable);
+
     bool isDragging() const;
 
     //==============================================================================
@@ -61,6 +63,7 @@ public:
 private:
     //==============================================================================
     bool m_isToggledOn = true;
+    bool m_isTogglable = true;
     bool m_isDragging = false;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ToggleStateSlider)

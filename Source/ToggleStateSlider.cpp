@@ -57,12 +57,15 @@ ToggleStateSlider::~ToggleStateSlider()
 }
 
 /**
- * Setter for the on/off toggle state of the slider
+ * Setter for the on/off toggle state of the slider. Will be ignored if toggling is globally disabled
  * @param	shouldBeOn	Boolean on/off value
  * @param	notification	Notification type to define if the change should be promoted onwards
  */
 void ToggleStateSlider::setToggleState(bool shouldBeOn, juce::NotificationType notification)
 {
+	if (!m_isTogglable)
+		return;
+
 	m_isToggledOn = shouldBeOn;
 
 	if (juce::dontSendNotification != notification && onToggleStateChange)
@@ -78,6 +81,17 @@ void ToggleStateSlider::setToggleState(bool shouldBeOn, juce::NotificationType n
 bool ToggleStateSlider::getToggleState() const noexcept
 {
 	return m_isToggledOn;
+}
+
+/**
+ * Setter for if the slider toggle capability should be enabled
+ * @param	isToggleable	True if toggling shall be enabled
+ */
+void ToggleStateSlider::setTogglalbe(bool isTogglable)
+{
+	m_isTogglable = isTogglable;
+
+	setToggleState(true, juce::dontSendNotification);
 }
 
 /**
