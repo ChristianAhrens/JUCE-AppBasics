@@ -43,6 +43,7 @@ public:
     virtual ~TwoDFieldBase();
 
     virtual bool setChannelConfiguration(const juce::AudioChannelSet& channelLayout);
+    const juce::AudioChannelSet& getChannelConfiguration();
     const juce::Array<juce::AudioChannelSet>& getSupportedChannelConfigurations();
 
     float getAngleForChannelTypeInCurrentConfiguration(const juce::AudioChannelSet::ChannelType& channelType);

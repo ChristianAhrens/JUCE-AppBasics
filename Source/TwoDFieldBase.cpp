@@ -54,6 +54,11 @@ bool TwoDFieldBase::setChannelConfiguration(const juce::AudioChannelSet& channel
     return wasUpdated;
 }
 
+const juce::AudioChannelSet& TwoDFieldBase::getChannelConfiguration()
+{
+    return m_channelConfiguration;
+}
+
 const juce::Array<juce::AudioChannelSet>& TwoDFieldBase::getSupportedChannelConfigurations()
 {
     return m_supportedChannelConfigurations;
