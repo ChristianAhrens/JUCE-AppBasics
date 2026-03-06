@@ -69,13 +69,13 @@ public:
 	juce::MouseCursor getMouseCursorFor(juce::Component& c) override;
 
 	//==============================================================================
-	void drawTreeviewPlusMinusBox(Graphics& g, const Rectangle<float>& area,
+	void drawTreeviewPlusMinusBox(juce::Graphics& g, const juce::Rectangle<float>& area,
 		Colour backgroundColour, bool isOpen, bool isMouseOver) override;
 	bool areLinesDrawnForTreeView(TreeView&) override;
 	int getTreeViewIndentSize(TreeView&) override;
 
 	//==============================================================================
-	void drawPopupMenuBackground(Graphics& g, int width, int height) override;
+	void drawPopupMenuBackground(juce::Graphics& g, int width, int height) override;
 
 private:
 	PaletteStyle m_paletteStyle = PS_Dark;
