@@ -912,6 +912,17 @@ int getDeviceDisplaySlideBarIndent()
 
 JUCEAppBasics::iOS_utils::SafetyMargin getDeviceSafetyMargins()
 {
+#if JUCE_IOS
+    // Prefer the OS-reported safe area over the static device table.
+    // UIWindow.safeAreaInsets handles all current and future hardware
+    // (notch, Dynamic Island, iPadOS status bar, Stage Manager, etc.)
+    // and is already orientation-aware, so no manual rotation mapping needed.
+    auto native = getNativeSafeAreaInsets();
+    if (native._top || native._bottom || native._left || native._right)
+        return native;
+    // Fall through only if the window is not yet available (early startup edge case).
+#endif
+
     SafetyMargin safety{};
     auto displayNotch = getDeviceDisplayNotchIndent();
     auto displaySlideBar = getDeviceDisplaySlideBarIndent();
@@ -955,6 +966,22 @@ JUCEAppBasics::iOS_utils::SafetyMargin getDeviceSafetyMargins()
 
     return safety;
 };
-     
+
+void initialise(std::function<void()> safeAreaChangeCallback)
+{
+#if JUCE_IOS
+    registerSafeAreaChangeCallback(safeAreaChangeCallback);
+#else
+    ignoreUnused(safeAreaChangeCallback);
+#endif
+}
+
+void deinitialise()
+{
+#if JUCE_IOS
+    unregisterSafeAreaChangeCallback();
+#endif
+}
+
 }; // namespace iOS_utils
 }; // namespace JUCE-AppBasics

@@ -164,6 +164,32 @@ JUCEAppBasics::iOS_utils::KnownDevices getGenericDeviceType();
 int getDeviceDisplayNotchIndent();
 int getDeviceDisplaySlideBarIndent();
 JUCEAppBasics::iOS_utils::SafetyMargin getDeviceSafetyMargins();
+
+/** Initialises platform-specific safe-area monitoring.
+ *  On iOS/iPadOS, registers @p safeAreaChangeCallback to be invoked
+ *  whenever safe area insets may have changed (app becomes active,
+ *  scene activates, Stage Manager / split-screen geometry updates).
+ *  Intended use: call resized() on the root component so the layout
+ *  picks up the correct insets after UIKit's first layout pass.
+ *  On all other platforms this is a no-op. */
+void initialise(std::function<void()> safeAreaChangeCallback);
+
+/** Tears down any resources allocated by initialise(). No-op on non-iOS. */
+void deinitialise();
+
+#if JUCE_IOS
+/** Queries UIWindow.safeAreaInsets via UIKit.
+ *  Returns exact OS-reported margins in points for the current window,
+ *  handling notch, Dynamic Island, home indicator, iPadOS status bar,
+ *  Stage Manager, split-screen, and all future hardware automatically.
+ *  Implemented in iOS_utils_native.mm. */
+JUCEAppBasics::iOS_utils::SafetyMargin getNativeSafeAreaInsets();
+
+/** iOS-internal: used by initialise(). Prefer initialise() in application code. */
+void registerSafeAreaChangeCallback(std::function<void()> callback);
+/** iOS-internal: used by deinitialise(). Prefer deinitialise() in application code. */
+void unregisterSafeAreaChangeCallback();
+#endif
      
 }; // namespace iOS_utils
 }; // namespace JUCE-AppBasics
