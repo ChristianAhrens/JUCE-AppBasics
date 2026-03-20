@@ -45,6 +45,41 @@
 static JUCEAppBasics_SafeAreaObserver* g_safeAreaObserver = nil;
 
 // ---------------------------------------------------------------------------
+// ObjC pinch handler — wraps UIPinchGestureRecognizer with an incremental callback.
+// ---------------------------------------------------------------------------
+@interface JUCEAppBasics_PinchHandler : NSObject
+@property (nonatomic, copy)   void (^callback)(float, float, float);
+@property (nonatomic, assign) CGFloat lastScale;
+@property (nonatomic, strong) UIPinchGestureRecognizer* recognizer;
+- (void)pinchAction:(UIPinchGestureRecognizer*)gesture;
+@end
+
+@implementation JUCEAppBasics_PinchHandler
+- (void)pinchAction:(UIPinchGestureRecognizer*)gesture
+{
+    if (gesture.state == UIGestureRecognizerStateBegan)
+    {
+        self.lastScale = 1.0f;
+    }
+    else if (gesture.state == UIGestureRecognizerStateChanged)
+    {
+        CGFloat currentScale = gesture.scale;
+        if (self.lastScale > 0.0f)
+        {
+            float incrementalScale = (float)(currentScale / self.lastScale);
+            self.lastScale = currentScale;
+            CGPoint centre = [gesture locationInView:gesture.view];
+            if (self.callback)
+                self.callback(incrementalScale, (float)centre.x, (float)centre.y);
+        }
+    }
+}
+@end
+
+// Map from UIView pointer (as NSValue key) to pinch handler, keeping handlers alive.
+static NSMutableDictionary<NSValue*, JUCEAppBasics_PinchHandler*>* g_pinchHandlers = nil;
+
+// ---------------------------------------------------------------------------
 
 namespace JUCEAppBasics
 {
@@ -120,6 +155,47 @@ void unregisterSafeAreaChangeCallback()
         [[NSNotificationCenter defaultCenter] removeObserver:g_safeAreaObserver];
         g_safeAreaObserver = nil;
     }
+}
+
+void registerNativePinchOnView(void* nativeViewHandle, std::function<void(float, float, float)> callback)
+{
+    UIView* view = (__bridge UIView*)nativeViewHandle;
+    if (!view)
+        return;
+
+    if (!g_pinchHandlers)
+        g_pinchHandlers = [NSMutableDictionary dictionary];
+
+    // Remove any existing handler for this view before adding a new one.
+    unregisterNativePinchOnView(nativeViewHandle);
+
+    auto* handler      = [[JUCEAppBasics_PinchHandler alloc] init];
+    handler.lastScale  = 1.0f;
+    handler.callback   = ^(float scale, float cx, float cy) { callback(scale, cx, cy); };
+
+    auto* recognizer   = [[UIPinchGestureRecognizer alloc]
+                              initWithTarget:handler
+                                      action:@selector(pinchAction:)];
+    handler.recognizer = recognizer;
+
+    NSValue* key = [NSValue valueWithPointer:(const void*)view];
+    g_pinchHandlers[key] = handler;
+    [view addGestureRecognizer:recognizer];
+}
+
+void unregisterNativePinchOnView(void* nativeViewHandle)
+{
+    UIView* view = (__bridge UIView*)nativeViewHandle;
+    if (!view || !g_pinchHandlers)
+        return;
+
+    NSValue* key = [NSValue valueWithPointer:(const void*)view];
+    JUCEAppBasics_PinchHandler* handler = g_pinchHandlers[key];
+    if (!handler)
+        return;
+
+    [view removeGestureRecognizer:handler.recognizer];
+    [g_pinchHandlers removeObjectForKey:key];
 }
 
 } // namespace iOS_utils

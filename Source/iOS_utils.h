@@ -189,6 +189,18 @@ JUCEAppBasics::iOS_utils::SafetyMargin getNativeSafeAreaInsets();
 void registerSafeAreaChangeCallback(std::function<void()> callback);
 /** iOS-internal: used by deinitialise(). Prefer deinitialise() in application code. */
 void unregisterSafeAreaChangeCallback();
+
+/** Attaches a native UIPinchGestureRecognizer to the UIView identified by @p nativeViewHandle.
+ *  On each gesture update, @p callback is invoked with (incrementalScale, centreX, centreY)
+ *  where incrementalScale is the scale change since the previous callback (not the total
+ *  gesture scale), and centreX/centreY are in the UIView's coordinate space (logical points,
+ *  same as JUCE component pixel coordinates).
+ *  Implemented in iOS_utils_native.mm. */
+void registerNativePinchOnView(void* nativeViewHandle, std::function<void(float, float, float)> callback);
+
+/** Removes the UIPinchGestureRecognizer previously attached by registerNativePinchOnView().
+ *  Implemented in iOS_utils_native.mm. */
+void unregisterNativePinchOnView(void* nativeViewHandle);
 #endif
      
 }; // namespace iOS_utils
