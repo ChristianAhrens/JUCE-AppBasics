@@ -1,3 +1,20 @@
+/* Copyright (c) 2020-2026, Christian Ahrens
+ *
+ * This file is part of JUCE-AppBasics <https://github.com/ChristianAhrens/JUCE-AppBasics>
+ *
+ * This module is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License version 3.0 as published
+ * by the Free Software Foundation.
+ *
+ * This tool is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this tool; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 #include "iOS_utils.h"
 
 namespace JUCEAppBasics
@@ -537,6 +554,8 @@ JUCEAppBasics::iOS_utils::KnownDevices getGenericDeviceType()
     case iPod7:
         return GenericiPod;
     case GenericiPhone:
+    case iPhoneSim_i386:
+    case iPhoneSim_x86_64:
     case iPhone:
     case iPhone3G:
     case iPhone3GS:
@@ -591,39 +610,44 @@ JUCEAppBasics::iOS_utils::KnownDevices getGenericDeviceType()
         return GenericiPhone;
     case GenericiPad:
     case iPad:
+    case iPad3G:
     case iPad2:
     case iPad3:
     case iPad4:
-    case iPadAir:
-    case iPadAir2:
     case iPad5:
     case iPad6:
-    case iPadAir3:
     case iPad7:
+    case iPad10:
+    case iPad11:
+    case iPad1027:
+    case iPad2017:
+    case iPadAir:
+    case iPadAir2:
+    case iPadAir3:
+    case iPadAir4:
+    case iPadAir5:
+    case iPadAir811:
+    case iPadAir813:
     case iPadPro:
     case iPadPro2:
     case iPadPro3:
     case iPadPro4:
     case iPadPro970:
     case iPadPro1050:
+    case iPadPro1101:
+    case iPadPro1102:
+    case iPadPro1104:
     case iPadPro1120:
     case iPadPro1290:
-    case iPad1027:
-    case iPadPro1101:
     case iPadPro1293:
-    case iPadPro1102:
     case iPadPro1294:
     case iPadPro1296:
-    case iPadAir811:
-    case iPadAir813:
-    case iPad11:
     case iPadmini:
     case iPadmini2:
     case iPadmini3:
     case iPadmini4:
     case iPadmini5:
     case iPadmini6:
-    case iPad2017:
         return GenericiPad;
     case AppleWatch:
     case AppleWatch1:
