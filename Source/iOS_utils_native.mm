@@ -91,9 +91,13 @@ SafetyMargin getNativeSafeAreaInsets()
     SafetyMargin result{};
 
     // Deployment target is iOS 15+, so UIWindowScene API is always available.
-    // Iterate connected scenes to find the foreground-active window — this is
-    // the correct path for Stage Manager, Split View, and Slide Over, where
-    // each app window belongs to a distinct UIWindowScene.
+    // Iterate connected scenes to find the foreground-active one — this is the correct path
+    // for Stage Manager, Split View, and Slide Over, where each app window belongs to a
+    // distinct UIWindowScene.
+    // Use the first (lowest z-order) window in the active scene — this is always the main
+    // application window.  Do NOT use isKeyWindow: JUCE popup/overlay windows temporarily
+    // become the key window and carry different (often zero) safe area insets, which would
+    // corrupt the main layout while a dialog is open.
     UIWindow* keyWindow = nil;
     for (UIScene* scene in [UIApplication sharedApplication].connectedScenes)
     {
@@ -101,14 +105,7 @@ SafetyMargin getNativeSafeAreaInsets()
             && scene.activationState == UISceneActivationStateForegroundActive)
         {
             UIWindowScene* windowScene = (UIWindowScene*)scene;
-            for (UIWindow* window in windowScene.windows)
-            {
-                if (window.isKeyWindow) { keyWindow = window; break; }
-            }
-            // Accept first window of the active scene if no key window yet
-            // (can happen briefly during startup).
-            if (!keyWindow)
-                keyWindow = windowScene.windows.firstObject;
+            keyWindow = windowScene.windows.firstObject;
             if (keyWindow)
                 break;
         }
@@ -137,14 +134,21 @@ void registerSafeAreaChangeCallback(std::function<void()> callback)
     g_safeAreaObserver = [[JUCEAppBasics_SafeAreaObserver alloc] init];
     g_safeAreaObserver.callback = ^{ callback(); };
 
-    // UIApplicationDidBecomeActiveNotification fires after UIKit's first layout
-    // pass on launch (when safeAreaInsets become valid) and whenever the app
-    // returns to the foreground. Stage Manager window resizes are handled by
-    // JUCE's own resized() call when the component bounds change.
-    [[NSNotificationCenter defaultCenter]
-        addObserver:g_safeAreaObserver
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+
+    // UIApplicationDidBecomeActiveNotification: fires on launch completion and whenever the
+    // app returns from the background — ensures insets are valid after UIKit's first layout pass.
+    [nc addObserver:g_safeAreaObserver
            selector:@selector(safeAreaDidChange:)
                name:UIApplicationDidBecomeActiveNotification
+             object:nil];
+
+    // UIWindowDidBecomeKeyNotification: fires whenever any window becomes key, including when
+    // the main window regains key status after a JUCE popup/overlay is dismissed.  This causes
+    // an immediate layout update rather than waiting for the next app-active event.
+    [nc addObserver:g_safeAreaObserver
+           selector:@selector(safeAreaDidChange:)
+               name:UIWindowDidBecomeKeyNotification
              object:nil];
 }
 
