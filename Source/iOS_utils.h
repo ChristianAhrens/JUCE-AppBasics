@@ -21,6 +21,64 @@
 
 namespace JUCEAppBasics
 {
+
+/**
+ * @namespace JUCEAppBasics::iOS_utils
+ * @brief iOS/iPadOS platform utilities for JUCE applications.
+ *
+ * Provides two groups of functionality, both compiled only for iOS/iPadOS targets
+ * (guarded by `#if JUCE_IOS` or `#if TARGET_OS_IPHONE` as appropriate).
+ *
+ * ### Safe-area insets
+ * Queries UIKit for the *current* safe-area insets (status bar, home indicator,
+ * Dynamic Island, notch, Stage Manager windows, split-screen) and notifies the
+ * application whenever they may have changed.
+ *
+ * Typical usage in a JUCE application:
+ * ```cpp
+ * // In MainComponent constructor or initialise():
+ * JUCEAppBasics::iOS_utils::initialise([this] { resized(); });
+ *
+ * // In MainComponent destructor or shutdown():
+ * JUCEAppBasics::iOS_utils::deinitialise();
+ *
+ * // In MainComponent::resized():
+ * auto safety = JUCEAppBasics::iOS_utils::getDeviceSafetyMargins();
+ * auto usable = getLocalBounds().withTrimmedTop(safety._top)
+ *                               .withTrimmedBottom(safety._bottom);
+ * ```
+ *
+ * On non-iOS platforms `initialise()` and `deinitialise()` are no-ops and
+ * `getDeviceSafetyMargins()` falls back to the static device-model lookup table.
+ *
+ * ### Native pinch gesture
+ * Attaches / detaches a `UIPinchGestureRecognizer` to any UIKit view identified by
+ * a raw `void*` handle (obtained from `Component::getPeer()->getNativeHandle()`).
+ * The recognizer fires an incremental-scale callback on each gesture update.
+ *
+ * This is required in JUCE 8 because the iOS peer routes each finger touch to
+ * whichever JUCE component passes `hitTest()` at that touch position.  Both fingers
+ * of a pinch gesture therefore rarely land on the same JUCE component, so
+ * `mouseMagnify()` is never called.  A `UIPinchGestureRecognizer` operates at the
+ * UIKit gesture layer, before JUCE's per-component routing, and fires regardless of
+ * which components the individual fingers hit.
+ *
+ * Typical usage (see `UmsciControlComponent::parentHierarchyChanged()`):
+ * ```cpp
+ * JUCEAppBasics::iOS_utils::registerNativePinchOnView(
+ *     getPeer()->getNativeHandle(),
+ *     [this](float scale, float cx, float cy) {
+ *         auto local = myComponent->getLocalPoint(nullptr, { cx, cy });
+ *         myComponent->simulatePinchZoom(scale, local);
+ *     });
+ * ```
+ *
+ * ### Implementation files
+ * - Platform-independent helpers (device model table, safety margins):
+ *   `iOS_utils.cpp`
+ * - iOS-only ObjC++ code (UIKit API calls, ObjC observers, gesture recognizers):
+ *   `iOS_utils_native.mm`
+ */
 namespace iOS_utils
 {
 
