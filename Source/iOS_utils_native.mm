@@ -76,8 +76,12 @@ static JUCEAppBasics_SafeAreaObserver* g_safeAreaObserver = nil;
 }
 @end
 
-// Map from UIView pointer (as NSValue key) to pinch handler, keeping handlers alive.
-static NSMutableDictionary<NSValue*, JUCEAppBasics_PinchHandler*>* g_pinchHandlers = nil;
+// Map from UIView* (weak, opaque key) to pinch handler (strong value).
+// Weak keys: when a UIView is deallocated the slot is zeroed, so objectForKey: on a
+// dying view returns nil without sending any ObjC message to the view.
+// OpaquePersonality: uses raw-pointer hash/equality — no [key hash] or [key isEqual:]
+// calls, so it is safe to query with a dangling pointer during teardown.
+static NSMapTable<UIView*, JUCEAppBasics_PinchHandler*>* g_pinchHandlers = nil;
 
 // ---------------------------------------------------------------------------
 
@@ -168,7 +172,15 @@ void registerNativePinchOnView(void* nativeViewHandle, std::function<void(float,
         return;
 
     if (!g_pinchHandlers)
-        g_pinchHandlers = [NSMutableDictionary dictionary];
+    {
+        NSPointerFunctions* keyFns = [NSPointerFunctions pointerFunctionsWithOptions:
+            NSPointerFunctionsWeakMemory | NSPointerFunctionsOpaquePersonality];
+        NSPointerFunctions* valFns = [NSPointerFunctions pointerFunctionsWithOptions:
+            NSPointerFunctionsStrongMemory | NSPointerFunctionsObjectPersonality];
+        g_pinchHandlers = [[NSMapTable alloc] initWithKeyPointerFunctions:keyFns
+                                                    valuePointerFunctions:valFns
+                                                                 capacity:4];
+    }
 
     // Remove any existing handler for this view before adding a new one.
     unregisterNativePinchOnView(nativeViewHandle);
@@ -182,8 +194,7 @@ void registerNativePinchOnView(void* nativeViewHandle, std::function<void(float,
                                       action:@selector(pinchAction:)];
     handler.recognizer = recognizer;
 
-    NSValue* key = [NSValue valueWithPointer:(const void*)view];
-    g_pinchHandlers[key] = handler;
+    [g_pinchHandlers setObject:handler forKey:view];
     [view addGestureRecognizer:recognizer];
 }
 
@@ -193,13 +204,15 @@ void unregisterNativePinchOnView(void* nativeViewHandle)
     if (!view || !g_pinchHandlers)
         return;
 
-    NSValue* key = [NSValue valueWithPointer:(const void*)view];
-    JUCEAppBasics_PinchHandler* handler = g_pinchHandlers[key];
+    // objectForKey: uses raw-pointer equality (OpaquePersonality), so it is safe even
+    // if view is a dangling pointer: the stored weak slot will have been zeroed to nil
+    // when the UIView was deallocated, and nil != dangling_ptr → returns nil.
+    JUCEAppBasics_PinchHandler* handler = [g_pinchHandlers objectForKey:view];
     if (!handler)
         return;
 
     [view removeGestureRecognizer:handler.recognizer];
-    [g_pinchHandlers removeObjectForKey:key];
+    [g_pinchHandlers removeObjectForKey:view];
 }
 
 } // namespace iOS_utils
