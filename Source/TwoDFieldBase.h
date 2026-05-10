@@ -56,6 +56,9 @@ public:
     //==============================================================================
     const juce::Array<juce::AudioChannelSet::ChannelType>& getOutputsInLayer(const ChannelLayer& layer);
     const juce::Array<juce::AudioChannelSet::ChannelType> getDirectiveOutputsNotInLayer(const ChannelLayer& layer);
+    
+    // JUCE has no create9point1(); this builds it from its constituent channel types.
+    static juce::AudioChannelSet create9point1();
 
 protected:
     //==============================================================================
@@ -76,7 +79,8 @@ protected:
     juce::Array<juce::AudioChannelSet::ChannelType> m_clockwiseOrderedChannelTypes;
     juce::Array<juce::AudioChannelSet::ChannelType> m_clockwiseOrderedHeightChannelTypes;
     juce::Array<juce::AudioChannelSet::ChannelType> m_directionLessChannelTypes;
-    juce::Array<juce::AudioChannelSet>              m_supportedChannelConfigurations = { 
+
+    juce::Array<juce::AudioChannelSet>              m_supportedChannelConfigurations = {
         juce::AudioChannelSet::mono(),
         juce::AudioChannelSet::stereo(),
         juce::AudioChannelSet::createLCR(),
@@ -88,9 +92,10 @@ protected:
         juce::AudioChannelSet::create7point0(),
         juce::AudioChannelSet::create7point1(),
         juce::AudioChannelSet::create7point1point4(),
+        TwoDFieldBase::create9point1(),
         juce::AudioChannelSet::create9point1point6(),
         juce::AudioChannelSet::quadraphonic() };
-    
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TwoDFieldBase)
 };
 

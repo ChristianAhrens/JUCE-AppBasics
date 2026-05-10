@@ -24,6 +24,22 @@ namespace JUCEAppBasics
 
 
 //==============================================================================
+juce::AudioChannelSet TwoDFieldBase::create9point1()
+{
+    juce::AudioChannelSet set;
+    set.addChannel(juce::AudioChannelSet::ChannelType::left);
+    set.addChannel(juce::AudioChannelSet::ChannelType::right);
+    set.addChannel(juce::AudioChannelSet::ChannelType::centre);
+    set.addChannel(juce::AudioChannelSet::ChannelType::LFE);
+    set.addChannel(juce::AudioChannelSet::ChannelType::leftSurroundSide);
+    set.addChannel(juce::AudioChannelSet::ChannelType::rightSurroundSide);
+    set.addChannel(juce::AudioChannelSet::ChannelType::leftSurroundRear);
+    set.addChannel(juce::AudioChannelSet::ChannelType::rightSurroundRear);
+    set.addChannel(juce::AudioChannelSet::ChannelType::wideLeft);
+    set.addChannel(juce::AudioChannelSet::ChannelType::wideRight);
+    return set;
+}
+
 TwoDFieldBase::TwoDFieldBase()
 {
 }
@@ -188,6 +204,34 @@ float TwoDFieldBase::getAngleForChannelTypeInCurrentConfiguration(const juce::Au
             return -135.0f;
         case juce::AudioChannelSet::ChannelType::topRearRight:
             return 135.0f;
+        default:
+            jassertfalse;
+        }
+    }
+    else if (create9point1() == m_channelConfiguration)
+    {
+        switch (channelType)
+        {
+        case juce::AudioChannelSet::ChannelType::left:
+            return -30.0f;
+        case juce::AudioChannelSet::ChannelType::right:
+            return 30.0f;
+        case juce::AudioChannelSet::ChannelType::centre:
+            return 0.0f;
+        case juce::AudioChannelSet::ChannelType::LFE:
+            return 0.0f;
+        case juce::AudioChannelSet::ChannelType::wideLeft:
+            return -60.0f;
+        case juce::AudioChannelSet::ChannelType::wideRight:
+            return 60.0f;
+        case juce::AudioChannelSet::ChannelType::leftSurroundSide:
+            return -100.0f;
+        case juce::AudioChannelSet::ChannelType::rightSurroundSide:
+            return 100.0f;
+        case juce::AudioChannelSet::ChannelType::leftSurroundRear:
+            return -145.0f;
+        case juce::AudioChannelSet::ChannelType::rightSurroundRear:
+            return 145.0f;
         default:
             jassertfalse;
         }
@@ -382,6 +426,34 @@ int TwoDFieldBase::getChannelNumberForChannelTypeInCurrentConfiguration(const ju
             jassertfalse;
         }
     }
+    else if (create9point1() == m_channelConfiguration)
+    {
+        switch (channelType)
+        {
+        case juce::AudioChannelSet::ChannelType::left:
+            return 1;
+        case juce::AudioChannelSet::ChannelType::right:
+            return 2;
+        case juce::AudioChannelSet::ChannelType::centre:
+            return 3;
+        case juce::AudioChannelSet::ChannelType::LFE:
+            return 4;
+        case juce::AudioChannelSet::ChannelType::wideLeft:
+            return 5;
+        case juce::AudioChannelSet::ChannelType::wideRight:
+            return 6;
+        case juce::AudioChannelSet::ChannelType::leftSurroundSide:
+            return 7;
+        case juce::AudioChannelSet::ChannelType::rightSurroundSide:
+            return 8;
+        case juce::AudioChannelSet::ChannelType::leftSurroundRear:
+            return 9;
+        case juce::AudioChannelSet::ChannelType::rightSurroundRear:
+            return 10;
+        default:
+            jassertfalse;
+        }
+    }
     else if (juce::AudioChannelSet::create9point1point6() == m_channelConfiguration)
     {
         switch (channelType)
@@ -572,41 +644,69 @@ const juce::AudioChannelSet::ChannelType TwoDFieldBase::getChannelTypeForChannel
             break;
         }
     }
+    else if (create9point1() == m_channelConfiguration)
+    {
+        switch (channelNumber)
+        {
+        case 1:
+            return juce::AudioChannelSet::ChannelType::left;
+        case 2:
+            return juce::AudioChannelSet::ChannelType::right;
+        case 3:
+            return juce::AudioChannelSet::ChannelType::centre;
+        case 4:
+            return juce::AudioChannelSet::ChannelType::LFE;
+        case 5:
+            return juce::AudioChannelSet::ChannelType::wideLeft;
+        case 6:
+            return juce::AudioChannelSet::ChannelType::wideRight;
+        case 7:
+            return juce::AudioChannelSet::ChannelType::leftSurroundSide;
+        case 8:
+            return juce::AudioChannelSet::ChannelType::rightSurroundSide;
+        case 9:
+            return juce::AudioChannelSet::ChannelType::leftSurroundRear;
+        case 10:
+            return juce::AudioChannelSet::ChannelType::rightSurroundRear;
+        default:
+            break;
+        }
+    }
     else if (juce::AudioChannelSet::create9point1point6() == m_channelConfiguration)
     {
         switch (channelNumber)
         {
-        case 1: 
+        case 1:
             return juce::AudioChannelSet::ChannelType::left;
-        case 2: 
+        case 2:
             return juce::AudioChannelSet::ChannelType::right;
-        case 3: 
+        case 3:
             return juce::AudioChannelSet::ChannelType::centre;
-        case 4: 
+        case 4:
             return juce::AudioChannelSet::ChannelType::LFE;
-        case 5: 
+        case 5:
             return juce::AudioChannelSet::ChannelType::wideLeft;
-        case 6: 
+        case 6:
             return juce::AudioChannelSet::ChannelType::wideRight;
-        case 7: 
+        case 7:
             return juce::AudioChannelSet::ChannelType::leftSurroundSide;
-        case 8: 
+        case 8:
             return juce::AudioChannelSet::ChannelType::rightSurroundSide;
-        case 9: 
+        case 9:
             return juce::AudioChannelSet::ChannelType::leftSurroundRear;
-        case 10: 
+        case 10:
             return juce::AudioChannelSet::ChannelType::rightSurroundRear;
-        case 11: 
+        case 11:
             return juce::AudioChannelSet::ChannelType::topFrontLeft;
-        case 12: 
+        case 12:
             return juce::AudioChannelSet::ChannelType::topFrontRight;
-        case 13: 
+        case 13:
             return juce::AudioChannelSet::ChannelType::topSideLeft;
-        case 14: 
+        case 14:
             return juce::AudioChannelSet::ChannelType::topSideRight;
-        case 15: 
+        case 15:
             return juce::AudioChannelSet::ChannelType::topRearLeft;
-        case 16: 
+        case 16:
             return juce::AudioChannelSet::ChannelType::topRearRight;
         default:
             break;
@@ -755,6 +855,23 @@ void TwoDFieldBase::setClockwiseOrderedChannelTypesForCurrentConfiguration()
             juce::AudioChannelSet::ChannelType::topFrontRight,
             juce::AudioChannelSet::ChannelType::topRearRight,
             juce::AudioChannelSet::ChannelType::topRearLeft
+        };
+        m_directionLessChannelTypes = {
+            juce::AudioChannelSet::ChannelType::LFE
+        };
+    }
+    else if (create9point1() == m_channelConfiguration)
+    {
+        m_clockwiseOrderedChannelTypes = {
+            juce::AudioChannelSet::ChannelType::left,
+            juce::AudioChannelSet::ChannelType::centre,
+            juce::AudioChannelSet::ChannelType::right,
+            juce::AudioChannelSet::ChannelType::wideRight,
+            juce::AudioChannelSet::ChannelType::rightSurroundSide,
+            juce::AudioChannelSet::ChannelType::rightSurroundRear,
+            juce::AudioChannelSet::ChannelType::leftSurroundRear,
+            juce::AudioChannelSet::ChannelType::leftSurroundSide,
+            juce::AudioChannelSet::ChannelType::wideLeft
         };
         m_directionLessChannelTypes = {
             juce::AudioChannelSet::ChannelType::LFE
