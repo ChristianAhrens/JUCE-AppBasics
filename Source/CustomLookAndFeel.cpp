@@ -414,7 +414,7 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
 {
     auto isTwoVal = (style == juce::Slider::SliderStyle::TwoValueVertical || style == juce::Slider::SliderStyle::TwoValueHorizontal);
     auto isThreeVal = (style == juce::Slider::SliderStyle::ThreeValueVertical || style == juce::Slider::SliderStyle::ThreeValueHorizontal);
-    auto tss = reinterpret_cast<ToggleStateSlider*>(&slider);
+    auto tss = dynamic_cast<ToggleStateSlider*>(&slider);
     if (tss && !(isTwoVal || isThreeVal || slider.isBar()))
     {
         // oval surrounding frame
@@ -530,7 +530,7 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
 void CustomLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
     float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider)
 {
-    auto tss = reinterpret_cast<ToggleStateSlider*>(&slider);
+    auto tss = dynamic_cast<ToggleStateSlider*>(&slider);
     if (tss)
     {
         auto bounds = juce::Rectangle<int>(x, y, width, height).toFloat().reduced(2.0f);
