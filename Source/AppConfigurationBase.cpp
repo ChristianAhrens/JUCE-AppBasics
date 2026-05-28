@@ -296,6 +296,11 @@ bool AppConfigurationBase::resetConfigState(std::unique_ptr<XmlElement> fullStat
 	return true;
 }
 
+bool AppConfigurationBase::flushToDisk()
+{
+	return flush(false);
+}
+
 bool AppConfigurationBase::IsFlushAndUpdateDisabled() const
 {
 	return m_flushAndUpdateDisabled.first && m_flushAndUpdateDisabled.second;

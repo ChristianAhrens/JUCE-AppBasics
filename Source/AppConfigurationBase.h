@@ -203,6 +203,8 @@ public:
 	bool setConfigState(std::unique_ptr<XmlElement> stateXml, StringRef attributeName = StringRef());
 	bool resetConfigState(std::unique_ptr<XmlElement> fullStateXml);
 
+	bool flushToDisk();
+
 	bool IsFlushAndUpdateDisabled() const;
 	const std::pair<bool, bool>& GetFlushAndUpdateDisabled() const;
 	void SetFlushAndUpdateDisabled(bool disableFlush = true, bool disableUpdate = true);
