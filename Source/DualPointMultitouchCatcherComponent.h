@@ -19,7 +19,7 @@ namespace JUCEAppBasics
 /**
  *
  */
-class DualPointMultitouchCatcherComponent : public Component
+class DualPointMultitouchCatcherComponent : public juce::Component
 {
 public:
     enum InputState
@@ -40,18 +40,18 @@ public:
     DualPointMultitouchCatcherComponent();
     ~DualPointMultitouchCatcherComponent() override;
 
-    virtual void dualPointMultitouchStarted(const Point<int>& p1, const Point<int>& p2) = 0;
-    virtual void dualPointMultitouchUpdated(const Point<int>& p1, const Point<int>& p2) = 0;
+    virtual void dualPointMultitouchStarted(const juce::Point<int>& p1, const juce::Point<int>& p2) = 0;
+    virtual void dualPointMultitouchUpdated(const juce::Point<int>& p1, const juce::Point<int>& p2) = 0;
     virtual void dualPointMultitouchFinished() = 0;
 
 protected:
-    virtual void mouseDown(const MouseEvent&) override;
-    virtual void mouseDrag(const MouseEvent&) override;
-    virtual void mouseUp(const MouseEvent&) override;
-    
-    virtual void modifierKeysChanged (const ModifierKeys& modifiers) override;
+    virtual void mouseDown(const juce::MouseEvent&) override;
+    virtual void mouseDrag(const juce::MouseEvent&) override;
+    virtual void mouseUp(const juce::MouseEvent&) override;
 
-    std::map<int, Point<int>>& GetActiveMouseInputSources();
+    virtual void modifierKeysChanged (const juce::ModifierKeys& modifiers) override;
+
+    std::map<int, juce::Point<int>>& GetActiveMouseInputSources();
     int GetPrimaryMouseInputSourceIndex();
     
     bool IsInFakeALTMultiTouch();
@@ -59,7 +59,7 @@ protected:
     void ProcessMultitouchState();
 
 private:
-    std::map<int, Point<int>>   m_activeMouseInputSources;
+    std::map<int, juce::Point<int>>   m_activeMouseInputSources;
     InputState                  m_inputState{ IS_None };
     bool                        m_fakeDualMultiTouchWithALTModifier{ false };
 

@@ -145,7 +145,7 @@ public:
             This will only detect broadcasts from an Advertiser object with a matching
             serviceTypeUID value, and where the broadcastPort matches.
         */
-        ServiceDiscovery(const String& serviceTypeUIDBase, int broadcastPort);
+        ServiceDiscovery(const juce::String& serviceTypeUIDBase, int broadcastPort);
 
         /** Destructor */
         ~ServiceDiscovery() override;
@@ -177,7 +177,7 @@ public:
 
 public:
 	ServiceTopologyManager(const juce::String& serviceTypeUIDBase, const juce::String& serviceTypeUID, const juce::String& serviceDescription, const juce::String& sessionMasterServiceDescription,
-        int broadcastPort, int connectionPort, juce::RelativeTime minTimeBetweenBroadcasts = RelativeTime::seconds(2));
+        int broadcastPort, int connectionPort, juce::RelativeTime minTimeBetweenBroadcasts = juce::RelativeTime::seconds(2));
 	~ServiceTopologyManager() override;
 
     void setSessionMasterServiceDescription(const juce::String& sessionMasterServiceDescription);
@@ -189,7 +189,7 @@ public:
     std::function<void()> onDiscoveredTopologyChanged;
 
 protected:
-	IPAddress getInterfaceBroadcastAddress(const IPAddress& address);
+	juce::IPAddress getInterfaceBroadcastAddress(const juce::IPAddress& address);
 	void run() override;
 	void sendBroadcast();
 

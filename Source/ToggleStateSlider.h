@@ -38,7 +38,7 @@ public:
     virtual ~ToggleStateSlider() override;
 
     //==============================================================================
-    void setToggleState(bool shouldBeOn, NotificationType notification);
+    void setToggleState(bool shouldBeOn, juce::NotificationType notification);
     bool getToggleState() const noexcept;
 
     void setTogglalbe(bool isTogglable);
@@ -54,8 +54,8 @@ public:
     void lookAndFeelChanged() override;
 
     //==============================================================================
-    void mouseUp(const MouseEvent& e) override;
-    void mouseDrag(const MouseEvent& e) override;
+    void mouseUp(const juce::MouseEvent& e) override;
+    void mouseDrag(const juce::MouseEvent& e) override;
 
     //==============================================================================
     std::function<juce::String(double)>   displayValueConverter;

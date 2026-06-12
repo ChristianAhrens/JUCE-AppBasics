@@ -198,8 +198,8 @@ void ZeroconfDiscoverComponent::showMenuAndGetService(const juce::String& servic
 			auto& serviceEntryName = std::get<0>(serviceEntry);
 			auto& service = std::get<1>(serviceEntry);
 
-			auto name = String(service.name).upToFirstOccurrenceOf(String("." + serviceEntryName), false, true);
-			auto serviceItemString = juce::String(name + " (" + String(service.ip) + ")");
+			auto name = juce::String(service.name).upToFirstOccurrenceOf(juce::String("." + serviceEntryName), false, true);
+			auto serviceItemString = juce::String(name + " (" + juce::String(service.ip) + ")");
 
 			itemNo++;
 
@@ -318,8 +318,8 @@ void ZeroconfDiscoverComponent::lookAndFeelChanged()
 {
 	juce::DrawableButton::lookAndFeelChanged();
 
-	auto colourOn = getLookAndFeel().findColour(TextButton::ColourIds::textColourOnId);
-	auto colourOff = getLookAndFeel().findColour(TextButton::ColourIds::textColourOffId);
+	auto colourOn = getLookAndFeel().findColour(juce::TextButton::ColourIds::textColourOnId);
+	auto colourOff = getLookAndFeel().findColour(juce::TextButton::ColourIds::textColourOffId);
 
 	std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
 	JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::find_replace24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage,
@@ -333,7 +333,7 @@ void ZeroconfDiscoverComponent::handleServicesChanged(std::string serviceName)
 	postMessage(new ServiceChangedMessage(serviceName));
 }
 
-void ZeroconfDiscoverComponent::handleMessage(const Message& message)
+void ZeroconfDiscoverComponent::handleMessage(const juce::Message& message)
 {
 	auto serviceChangedMessage = dynamic_cast<const ServiceChangedMessage*>(&message);
 	if (serviceChangedMessage != nullptr)
@@ -386,7 +386,7 @@ juce::String ZeroconfDiscoverComponent::getServiceName(ZeroconfServiceType type)
         case ZST_OSC:
             return "OSC";
         default:
-            return String();
+            return juce::String();
     };
 }
 

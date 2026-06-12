@@ -61,13 +61,13 @@ public:
     {
         return m_label1.getFont();
     };
-    void setFont (const Font& newFont)
+    void setFont (const juce::Font& newFont)
     {
         m_label1.setFont(newFont);
         m_label2.setFont(newFont);
     };
-    
-    void setJustificationType(Justification justification)
+
+    void setJustificationType(juce::Justification justification)
     {
         m_label1.setJustificationType(justification);
         m_label2.setJustificationType(justification);
@@ -265,7 +265,7 @@ std::pair<int, int> ServiceTopologyTreeView::getIdealSize()
         height += MasterServiceTreeViewItem::getHeight();
         for (auto const& service : masterService.second)
         {
-            ignoreUnused(service);
+            juce::ignoreUnused(service);
             height += ServiceTreeViewItem::getHeight();
         }
     }

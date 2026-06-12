@@ -36,9 +36,9 @@ std::uint64_t SplitButtonComponent::addButton(const juce::String& buttonText, co
 {
     std::uint64_t buttonID = getNextButtonID();
 
-    m_buttons[buttonID] = std::make_unique<TextButton>(buttonText);
-    addAndMakeVisible(m_buttons[buttonID].get(), dontSendNotification);
-    m_buttons[buttonID]->setToggleState(false, dontSendNotification);
+    m_buttons[buttonID] = std::make_unique<juce::TextButton>(buttonText);
+    addAndMakeVisible(m_buttons[buttonID].get(), juce::dontSendNotification);
+    m_buttons[buttonID]->setToggleState(false, juce::dontSendNotification);
     m_buttons[buttonID]->addListener(this);
 
     if (buttonFlex != -1)
@@ -89,7 +89,7 @@ void SplitButtonComponent::setButtonDown(const std::uint64_t buttonId)
 {
     for (auto const& p : m_buttons)
     {
-        p.second->setToggleState(p.first == buttonId, dontSendNotification);
+        p.second->setToggleState(p.first == buttonId, juce::dontSendNotification);
     }
 }
 
@@ -97,7 +97,7 @@ void SplitButtonComponent::setButtonDown(const juce::String& buttonText)
 {
     for (auto const& p : m_buttons)
     {
-        p.second->setToggleState(p.second->getButtonText() == buttonText, dontSendNotification);
+        p.second->setToggleState(p.second->getButtonText() == buttonText, juce::dontSendNotification);
     }
 }
 

@@ -19,7 +19,7 @@
 
 #include <JuceHeader.h>
 
-#include <ServiceTopologyManager.h>
+#include "ServiceTopologyManager.h"
 
 namespace JUCEAppBasics
 {

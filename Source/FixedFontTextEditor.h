@@ -32,7 +32,7 @@ namespace JUCEAppBasics
 class FixedFontTextEditor : public juce::TextEditor
 {
 public:    
-    explicit FixedFontTextEditor(const juce::String& componentName = String(),
+    explicit FixedFontTextEditor(const juce::String& componentName = juce::String(),
         juce_wchar passwordCharacter = 0, bool autoResizeFont = false);
     virtual ~FixedFontTextEditor() override;
 

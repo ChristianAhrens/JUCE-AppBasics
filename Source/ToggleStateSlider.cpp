@@ -134,7 +134,7 @@ void ToggleStateSlider::lookAndFeelChanged()
  * Also ends any is-dragging states
  * @param	e	The mouse event for the mouseup
  */
-void ToggleStateSlider::mouseUp(const MouseEvent& e)
+void ToggleStateSlider::mouseUp(const juce::MouseEvent& e)
 {
 	if (e.getDistanceFromDragStart() <= 1)
 		setToggleState(!getToggleState(), juce::sendNotification);
@@ -150,7 +150,7 @@ void ToggleStateSlider::mouseUp(const MouseEvent& e)
  * set the is-dragging status.
  * @param	e	The mouse event for the mouseDrag
  */
-void ToggleStateSlider::mouseDrag(const MouseEvent& e)
+void ToggleStateSlider::mouseDrag(const juce::MouseEvent& e)
 {
     auto offset = e.getOffsetFromDragStart();
     if (std::abs(offset.getDistanceFromOrigin()) > 1)

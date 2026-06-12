@@ -18,10 +18,10 @@ namespace JUCEAppBasics
 {
 
 class MidiLearnerComponent :
-    public Component,
-    public Timer,
-    private MidiInputCallback,
-    private MessageListener
+    public juce::Component,
+    public juce::Timer,
+    private juce::MidiInputCallback,
+    private juce::MessageListener
 {
 public:
     typedef std::uint8_t AssignmentType;
@@ -44,7 +44,7 @@ public:
     void handleIncomingMidiMessage(juce::MidiInput* source, const juce::MidiMessage& message) override;
     
     //==============================================================================
-    void handleMessage(const Message& msg) override;
+    void handleMessage(const juce::Message& msg) override;
 
     //==============================================================================
     void lookAndFeelChanged() override;
@@ -53,7 +53,7 @@ public:
     std::function<void(Component*, JUCEAppBasics::MidiCommandRangeAssignment)> onMidiAssiSet;
     
     //==============================================================================
-    void setSelectedDeviceIdentifier(const String& deviceIdentifier);
+    void setSelectedDeviceIdentifier(const juce::String& deviceIdentifier);
     void setCurrentMidiAssi(const JUCEAppBasics::MidiCommandRangeAssignment& currentAssi);
     void clearCurrentMidiAssi();
     const JUCEAppBasics::MidiCommandRangeAssignment& getCurrentMidiAssi();
@@ -62,7 +62,7 @@ public:
     std::int16_t getReferredId() const;
 
 private:
-    class CallbackMidiMessage : public Message
+    class CallbackMidiMessage : public juce::Message
     {
     public:
         /**
@@ -83,18 +83,18 @@ private:
     void activateMidiInput();
     void deactivateMidiInput();
 
-    std::unique_ptr<TextEditor>     m_currentMidiAssiEdit;
-    std::unique_ptr<DrawableButton> m_learnButton;
-    std::unique_ptr<DrawableButton> m_clearButton;
-    bool                            m_showClearButton;
-    String                          m_deviceIdentifier;
-    String                          m_deviceName;
-    PopupMenu                       m_popup;
+    std::unique_ptr<juce::TextEditor>     m_currentMidiAssiEdit;
+    std::unique_ptr<juce::DrawableButton> m_learnButton;
+    std::unique_ptr<juce::DrawableButton> m_clearButton;
+    bool                                  m_showClearButton;
+    juce::String                          m_deviceIdentifier;
+    juce::String                          m_deviceName;
+    juce::PopupMenu                       m_popup;
     std::map<JUCEAppBasics::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::MidiCommandRangeAssignment>>    m_learnedDirectAssis;
     std::map<JUCEAppBasics::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::MidiCommandRangeAssignment>>    m_learnedValueRangeAssis;
     std::map<JUCEAppBasics::MidiCommandRangeAssignment::CommandType, std::map<int, JUCEAppBasics::MidiCommandRangeAssignment>>    m_learnedCommandAndValueRangeAssis;
     
-    std::unique_ptr<MidiInput>                  m_midiInput;
+    std::unique_ptr<juce::MidiInput>            m_midiInput;
     JUCEAppBasics::MidiCommandRangeAssignment   m_currentMidiAssi;
     std::int16_t                                m_referredId{ -1 };
     int                                         m_popupItemIndexCounter{ 0 };

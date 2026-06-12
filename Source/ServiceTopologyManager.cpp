@@ -18,7 +18,7 @@
 
 #include "ServiceTopologyManager.h"
 
-#include <ServiceTopologyTreeView.h>
+#include "ServiceTopologyTreeView.h"
 
 namespace JUCEAppBasics
 {
@@ -60,7 +60,7 @@ void ServiceTopologyManager::ServiceDiscovery::run()
             auto bytesRead = m_socket.read(buffer, sizeof(buffer) - 1, false);
 
             if (bytesRead > 10)
-                if (auto xml = parseXML(juce::String(juce::CharPointer_UTF8(buffer),
+                if (auto xml = juce::parseXML(juce::String(juce::CharPointer_UTF8(buffer),
                     juce::CharPointer_UTF8(buffer + bytesRead))))
                     if (xml->getTagName().startsWith(m_serviceTypeUIDBase))
                         handleMessage(*xml);

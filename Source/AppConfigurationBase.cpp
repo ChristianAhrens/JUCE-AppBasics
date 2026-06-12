@@ -94,11 +94,11 @@ AppConfigurationBase* AppConfigurationBase::getInstance() noexcept
 	return m_singleton;
 }
 
-String AppConfigurationBase::getDefaultConfigFilePath() noexcept
+juce::String AppConfigurationBase::getDefaultConfigFilePath() noexcept
 {
-	static String s_configPath{ File::getSpecialLocation(File::SpecialLocationType::userApplicationDataDirectory).getFullPathName() + "/"
-										+ JUCEApplication::getInstance()->getApplicationName() + "/"
-										+ JUCEApplication::getInstance()->getApplicationName() + ".config" };
+	static juce::String s_configPath{ juce::File::getSpecialLocation(juce::File::SpecialLocationType::userApplicationDataDirectory).getFullPathName() + "/"
+										+ juce::JUCEApplication::getInstance()->getApplicationName() + "/"
+										+ juce::JUCEApplication::getInstance()->getApplicationName() + ".config" };
 
 	return s_configPath;
 }
@@ -108,12 +108,12 @@ bool AppConfigurationBase::isValid()
 	return isValid(m_xml);
 }
 
-bool AppConfigurationBase::isValid(const std::unique_ptr<XmlElement>& xmlConfiguration)
+bool AppConfigurationBase::isValid(const std::unique_ptr<juce::XmlElement>& xmlConfiguration)
 {
 	if (!xmlConfiguration)
 		return false;
 
-	if (!xmlConfiguration->hasTagName(JUCEApplication::getInstance()->getApplicationName()))
+	if (!xmlConfiguration->hasTagName(juce::JUCEApplication::getInstance()->getApplicationName()))
 		return false;
 
 	return true;
@@ -161,7 +161,7 @@ bool AppConfigurationBase::initializeFromDisk()
 	}
 	else
 	{
-		m_xml = std::make_unique<XmlElement>(JUCEApplication::getInstance()->getApplicationName());
+		m_xml = std::make_unique<juce::XmlElement>(juce::JUCEApplication::getInstance()->getApplicationName());
 	}
 		
 	return false;
@@ -175,7 +175,7 @@ bool AppConfigurationBase::flush(bool includeWatcherUpdate)
 	if (GetFlushAndUpdateDisabled().first) // check if config flushing to disk is globally disabled
 	{
 #ifdef DEBUG
-		DBG(String(__FUNCTION__) + " config flushing to disk is globally disabled");
+		DBG(juce::String(__FUNCTION__) + " config flushing to disk is globally disabled");
 #endif
 		return true;
 	}
@@ -186,7 +186,7 @@ bool AppConfigurationBase::flush(bool includeWatcherUpdate)
 
 	{
 		std::lock_guard<std::mutex> l(m_xmlCopyAccessMutex);
-		m_xmlFileFlushCopy = std::make_unique<XmlElement>(*m_xml);
+		m_xmlFileFlushCopy = std::make_unique<juce::XmlElement>(*m_xml);
 	}
 	m_fileFlushCV.notify_all();
 
@@ -228,7 +228,7 @@ void AppConfigurationBase::triggerWatcherUpdate()
 	if (GetFlushAndUpdateDisabled().second) // check if watcher updating is globally disabled
 	{
 #ifdef DEBUG
-		DBG(String(__FUNCTION__) + " config watcher updating is globally disabled");
+		DBG(juce::String(__FUNCTION__) + " config watcher updating is globally disabled");
 #endif
 		return;
 	}
@@ -242,16 +242,16 @@ void AppConfigurationBase::clearWatchers()
 	m_watchers.clear();
 }
 
-std::unique_ptr<XmlElement> AppConfigurationBase::getConfigState(StringRef tagName)
+std::unique_ptr<juce::XmlElement> AppConfigurationBase::getConfigState(juce::StringRef tagName)
 {
 	if (m_xml)
 	{
 		if (tagName.isEmpty())
-			return std::make_unique<XmlElement>(*m_xml);
+			return std::make_unique<juce::XmlElement>(*m_xml);
 
-		XmlElement *tagNameElement = m_xml->getChildByName(tagName);
+		juce::XmlElement *tagNameElement = m_xml->getChildByName(tagName);
 		if (tagNameElement)
-			return std::make_unique<XmlElement>(*tagNameElement);
+			return std::make_unique<juce::XmlElement>(*tagNameElement);
 		else
 			return nullptr;
 	}
@@ -259,12 +259,12 @@ std::unique_ptr<XmlElement> AppConfigurationBase::getConfigState(StringRef tagNa
 		return nullptr;
 }
 
-bool AppConfigurationBase::setConfigState(std::unique_ptr<XmlElement> stateXml, StringRef attributeName)
+bool AppConfigurationBase::setConfigState(std::unique_ptr<juce::XmlElement> stateXml, juce::StringRef attributeName)
 {
 	if (stateXml && m_xml)
 	{
-		XmlElement *existingChildElement = m_xml->getChildByName(stateXml->getTagName());
-		XmlElement* childElement = existingChildElement;
+		juce::XmlElement *existingChildElement = m_xml->getChildByName(stateXml->getTagName());
+		juce::XmlElement* childElement = existingChildElement;
 		while (childElement != nullptr && attributeName.isNotEmpty())
 		{
 			if (childElement->getIntAttribute(attributeName) == stateXml->getIntAttribute(attributeName))
@@ -277,9 +277,9 @@ bool AppConfigurationBase::setConfigState(std::unique_ptr<XmlElement> stateXml, 
 		}
 
 		if(!existingChildElement || existingChildElement->getIntAttribute(attributeName) != stateXml->getIntAttribute(attributeName))
-			m_xml->addChildElement(std::make_unique<XmlElement>(*stateXml).release());
+			m_xml->addChildElement(std::make_unique<juce::XmlElement>(*stateXml).release());
 		else
-			m_xml->replaceChildElement(existingChildElement, new XmlElement(*stateXml));
+			m_xml->replaceChildElement(existingChildElement, new juce::XmlElement(*stateXml));
 
 		return true;
 	}
@@ -287,7 +287,7 @@ bool AppConfigurationBase::setConfigState(std::unique_ptr<XmlElement> stateXml, 
 	return false;
 }
 
-bool AppConfigurationBase::resetConfigState(std::unique_ptr<XmlElement> fullStateXml)
+bool AppConfigurationBase::resetConfigState(std::unique_ptr<juce::XmlElement> fullStateXml)
 {
 	m_xml.reset(fullStateXml.release());
 
@@ -344,35 +344,35 @@ void AppConfigurationBase::debugPrintXmlTree()
 	DBG(m_xml->getTagName());
     for (auto childElement : m_xml->getChildIterator())
 	{
-		auto childDbgString = String("- " + childElement->getTagName());
+		auto childDbgString = juce::String("- " + childElement->getTagName());
 		for (int i = 0; i < childElement->getNumAttributes(); ++i)
 			childDbgString += " " + childElement->getAttributeName(i) + "=" + childElement->getAttributeValue(i);
 		DBG(childDbgString);
 
         for (auto childchildElement : childElement->getChildIterator())
 		{
-			auto childchildDbgString = String("-- " + childchildElement->getTagName());
+			auto childchildDbgString = juce::String("-- " + childchildElement->getTagName());
 			for (int i = 0; i < childchildElement->getNumAttributes(); ++i)
 				childchildDbgString += " " + childchildElement->getAttributeName(i) + "=" + childchildElement->getAttributeValue(i);
 			DBG(childchildDbgString);
 
             for (auto childchildchildElement : childchildElement->getChildIterator())
 			{
-				auto childchildchildDbgString = String("--- " + childchildchildElement->getTagName());
+				auto childchildchildDbgString = juce::String("--- " + childchildchildElement->getTagName());
 				for (int i = 0; i < childchildchildElement->getNumAttributes(); ++i)
 					childchildchildDbgString += " " + childchildchildElement->getAttributeName(i) + "=" + childchildchildElement->getAttributeValue(i);
 				DBG(childchildchildDbgString);
 
                 for (auto childchildchildchildElement : childchildchildElement->getChildIterator())
 				{
-					auto childchildchildchildDbgString = String("---- " + childchildchildchildElement->getTagName());
+					auto childchildchildchildDbgString = juce::String("---- " + childchildchildchildElement->getTagName());
 					for (int i = 0; i < childchildchildchildElement->getNumAttributes(); ++i)
 						childchildchildchildDbgString += " " + childchildchildchildElement->getAttributeName(i) + "=" + childchildchildchildElement->getAttributeValue(i);
 					DBG(childchildchildchildDbgString);
 
                     for (auto childchildchildchildchildElement : childchildchildchildElement->getChildIterator())
 					{
-						auto childchildchildchildchildDbgString = String("----- " + childchildchildchildchildElement->getTagName());
+						auto childchildchildchildchildDbgString = juce::String("----- " + childchildchildchildchildElement->getTagName());
 						for (int i = 0; i < childchildchildchildchildElement->getNumAttributes(); ++i)
 							childchildchildchildchildDbgString += " " + childchildchildchildchildElement->getAttributeName(i) + "=" + childchildchildchildchildElement->getAttributeValue(i) + " value=" + childchildchildchildchildElement->getAllSubText();
 						DBG(childchildchildchildchildDbgString);

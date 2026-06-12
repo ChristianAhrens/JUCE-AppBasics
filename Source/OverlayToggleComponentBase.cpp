@@ -17,7 +17,7 @@ namespace JUCEAppBasics
 
 OverlayToggleComponentBase::OverlayToggleComponentBase()
 {
-    m_toggleOverlayButton = std::make_unique<DrawableButton>(String(), DrawableButton::ButtonStyle::ImageFitted);
+    m_toggleOverlayButton = std::make_unique<juce::DrawableButton>(juce::String(), juce::DrawableButton::ButtonStyle::ImageFitted);
 
     std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
     JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::close_fullscreen24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage);
@@ -42,7 +42,7 @@ void OverlayToggleComponentBase::addOverlayParent(OverlayParent *p)
     m_overlayParent = p;
 }
 
-Rectangle<int>  OverlayToggleComponentBase::getOverlayBounds() const
+juce::Rectangle<int>  OverlayToggleComponentBase::getOverlayBounds() const
 {
     if (getCurrentOverlayState() == maximized)
         return getLocalBounds().reduced(10);
@@ -52,21 +52,21 @@ Rectangle<int>  OverlayToggleComponentBase::getOverlayBounds() const
         return getBounds();
 }
 
-void OverlayToggleComponentBase::paint(Graphics& g)
+void OverlayToggleComponentBase::paint(juce::Graphics& g)
 {
-    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
+    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId).darker());
 
-    g.setColour(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
+    g.setColour(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
     g.fillRect(getOverlayBounds().toFloat());
 }
 
 void OverlayToggleComponentBase::resized()
 {
-    auto buttonSize = Point<int>(25, 25);
+    auto buttonSize = juce::Point<int>(25, 25);
     auto topRight = getOverlayBounds().getTopRight();
-    auto buttonOrig = topRight - Point<int>(buttonSize.getX(), 0);
+    auto buttonOrig = topRight - juce::Point<int>(buttonSize.getX(), 0);
 
-    m_toggleOverlayButton->setBounds(Rectangle<int>(buttonOrig, buttonOrig + buttonSize));
+    m_toggleOverlayButton->setBounds(juce::Rectangle<int>(buttonOrig, buttonOrig + buttonSize));
 }
 
 void OverlayToggleComponentBase::toggleClicked()
@@ -106,14 +106,14 @@ void OverlayToggleComponentBase::changeOverlayState()
 void OverlayToggleComponentBase::setMinimized()
 {
     if (m_toggleOverlayButton->getToggleState())
-        m_toggleOverlayButton->setToggleState(false, dontSendNotification);
+        m_toggleOverlayButton->setToggleState(false, juce::dontSendNotification);
     m_overlayState = minimized;
 }
 
 void OverlayToggleComponentBase::setMaximized()
 {
     if (!m_toggleOverlayButton->getToggleState())
-        m_toggleOverlayButton->setToggleState(true, dontSendNotification);
+        m_toggleOverlayButton->setToggleState(true, juce::dontSendNotification);
     m_overlayState = maximized;
 }
 

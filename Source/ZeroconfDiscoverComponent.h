@@ -20,7 +20,7 @@ namespace JUCEAppBasics
 class ZeroconfDiscoverComponent :
     public juce::DrawableButton,
     public ZeroconfSearcher::ZeroconfSearcher::ZeroconfSearcherListener,
-    public MessageListener
+    public juce::MessageListener
 {
 public:
     enum ZeroconfServiceType
@@ -47,10 +47,10 @@ public:
         ZSCM_Max
     };
 
-    class ServiceChangedMessage : public Message
+    class ServiceChangedMessage : public juce::Message
     {
     public:
-        ServiceChangedMessage(String serviceName) { m_serviceName = serviceName; };
+        ServiceChangedMessage(juce::String serviceName) { m_serviceName = serviceName; };
 
         juce::String GetServiceName() const { return m_serviceName; };
 
@@ -82,7 +82,7 @@ public:
     void handleServicesChanged(std::string serviceName) override;
 
     //==============================================================================
-    void handleMessage(const Message& message) override;
+    void handleMessage(const juce::Message& message) override;
     
     //==============================================================================
     static juce::String getServiceName(ZeroconfServiceType type);
@@ -112,7 +112,7 @@ private:
         void resized() override {
             m_label->setBounds(getLocalBounds());
         };
-        void paint(Graphics& g) override {
+        void paint(juce::Graphics& g) override {
             if (isItemHighlighted())
                 m_label->setColour(juce::Label::ColourIds::backgroundColourId, getLookAndFeel().findColour(juce::PopupMenu::ColourIds::highlightedBackgroundColourId));
             else

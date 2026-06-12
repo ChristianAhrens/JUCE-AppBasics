@@ -23,17 +23,17 @@ MidiLearnerComponent::MidiLearnerComponent(std::int16_t refId, AssignmentType as
 
     setReferredId(refId);
 
-	m_currentMidiAssiEdit = std::make_unique<TextEditor>();
+	m_currentMidiAssiEdit = std::make_unique<juce::TextEditor>();
     m_currentMidiAssiEdit->setReadOnly(true);
 	addAndMakeVisible(m_currentMidiAssiEdit.get());
 
-	m_learnButton = std::make_unique<DrawableButton>("Learn MIDI command", DrawableButton::ButtonStyle::ImageOnButtonBackground);
+	m_learnButton = std::make_unique<juce::DrawableButton>("Learn MIDI command", juce::DrawableButton::ButtonStyle::ImageOnButtonBackground);
     m_learnButton->onClick = [this] { triggerLearning(); };
 	addAndMakeVisible(m_learnButton.get());
 
     if (m_showClearButton)
     {
-        m_clearButton = std::make_unique<DrawableButton>("Clear MIDI command", DrawableButton::ButtonStyle::ImageOnButtonBackground);
+        m_clearButton = std::make_unique<juce::DrawableButton>("Clear MIDI command", juce::DrawableButton::ButtonStyle::ImageOnButtonBackground);
         m_clearButton->onClick = [this] { clearCurrentMidiAssi(); };
         addAndMakeVisible(m_clearButton.get());
     }
@@ -74,14 +74,14 @@ void MidiLearnerComponent::activateMidiInput()
     {
         if (m_midiInput && m_midiInput->getDeviceInfo().identifier != m_deviceIdentifier)
         {
-            DBG(String(__FUNCTION__) + " Deactivating old MIDI input " + m_midiInput->getName() + +" (" + m_midiInput->getIdentifier() + ")");
+            DBG(juce::String(__FUNCTION__) + " Deactivating old MIDI input " + m_midiInput->getName() + +" (" + m_midiInput->getIdentifier() + ")");
             m_midiInput->stop();
             m_midiInput.reset();
         }
         
         if (m_midiInput && m_midiInput->getDeviceInfo().identifier == m_deviceIdentifier)
         {
-            DBG(String(__FUNCTION__) + " MIDI input " + m_midiInput->getName() + +" (" + m_midiInput->getIdentifier() + ") is already active.");
+            DBG(juce::String(__FUNCTION__) + " MIDI input " + m_midiInput->getName() + +" (" + m_midiInput->getIdentifier() + ") is already active.");
         }
         else
         {
@@ -89,11 +89,11 @@ void MidiLearnerComponent::activateMidiInput()
             if (m_midiInput)
             {
                 m_midiInput->start();
-                DBG(String(__FUNCTION__) + " Activated MIDI input " + m_midiInput->getName() + +" (" + m_midiInput->getIdentifier() + ")");
+                DBG(juce::String(__FUNCTION__) + " Activated MIDI input " + m_midiInput->getName() + +" (" + m_midiInput->getIdentifier() + ")");
             }
             else
             {
-                DBG(String(__FUNCTION__) + " MIDI input device " + m_deviceIdentifier + " could not be opened");
+                DBG(juce::String(__FUNCTION__) + " MIDI input device " + m_deviceIdentifier + " could not be opened");
             }
         }
     }
@@ -103,7 +103,7 @@ void MidiLearnerComponent::deactivateMidiInput()
 {
     if (m_midiInput)
     {
-        DBG(String(__FUNCTION__) + " Deactivating MIDI input " + m_midiInput->getName() + +" (" + m_midiInput->getIdentifier() + ")");
+        DBG(juce::String(__FUNCTION__) + " Deactivating MIDI input " + m_midiInput->getName() + +" (" + m_midiInput->getIdentifier() + ")");
         m_midiInput->stop();
         m_midiInput.reset();
     }
@@ -121,13 +121,13 @@ void MidiLearnerComponent::handleIncomingMidiMessage(juce::MidiInput* source, co
  * asynchronously posted to queue from midi callback method above.
  * @param msg    The incoming message to handle
  */
-void MidiLearnerComponent::handleMessage(const Message& msg)
+void MidiLearnerComponent::handleMessage(const juce::Message& msg)
 {
     if (auto* callbackMessage = dynamic_cast<const CallbackMidiMessage*> (&msg))
     {
         auto& midiMessage = callbackMessage->_message;
 
-        DBG(String(__FUNCTION__) + " MIDI received: " + midiMessage.getDescription());
+        DBG(juce::String(__FUNCTION__) + " MIDI received: " + midiMessage.getDescription());
 
         // sanity check if the incoming message comes from the device we want to listen to
         if (m_deviceIdentifier.isEmpty() || nullptr == callbackMessage->_source || (m_deviceIdentifier != callbackMessage->_source->getDeviceInfo().identifier))
@@ -212,10 +212,10 @@ void MidiLearnerComponent::handleMessage(const Message& msg)
  */
 void MidiLearnerComponent::lookAndFeelChanged()
 {
-    Component::lookAndFeelChanged();
+    juce::Component::lookAndFeelChanged();
 
-    auto colourOn = getLookAndFeel().findColour(TextButton::ColourIds::textColourOnId);
-    auto colourOff = getLookAndFeel().findColour(TextButton::ColourIds::textColourOffId);
+    auto colourOn = getLookAndFeel().findColour(juce::TextButton::ColourIds::textColourOnId);
+    auto colourOff = getLookAndFeel().findColour(juce::TextButton::ColourIds::textColourOffId);
 
     std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
 
@@ -254,7 +254,7 @@ void MidiLearnerComponent::updatePopupMenu()
 
             if (itemCount > maxItemsBeforeSubmenu)
             {
-                PopupMenu subMenu;
+                juce::PopupMenu subMenu;
                 for (auto const& learnedDirectAssiKV : m_learnedDirectAssis)
                     for (auto const& learnedAssiKV : learnedDirectAssiKV.second)
                         subMenu.addItem(learnedAssiKV.first, learnedAssiKV.second.getNiceDescription());
@@ -281,7 +281,7 @@ void MidiLearnerComponent::updatePopupMenu()
 
             if (itemCount > maxItemsBeforeSubmenu)
             {
-                PopupMenu subMenu;
+                juce::PopupMenu subMenu;
                 for (auto const& learnedValueRangeAssiKV : m_learnedValueRangeAssis)
                     for (auto const& learnedAssiKV : learnedValueRangeAssiKV.second)
                         if (learnedAssiKV.second.isValueRangeAssignment())
@@ -310,7 +310,7 @@ void MidiLearnerComponent::updatePopupMenu()
 
             if (itemCount > maxItemsBeforeSubmenu)
             {
-                PopupMenu subMenu;
+                juce::PopupMenu subMenu;
                 for (auto const& learnedCommandAndValueRangeAssiKV : m_learnedCommandAndValueRangeAssis)
                     for (auto const& learnedAssiKV : learnedCommandAndValueRangeAssiKV.second)
                         if (learnedAssiKV.second.isCommandRangeAssignment())
@@ -413,7 +413,7 @@ void MidiLearnerComponent::handlePopupResult(int resultingAssiIdx)
     m_popupItemIndexCounter = 0;
 }
 
-void MidiLearnerComponent::setSelectedDeviceIdentifier(const String& deviceIdentifier)
+void MidiLearnerComponent::setSelectedDeviceIdentifier(const juce::String& deviceIdentifier)
 {
     // a new deviceIdx cancels all ongoing action
     deactivateMidiInput();

@@ -16,7 +16,7 @@ namespace JUCEAppBasics
 {
 
 
-class DrawableButtonWithColourIndicator : public DrawableButton
+class DrawableButtonWithColourIndicator : public juce::DrawableButton
 {
 public:
     DrawableButtonWithColourIndicator(const juce::String buttonName, const juce::DrawableButton::ButtonStyle buttonStyle);
@@ -25,18 +25,18 @@ public:
     void setIndicatorColour(const juce::Colour& indicatorColour);
 
     //==============================================================================
-    void paint(Graphics& g) override;
+    void paint(juce::Graphics& g) override;
 
     //==============================================================================
-    Rectangle<float> getImageBounds() const override;
+    juce::Rectangle<float> getImageBounds() const override;
 
 private:
     juce::Colour    m_indicatorColour;
 };
     
 class ColourAndSizeCustomPopupContent :
-    public PopupMenu::CustomComponent,
-    public Button::Listener
+    public juce::PopupMenu::CustomComponent,
+    public juce::Button::Listener
 {
 public:
     ColourAndSizeCustomPopupContent();
@@ -46,7 +46,7 @@ public:
     void resized() override;
 
     //==============================================================================
-    void buttonClicked(Button*) override;
+    void buttonClicked(juce::Button*) override;
 
     //==============================================================================
     void getIdealSize(int& idealWidth, int& idealHeight) override;
@@ -60,17 +60,17 @@ public:
     std::function<void(const juce::Colour& colour, double size)> onColourAndSizeValuePicked;
 
 private:
-    std::unique_ptr<ColourSelector> m_colourSelector;
-    std::unique_ptr<Label>          m_colourSelectorLabel;
-    std::unique_ptr<Slider>         m_sizeSlider;
-    std::unique_ptr<Label>          m_sizeSliderLabel;
-    std::unique_ptr<TextButton>     m_acceptButton;
+    std::unique_ptr<juce::ColourSelector> m_colourSelector;
+    std::unique_ptr<juce::Label>          m_colourSelectorLabel;
+    std::unique_ptr<juce::Slider>         m_sizeSlider;
+    std::unique_ptr<juce::Label>          m_sizeSliderLabel;
+    std::unique_ptr<juce::TextButton>     m_acceptButton;
 
 };
 
 class ColourAndSizePickerComponent :
-    public Component,
-    public Button::Listener
+    public juce::Component,
+    public juce::Button::Listener
 {
 public:
     ColourAndSizePickerComponent();
@@ -80,7 +80,7 @@ public:
     void resized() override;
 
     //==============================================================================
-    void buttonClicked(Button*) override;
+    void buttonClicked(juce::Button*) override;
 
     //==============================================================================
     void lookAndFeelChanged() override;
@@ -95,9 +95,9 @@ private:
     void triggerPickColourAndSize();
 
     std::unique_ptr<DrawableButtonWithColourIndicator>  m_pickButton;
-    String                                              m_deviceIdentifier;
-    String                                              m_deviceName;
-    PopupMenu                                           m_popup;
+    juce::String                                        m_deviceIdentifier;
+    juce::String                                        m_deviceName;
+    juce::PopupMenu                                     m_popup;
 
     juce::Colour                                        m_colour;
     double                                              m_size;

@@ -57,7 +57,7 @@ void FixedFontTextEditor::resized()
  */
 void FixedFontTextEditor::lookAndFeelChanged()
 {
-	applyColourToAllText(getLookAndFeel().findColour(TextEditor::textColourId), true);
+	applyColourToAllText(getLookAndFeel().findColour(juce::TextEditor::textColourId), true);
 
 	juce::TextEditor::lookAndFeelChanged();
 }

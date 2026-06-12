@@ -54,8 +54,8 @@ public:
 	public:
         virtual ~XmlConfigurableElement(){};
         
-		virtual std::unique_ptr<XmlElement> createStateXml() = 0;
-		virtual bool setStateXml(XmlElement* stateXml) = 0;
+		virtual std::unique_ptr<juce::XmlElement> createStateXml() = 0;
+		virtual bool setStateXml(juce::XmlElement* stateXml) = 0;
 
 		void triggerConfigurationUpdate(bool includeWatcherUpdate)
 		{
@@ -182,14 +182,14 @@ public:
 
 	static AppConfigurationBase* getInstance() noexcept;
 	static AppConfigurationBase*	m_singleton;
-	static String getDefaultConfigFilePath() noexcept;
+	static juce::String getDefaultConfigFilePath() noexcept;
 
 	void InitializeBase(const juce::File& file, const Version& configVersion = Version());
 
 	bool UsesConfigVersion() { return m_configVersion.IsValid(); };
 
 	virtual bool isValid();
-	static bool isValid(const std::unique_ptr<XmlElement>& xmlConfiguration);
+	static bool isValid(const std::unique_ptr<juce::XmlElement>& xmlConfiguration);
 
 	void addDumper(AppConfigurationBase::Dumper* d);
 	void triggerConfigurationDump(bool includeWatcherUpdate = true);
@@ -199,9 +199,9 @@ public:
 	void triggerWatcherUpdate();
 	void clearWatchers();
 
-	std::unique_ptr<XmlElement> getConfigState(StringRef tagName = StringRef());
-	bool setConfigState(std::unique_ptr<XmlElement> stateXml, StringRef attributeName = StringRef());
-	bool resetConfigState(std::unique_ptr<XmlElement> fullStateXml);
+	std::unique_ptr<juce::XmlElement> getConfigState(juce::StringRef tagName = juce::StringRef());
+	bool setConfigState(std::unique_ptr<juce::XmlElement> stateXml, juce::StringRef attributeName = juce::StringRef());
+	bool resetConfigState(std::unique_ptr<juce::XmlElement> fullStateXml);
 
 	bool flushToDisk();
 
@@ -214,11 +214,11 @@ protected:
 	virtual bool HandleConfigVersionConflict(const Version& configVersionFound);
 
 protected:
-	std::unique_ptr<XmlElement>	m_xml{ nullptr };
-	std::unique_ptr<XmlElement>	m_xmlFileFlushCopy{ nullptr };
+	std::unique_ptr<juce::XmlElement>	m_xml{ nullptr };
+	std::unique_ptr<juce::XmlElement>	m_xmlFileFlushCopy{ nullptr };
 	std::mutex							m_xmlCopyAccessMutex;
-	
-	std::unique_ptr<File>			m_file{ nullptr };
+
+	std::unique_ptr<juce::File>			m_file{ nullptr };
 	std::unique_ptr<std::thread>	m_fileFlushThread;
 	std::atomic<bool>				m_fileFlushThreadActive;
 	std::condition_variable			m_fileFlushCV;

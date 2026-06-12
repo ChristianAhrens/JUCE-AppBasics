@@ -118,21 +118,21 @@ juce::String MidiCommandRangeAssignment::getCommandDescription() const
 juce::String MidiCommandRangeAssignment::getCommandDescription(const std::vector<std::uint8_t>& commandData)
 {
     if (isNoteOnCommand(commandData) && (commandData.size() > 1))
-        return "NoteOn " + MidiMessage::getMidiNoteName(commandData[1], true, true, 3);
+        return "NoteOn " + juce::MidiMessage::getMidiNoteName(commandData[1], true, true, 3);
 
     else if (isNoteOffCommand(commandData) && (commandData.size() > 1))
-        return "NoteOff " + MidiMessage::getMidiNoteName(commandData[1], true, true, 3);
+        return "NoteOff " + juce::MidiMessage::getMidiNoteName(commandData[1], true, true, 3);
 
     else if (isProgramChangeCommand(commandData) && (commandData.size() > 1))
-        return "ProgChange" + String(commandData[1]);
+        return "ProgChange" + juce::String(commandData[1]);
 
     else if (isAftertouchCommand(commandData) && (commandData.size() > 1))
-        return "Aftertouch" + String(commandData[1]);
+        return "Aftertouch" + juce::String(commandData[1]);
     // aftertouch value
     //data[2]
 
     else if (isControllerCommand(commandData) && (commandData.size() > 1))
-        return "Ctrl" + String(commandData[1]);
+        return "Ctrl" + juce::String(commandData[1]);
     //// controller value
     //data[2]
     
@@ -414,9 +414,9 @@ int MidiCommandRangeAssignment::getCommandChannel(const std::vector<std::uint8_t
 juce::String MidiCommandRangeAssignment::getValueRangeDescription() const
 {
     if (m_valueRange.isEmpty())
-        return String(m_valueRange.getStart());
+        return juce::String(m_valueRange.getStart());
     else
-        return String(m_valueRange.getStart()) + " - " + String(m_valueRange.getEnd());
+        return juce::String(m_valueRange.getStart()) + " - " + juce::String(m_valueRange.getEnd());
 }
 
 juce::String MidiCommandRangeAssignment::getCommandRangeDescription() const
@@ -753,9 +753,9 @@ juce::String MidiCommandRangeAssignment::serializeToHexString() const
     }
 
     // dump all the serialized bytes into a byte string array
-    auto byteStrings = StringArray();
+    auto byteStrings = juce::StringArray();
     for (auto const& byte : serialData)
-        byteStrings.add(String::toHexString(byte));
+        byteStrings.add(juce::String::toHexString(byte));
     
     // join the byte strings into a single space separated string and return it
     return byteStrings.joinIntoString(" ");
@@ -776,7 +776,7 @@ bool MidiCommandRangeAssignment::deserializeFromHexString(const juce::String& se
 {
     // Read the given serial hex string data into byte vector
     auto byteData = std::vector<std::uint8_t>();
-    auto byteStrings = StringArray::fromTokens(serialData, " ", StringRef());
+    auto byteStrings = juce::StringArray::fromTokens(serialData, " ", juce::StringRef());
     for (auto const& byteString : byteStrings)
         byteData.push_back(static_cast<std::uint8_t>(byteString.getHexValue32()));
     auto byteDataLength = byteData.size();

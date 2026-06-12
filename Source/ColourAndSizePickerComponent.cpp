@@ -17,7 +17,7 @@ namespace JUCEAppBasics
 
 //==============================================================================
 DrawableButtonWithColourIndicator::DrawableButtonWithColourIndicator(const juce::String buttonName, const juce::DrawableButton::ButtonStyle buttonStyle)
-    : DrawableButton(buttonName, buttonStyle)
+    : juce::DrawableButton(buttonName, buttonStyle)
 {
 }
 
@@ -32,18 +32,18 @@ void DrawableButtonWithColourIndicator::setIndicatorColour(const juce::Colour& i
     repaint();
 }
 
-void DrawableButtonWithColourIndicator::paint(Graphics& g)
+void DrawableButtonWithColourIndicator::paint(juce::Graphics& g)
 {
-    DrawableButton::paint(g);
+    juce::DrawableButton::paint(g);
 
-    auto imageBounds = DrawableButton::getImageBounds();
+    auto imageBounds = juce::DrawableButton::getImageBounds();
     g.setColour(m_indicatorColour);
     g.fillRect(imageBounds.removeFromBottom(0.2f * imageBounds.getHeight()));
 }
 
-Rectangle<float> DrawableButtonWithColourIndicator::getImageBounds() const
+juce::Rectangle<float> DrawableButtonWithColourIndicator::getImageBounds() const
 {
-    auto imageBounds = DrawableButton::getImageBounds();
+    auto imageBounds = juce::DrawableButton::getImageBounds();
 
     return imageBounds.removeFromTop(0.8f * imageBounds.getHeight());
 }
@@ -53,18 +53,18 @@ Rectangle<float> DrawableButtonWithColourIndicator::getImageBounds() const
 ColourAndSizeCustomPopupContent::ColourAndSizeCustomPopupContent()
     : CustomComponent(false)
 {
-    m_colourSelector = std::make_unique<ColourSelector>();
+    m_colourSelector = std::make_unique<juce::ColourSelector>();
     addAndMakeVisible(m_colourSelector.get());
-    m_colourSelectorLabel = std::make_unique<Label>("colour", "Colour:");
+    m_colourSelectorLabel = std::make_unique<juce::Label>("colour", "Colour:");
     addAndMakeVisible(m_colourSelectorLabel.get());
 
-    m_sizeSlider = std::make_unique<Slider>(Slider::LinearHorizontal, Slider::NoTextBox);
+    m_sizeSlider = std::make_unique<juce::Slider>(juce::Slider::LinearHorizontal, juce::Slider::NoTextBox);
     m_sizeSlider->setRange(0.1f, 1.0f, 0.05f);
     addAndMakeVisible(m_sizeSlider.get());
-    m_sizeSliderLabel = std::make_unique<Label>("size", "Size:");
+    m_sizeSliderLabel = std::make_unique<juce::Label>("size", "Size:");
     addAndMakeVisible(m_sizeSliderLabel.get());
 
-    m_acceptButton = std::make_unique<TextButton>("Accept");
+    m_acceptButton = std::make_unique<juce::TextButton>("Accept");
     m_acceptButton->addListener(this);
     addAndMakeVisible(m_acceptButton.get());
 }
@@ -91,7 +91,7 @@ void ColourAndSizeCustomPopupContent::resized()
         m_colourSelector->setBounds(bounds);
 }
 
-void ColourAndSizeCustomPopupContent::buttonClicked(Button* button)
+void ColourAndSizeCustomPopupContent::buttonClicked(juce::Button* button)
 {
     if (m_acceptButton && m_acceptButton.get() == button)
     {
@@ -106,7 +106,7 @@ void ColourAndSizeCustomPopupContent::getIdealSize(int& idealWidth, int& idealHe
     idealWidth = 240;
     idealHeight = 360;
 
-    auto primaryDisplay = Desktop::getInstance().getDisplays().getPrimaryDisplay();
+    auto primaryDisplay = juce::Desktop::getInstance().getDisplays().getPrimaryDisplay();
     if (primaryDisplay != nullptr)
     {
         auto screenBounds = primaryDisplay->userArea;
@@ -149,12 +149,12 @@ const double ColourAndSizeCustomPopupContent::getSizeValue()
 //==============================================================================
 ColourAndSizePickerComponent::ColourAndSizePickerComponent()
 {
-    m_pickButton = std::make_unique<DrawableButtonWithColourIndicator>("Pick colour and size", DrawableButton::ButtonStyle::ImageOnButtonBackground);
+    m_pickButton = std::make_unique<DrawableButtonWithColourIndicator>("Pick colour and size", juce::DrawableButton::ButtonStyle::ImageOnButtonBackground);
     m_pickButton->addListener(this);
 	addAndMakeVisible(m_pickButton.get());
     lookAndFeelChanged();
 
-    setCurrentColourAndSize(Colour::greyLevel(0.5f), 0.5f);
+    setCurrentColourAndSize(juce::Colour::greyLevel(0.5f), 0.5f);
 }
 
 ColourAndSizePickerComponent::~ColourAndSizePickerComponent()
@@ -168,7 +168,7 @@ void ColourAndSizePickerComponent::resized()
         m_pickButton->setBounds(getLocalBounds());
 }
 
-void ColourAndSizePickerComponent::buttonClicked(Button* button)
+void ColourAndSizePickerComponent::buttonClicked(juce::Button* button)
 {
 	if (m_pickButton && button == m_pickButton.get())
 	{
@@ -178,10 +178,10 @@ void ColourAndSizePickerComponent::buttonClicked(Button* button)
 
 void ColourAndSizePickerComponent::lookAndFeelChanged()
 {
-    Component::lookAndFeelChanged();
+    juce::Component::lookAndFeelChanged();
 
-    auto colourOn = getLookAndFeel().findColour(TextButton::ColourIds::textColourOnId);
-    auto colourOff = getLookAndFeel().findColour(TextButton::ColourIds::textColourOffId);
+    auto colourOn = getLookAndFeel().findColour(juce::TextButton::ColourIds::textColourOnId);
+    auto colourOff = getLookAndFeel().findColour(juce::TextButton::ColourIds::textColourOffId);
 
     std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
     JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::colorize_black_24dp_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage,
@@ -214,8 +214,8 @@ void ColourAndSizePickerComponent::triggerPickColourAndSize()
     };
     m_popup.addCustomItem(-1, std::move(customPopupContent));
 
-    m_popup.showMenuAsync(PopupMenu::Options(), [this](int resultingAssiIdx) {
-        ignoreUnused(resultingAssiIdx);
+    m_popup.showMenuAsync(juce::PopupMenu::Options(), [this](int resultingAssiIdx) {
+        juce::ignoreUnused(resultingAssiIdx);
         });
 }
 

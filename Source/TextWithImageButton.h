@@ -18,25 +18,25 @@ namespace JUCEAppBasics
 //==============================================================================
 /*
 */
-class TextWithImageButton : public DrawableButton
+class TextWithImageButton : public juce::DrawableButton
 {
 public:
     TextWithImageButton();
-    explicit TextWithImageButton(const String& buttonName);
+    explicit TextWithImageButton(const juce::String& buttonName);
 	~TextWithImageButton() override;
 
     //==============================================================================
-    Rectangle<float> getImageBounds() const override;
+    juce::Rectangle<float> getImageBounds() const override;
 
     //==============================================================================
-    void paint (Graphics&) override;
+    void paint (juce::Graphics&) override;
     void resized() override;
 
     //==============================================================================
-    void setImagePosition(Justification position);
+    void setImagePosition(juce::Justification position);
 
 private:
-    Justification m_imagePosition;
+    juce::Justification m_imagePosition;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TextWithImageButton)
 };

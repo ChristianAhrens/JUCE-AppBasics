@@ -18,7 +18,7 @@ namespace JUCEAppBasics
  *
  */
 DualPointMultitouchCatcherComponent::DualPointMultitouchCatcherComponent()
-	:   Component()
+	:   juce::Component()
 {
     setWantsKeyboardFocus(true);
 }
@@ -34,7 +34,7 @@ DualPointMultitouchCatcherComponent::~DualPointMultitouchCatcherComponent()
  * Called when a mouse button is pressed. 
  * @param e		Details about the position and status of the mouse event, including the source component in which it occurred 
  */
-void DualPointMultitouchCatcherComponent::mouseDown(const MouseEvent& e)
+void DualPointMultitouchCatcherComponent::mouseDown(const juce::MouseEvent& e)
 {
     if (juce::ModifierKeys::currentModifiers.isAltDown())
     {
@@ -71,14 +71,14 @@ void DualPointMultitouchCatcherComponent::mouseDown(const MouseEvent& e)
 
     ProcessMultitouchState();
 
-    Component::mouseDown(e);
+    juce::Component::mouseDown(e);
 }
 
 /**
  * Called when the mouse is moved while a button is held down. 
  * @param e		Details about the position and status of the mouse event, including the source component in which it occurred
  */
-void DualPointMultitouchCatcherComponent::mouseDrag(const MouseEvent& e)
+void DualPointMultitouchCatcherComponent::mouseDrag(const juce::MouseEvent& e)
 {
     if (GetActiveMouseInputSources().empty())
         jassertfalse;   // A mouseDrag for a not already known (mouseDown) inputIndex does not make sense. What went wrong?
@@ -104,14 +104,14 @@ void DualPointMultitouchCatcherComponent::mouseDrag(const MouseEvent& e)
 
     ProcessMultitouchState();
 
-    Component::mouseDrag(e);
+    juce::Component::mouseDrag(e);
 }
 
 /**
  * Called when the mouse button is released.
  * @param e		Details about the position and status of the mouse event, including the source component in which it occurred
  */
-void DualPointMultitouchCatcherComponent::mouseUp(const MouseEvent& e)
+void DualPointMultitouchCatcherComponent::mouseUp(const juce::MouseEvent& e)
 {
     if (GetActiveMouseInputSources().empty())
         jassertfalse;   // A mouseUp for a not already known (mouseDown) inputIndex does not make sense. What went wrong?
@@ -149,14 +149,14 @@ void DualPointMultitouchCatcherComponent::mouseUp(const MouseEvent& e)
         m_fakeDualMultiTouchWithALTModifier = false;
     }
 
-    Component::mouseUp(e);
+    juce::Component::mouseUp(e);
 }
 
 /**
  * Called when a modifier key was pressed or released
  * @param modifiers   The modifiers that have changed.
  */
-void DualPointMultitouchCatcherComponent::modifierKeysChanged (const ModifierKeys& modifiers)
+void DualPointMultitouchCatcherComponent::modifierKeysChanged (const juce::ModifierKeys& modifiers)
 {
     // if ALT was just released and we are in fake multitouch -> finish fake multitouch
     if (!modifiers.isAltDown() && IsInFakeALTMultiTouch())
@@ -185,7 +185,7 @@ void DualPointMultitouchCatcherComponent::modifierKeysChanged (const ModifierKey
  * Getter for the internal map of active inputSources
  * @return  The list of currently active ('mouseDown') inputSources
  */
-std::map<int, Point<int>>& DualPointMultitouchCatcherComponent::GetActiveMouseInputSources()
+std::map<int, juce::Point<int>>& DualPointMultitouchCatcherComponent::GetActiveMouseInputSources()
 {
     return m_activeMouseInputSources;
 }

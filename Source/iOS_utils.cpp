@@ -416,7 +416,7 @@ JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeIPad(const juce::String& dev
 
 JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeMac(const juce::String& deviceDescription)
 {
-    ignoreUnused(deviceDescription);
+    juce::ignoreUnused(deviceDescription);
     return KnownDevices::GenericMac;
 }
 
@@ -518,7 +518,7 @@ JUCEAppBasics::iOS_utils::KnownDevices getDeviceTypeOther(const juce::String& de
 
 JUCEAppBasics::iOS_utils::KnownDevices getDeviceType()
 {
-    auto deviceDescription = SystemStats::getDeviceDescription();
+    auto deviceDescription = juce::SystemStats::getDeviceDescription();
 
     if (deviceDescription.contains("iPhone"))
         return getDeviceTypeIPhone(deviceDescription);
@@ -926,27 +926,27 @@ JUCEAppBasics::iOS_utils::SafetyMargin getDeviceSafetyMargins()
     SafetyMargin safety{};
     auto displayNotch = getDeviceDisplayNotchIndent();
     auto displaySlideBar = getDeviceDisplaySlideBarIndent();
-    switch (SystemStats::getOperatingSystemType())
+    switch (juce::SystemStats::getOperatingSystemType())
     {
-    case SystemStats::OperatingSystemType::Android:
-    case SystemStats::OperatingSystemType::iOS:
+    case juce::SystemStats::OperatingSystemType::Android:
+    case juce::SystemStats::OperatingSystemType::iOS:
     {
-        auto orientation = Desktop::getInstance().getCurrentOrientation();
+        auto orientation = juce::Desktop::getInstance().getCurrentOrientation();
         switch (orientation)
         {
-        case Desktop::upright:
+        case juce::Desktop::upright:
             safety._top = displayNotch;
             safety._bottom = displaySlideBar;
             break;
-        case Desktop::upsideDown:
+        case juce::Desktop::upsideDown:
             safety._top = displaySlideBar;
             safety._bottom = displayNotch;
             break;
-        case Desktop::rotatedAntiClockwise:
+        case juce::Desktop::rotatedAntiClockwise:
             safety._left = displayNotch;
             safety._right = displaySlideBar;
             break;
-        case Desktop::rotatedClockwise:
+        case juce::Desktop::rotatedClockwise:
             safety._left = displaySlideBar;
             safety._right = displayNotch;
             break;
@@ -955,9 +955,9 @@ JUCEAppBasics::iOS_utils::SafetyMargin getDeviceSafetyMargins()
         }
     }
     break;
-    case SystemStats::OperatingSystemType::MacOSX:
-    case SystemStats::OperatingSystemType::Windows:
-    case SystemStats::OperatingSystemType::Linux:
+    case juce::SystemStats::OperatingSystemType::MacOSX:
+    case juce::SystemStats::OperatingSystemType::Windows:
+    case juce::SystemStats::OperatingSystemType::Linux:
     default:
         safety._top = displayNotch;
         safety._bottom = displaySlideBar;
@@ -972,7 +972,7 @@ void initialise(std::function<void()> safeAreaChangeCallback)
 #if JUCE_IOS
     registerSafeAreaChangeCallback(safeAreaChangeCallback);
 #else
-    ignoreUnused(safeAreaChangeCallback);
+    juce::ignoreUnused(safeAreaChangeCallback);
 #endif
 }
 

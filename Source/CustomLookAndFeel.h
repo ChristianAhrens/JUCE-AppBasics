@@ -2,7 +2,7 @@
 
 #include <JuceHeader.h>
 
-#include <ToggleStateSlider.h>
+#include "ToggleStateSlider.h"
 
 
 namespace JUCEAppBasics
@@ -52,7 +52,7 @@ public:
 		juce::ComboBox&) override;
 
 	//==============================================================================
-	void drawCallOutBoxBackground(juce::CallOutBox& box, Graphics& g,
+	void drawCallOutBoxBackground(juce::CallOutBox& box, juce::Graphics& g,
 		const juce::Path& path, juce::Image& cachedImage) override;
 
 	//==============================================================================
@@ -70,9 +70,9 @@ public:
 
 	//==============================================================================
 	void drawTreeviewPlusMinusBox(juce::Graphics& g, const juce::Rectangle<float>& area,
-		Colour backgroundColour, bool isOpen, bool isMouseOver) override;
-	bool areLinesDrawnForTreeView(TreeView&) override;
-	int getTreeViewIndentSize(TreeView&) override;
+		juce::Colour backgroundColour, bool isOpen, bool isMouseOver) override;
+	bool areLinesDrawnForTreeView(juce::TreeView&) override;
+	int getTreeViewIndentSize(juce::TreeView&) override;
 
 	//==============================================================================
 	void drawPopupMenuBackground(juce::Graphics& g, int width, int height) override;

@@ -114,7 +114,7 @@ public:
 
         juce::URL latestVersionURL(webUpdateServerAddress + endpoint);
 
-        std::unique_ptr<InputStream> inStream(
+        std::unique_ptr<juce::InputStream> inStream(
             latestVersionURL.createInputStream(juce::URL::InputStreamOptions(juce::URL::ParameterHandling::inAddress).withConnectionTimeoutMs(5000)));
 
         if(inStream == nullptr)

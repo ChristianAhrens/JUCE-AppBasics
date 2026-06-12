@@ -15,7 +15,7 @@
 namespace JUCEAppBasics
 {
 
-class OverlayToggleComponentBase  :   public Component
+class OverlayToggleComponentBase  :   public juce::Component
 {
 public:
     enum OverlayState
@@ -54,11 +54,11 @@ public:
 
     void addOverlayParent(OverlayParent *p);
 
-    Rectangle<int>  getOverlayBounds() const;
+    juce::Rectangle<int>  getOverlayBounds() const;
     void toggleClicked();
 
     //==============================================================================
-    void paint (Graphics& g) override;
+    void paint (juce::Graphics& g) override;
     void resized() override;
 
     //==============================================================================
@@ -76,7 +76,7 @@ private:
     OverlayParent *m_overlayParent{ nullptr };
 
     //==============================================================================
-    std::unique_ptr<DrawableButton> m_toggleOverlayButton;
+    std::unique_ptr<juce::DrawableButton> m_toggleOverlayButton;
 
     //==============================================================================
     OverlayState    m_overlayState{ invalid };
