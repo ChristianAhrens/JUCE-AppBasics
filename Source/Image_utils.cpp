@@ -11,26 +11,24 @@ void getDrawableButtonImages(juce::String BinaryDataString,
     juce::Colour normalColour, juce::Colour overColour, juce::Colour downColour, juce::Colour disabledColour,
     juce::Colour normalOnColour, juce::Colour overOnColour, juce::Colour downOnColour, juce::Colour disabledOnColour)
 {
-    std::unique_ptr<juce::XmlElement> svg_xml = juce::XmlDocument::parse(BinaryDataString);
-
     // create svg images from resources for regular state
-    NormalImage = juce::Drawable::createFromSVG(*(svg_xml.get()));
+    NormalImage = juce::Drawable::createFromSVGString(BinaryDataString);
     NormalImage->replaceColour(juce::Colours::black, normalColour);
-    OverImage = juce::Drawable::createFromSVG(*(svg_xml.get()));
+    OverImage = juce::Drawable::createFromSVGString(BinaryDataString);
     OverImage->replaceColour(juce::Colours::black, overColour);
-    DownImage = juce::Drawable::createFromSVG(*(svg_xml.get()));
+    DownImage = juce::Drawable::createFromSVGString(BinaryDataString);
     DownImage->replaceColour(juce::Colours::black, downColour);
-    DisabledImage = juce::Drawable::createFromSVG(*(svg_xml.get()));
+    DisabledImage = juce::Drawable::createFromSVGString(BinaryDataString);
     DisabledImage->replaceColour(juce::Colours::black, disabledColour);
 
     // create svg images from resources for ON state
-    NormalOnImage = juce::Drawable::createFromSVG(*(svg_xml.get()));
+    NormalOnImage = juce::Drawable::createFromSVGString(BinaryDataString);
     NormalOnImage->replaceColour(juce::Colours::black, normalOnColour);
-    OverOnImage = juce::Drawable::createFromSVG(*(svg_xml.get()));
+    OverOnImage = juce::Drawable::createFromSVGString(BinaryDataString);
     OverOnImage->replaceColour(juce::Colours::black, overOnColour);
-    DownOnImage = juce::Drawable::createFromSVG(*(svg_xml.get()));
+    DownOnImage = juce::Drawable::createFromSVGString(BinaryDataString);
     DownOnImage->replaceColour(juce::Colours::black, downOnColour);
-    DisabledOnImage = juce::Drawable::createFromSVG(*(svg_xml.get()));
+    DisabledOnImage = juce::Drawable::createFromSVGString(BinaryDataString);
     DisabledOnImage->replaceColour(juce::Colours::black, disabledOnColour);
 }
 
@@ -38,16 +36,14 @@ void getDrawableButtonImages(juce::String BinaryDataString,
     std::unique_ptr<juce::Drawable>& NormalImage, std::unique_ptr<juce::Drawable>& OverImage, std::unique_ptr<juce::Drawable>& DownImage, std::unique_ptr<juce::Drawable>& DisabledImage,
     juce::Colour normalColour, juce::Colour overColour, juce::Colour downColour, juce::Colour disabledColour)
 {
-    std::unique_ptr<juce::XmlElement> svg_xml = juce::XmlDocument::parse(BinaryDataString);
-
     // create svg images from resources for regular state
-    NormalImage = juce::Drawable::createFromSVG(*(svg_xml.get()));
+    NormalImage = juce::Drawable::createFromSVGString(BinaryDataString);
     NormalImage->replaceColour(juce::Colours::black, normalColour);
-    OverImage = juce::Drawable::createFromSVG(*(svg_xml.get()));
+    OverImage = juce::Drawable::createFromSVGString(BinaryDataString);
     OverImage->replaceColour(juce::Colours::black, overColour);
-    DownImage = juce::Drawable::createFromSVG(*(svg_xml.get()));
+    DownImage = juce::Drawable::createFromSVGString(BinaryDataString);
     DownImage->replaceColour(juce::Colours::black, downColour);
-    DisabledImage = juce::Drawable::createFromSVG(*(svg_xml.get()));
+    DisabledImage = juce::Drawable::createFromSVGString(BinaryDataString);
     DisabledImage->replaceColour(juce::Colours::black, disabledColour);
 }
      
