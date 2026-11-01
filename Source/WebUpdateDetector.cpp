@@ -311,8 +311,10 @@ void WebUpdateDetector::run()
     {
         auto failureInfo = juce::String("Failed to communicate with the server providing update information.\nPlease try again in a few minutes.");
         std::cout << __FUNCTION__ << " " << failureInfo.toStdString() << std::endl;
-        if(!m_backgroundCheck)
-            juce::AlertWindow::showMessageBoxAsync(juce::MessageBoxIconType::WarningIcon, "Update Server Communication Error", failureInfo);
+        if(!m_backgroundCheck) // this runs on the update check thread, dialogs must be shown on the message thread
+            juce::MessageManager::callAsync([failureInfo]() {
+                juce::AlertWindow::showMessageBoxAsync(juce::MessageBoxIconType::WarningIcon, "Update Server Communication Error", failureInfo);
+            });
         return;
     }
 
@@ -321,7 +323,9 @@ void WebUpdateDetector::run()
         auto noUpdateInfo = juce::String("Your " + juce::String(ProjectInfo::projectName) + " version is up to date.");
         std::cout << __FUNCTION__ << " " << noUpdateInfo.toStdString() << std::endl;
         if(!m_backgroundCheck)
-            juce::AlertWindow::showMessageBoxAsync(juce::MessageBoxIconType::NoIcon, "No New Version Available", noUpdateInfo);
+            juce::MessageManager::callAsync([noUpdateInfo]() {
+                juce::AlertWindow::showMessageBoxAsync(juce::MessageBoxIconType::NoIcon, "No New Version Available", noUpdateInfo);
+            });
         return;
     }
     else
@@ -335,16 +339,19 @@ void WebUpdateDetector::run()
             .withMessage(availableUpdateInfo)
             .withButton("Download")
             .withButton("Ignore");
-        juce::AlertWindow::showAsync(options, [=](int buttonIndex) {
-            switch (buttonIndex)
-            {
-            case 1:
-                juce::URL(m_downloadUpdateWebAddress).launchInDefaultBrowser();
-                break;
-            case 0:
-            default:
-                break;
-            }
+        auto downloadUpdateWebAddress = m_downloadUpdateWebAddress;
+        juce::MessageManager::callAsync([options, downloadUpdateWebAddress]() {
+            juce::AlertWindow::showAsync(options, [downloadUpdateWebAddress](int buttonIndex) {
+                switch (buttonIndex)
+                {
+                case 1:
+                    juce::URL(downloadUpdateWebAddress).launchInDefaultBrowser();
+                    break;
+                case 0:
+                default:
+                    break;
+                }
+            });
         });
         return;
     }
