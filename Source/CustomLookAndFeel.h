@@ -76,6 +76,7 @@ public:
 
 	//==============================================================================
 	void drawPopupMenuBackground(juce::Graphics& g, int width, int height) override;
+	void preparePopupMenuWindow(juce::Component& newWindow) override;
 
 private:
 	PaletteStyle m_paletteStyle = PS_Dark;

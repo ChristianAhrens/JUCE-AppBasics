@@ -1,5 +1,82 @@
 #include "CustomLookAndFeel.h"
 
+#if JUCE_MAC
+#include <objc/message.h>
+#endif
+
+namespace JUCEAppBasics
+{
+
+#if JUCE_MAC
+/**
+ * Keeps the native window levels of open popup menu windows at the popup menu level plus their nesting depth
+ * (oldest menu lowest), so that a menu opened from a menu is always above its parent, and above a CallOutBox.
+ * JUCE sets the window levels of modal components on every change of the modal component stack, hence the timer.
+ */
+class PopupMenuWindowLevelKeeper : public juce::Timer, private juce::DeletedAtShutdown
+{
+public:
+    static PopupMenuWindowLevelKeeper& getInstance()
+    {
+        if (nullptr == s_instance)
+            s_instance = new PopupMenuWindowLevelKeeper();
+        return *s_instance;
+    }
+
+    void track(juce::Component& menuWindow)
+    {
+        m_windows.push_back(juce::Component::SafePointer<juce::Component>(&menuWindow));
+        applyLevels();
+        if (!isTimerRunning())
+            startTimer(10);
+    }
+
+    ~PopupMenuWindowLevelKeeper() override
+    {
+        stopTimer();
+        s_instance = nullptr;
+    }
+
+private:
+    PopupMenuWindowLevelKeeper() = default;
+
+    void timerCallback() override
+    {
+        applyLevels();
+        if (m_windows.empty())
+            stopTimer();
+    }
+
+    void applyLevels()
+    {
+        m_windows.erase(std::remove_if(m_windows.begin(), m_windows.end(), [](const auto& window) { return nullptr == window; }), m_windows.end());
+
+        auto depth = 0L;
+        for (auto const& window : m_windows)
+        {
+            auto* peer = window->getPeer();
+            if (nullptr == peer)
+                continue; // not on the desktop (yet)
+
+            auto nsView = reinterpret_cast<id>(peer->getNativeHandle());
+            auto nsWindow = reinterpret_cast<id (*)(id, SEL)>(objc_msgSend)(nsView, sel_registerName("window"));
+            if (nullptr == nsWindow)
+                continue;
+
+            auto const level = 101L + depth++; // NSPopUpMenuWindowLevel + depth
+            if (level != reinterpret_cast<long (*)(id, SEL)>(objc_msgSend)(nsWindow, sel_registerName("level")))
+                reinterpret_cast<void (*)(id, SEL, long)>(objc_msgSend)(nsWindow, sel_registerName("setLevel:"), level);
+        }
+    }
+
+    std::vector<juce::Component::SafePointer<juce::Component>> m_windows;
+
+    static inline PopupMenuWindowLevelKeeper* s_instance = nullptr;
+};
+#endif
+
+}
+
 namespace JUCEAppBasics
 {
 
@@ -664,6 +741,17 @@ int CustomLookAndFeel::getTreeViewIndentSize(juce::TreeView&)
 void CustomLookAndFeel::drawPopupMenuBackground(juce::Graphics& g, [[maybe_unused]] int width, [[maybe_unused]] int height)
 {
     g.fillAll(findColour(juce::PopupMenu::backgroundColourId));
+}
+
+void CustomLookAndFeel::preparePopupMenuWindow([[maybe_unused]] juce::Component& newWindow)
+{
+#if JUCE_MAC
+    // Since JUCE 9.0.3 (commit 5fc8d3485d) modal windows - and with them popup menus - are raised to NSModalPanelWindowLevel,
+    // which is below the window level of a CallOutBox, so a menu opened from within a callout is hidden behind it. Moreover,
+    // a menu opened from a menu (e.g. the popup of a ComboBox in a custom menu item) ends up behind its parent menu.
+    // Restore the pre-9.0.3 popup menu window levels and keep them while the menus are open.
+    PopupMenuWindowLevelKeeper::getInstance().track(newWindow);
+#endif
 }
 
 
