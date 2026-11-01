@@ -54,6 +54,7 @@ public:
     void lookAndFeelChanged() override;
 
     //==============================================================================
+    void mouseDown(const juce::MouseEvent& e) override;
     void mouseUp(const juce::MouseEvent& e) override;
     void mouseDrag(const juce::MouseEvent& e) override;
 
@@ -65,6 +66,7 @@ private:
     bool m_isToggledOn = true;
     bool m_isTogglable = true;
     bool m_isDragging = false;
+    std::optional<juce::MouseEvent> m_pendingMouseDown; ///< Plain click that was not yet handed to juce::Slider (see mouseDown).
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ToggleStateSlider)
 };

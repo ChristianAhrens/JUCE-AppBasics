@@ -129,6 +129,26 @@ void ToggleStateSlider::lookAndFeelChanged()
 }
 
 /**
+ * Reimplemented to keep a plain click from also moving the value: juce::Slider snaps the value to the mouse
+ * position already on mouseDown. A plain (unmodified, left button) click on a togglable slider is therefore
+ * only remembered and handed to juce::Slider once the mouse has actually moved (see mouseDrag). A click that
+ * is released without movement only toggles (see mouseUp).
+ * @param	e	The mouse event for the mousedown
+ */
+void ToggleStateSlider::mouseDown(const juce::MouseEvent& e)
+{
+	m_pendingMouseDown.reset();
+
+	if (m_isTogglable && isEnabled() && !e.mods.isPopupMenu() && e.mods.withoutMouseButtons() == juce::ModifierKeys())
+	{
+		m_pendingMouseDown.emplace(e);
+		return;
+	}
+
+	juce::Slider::mouseDown(e);
+}
+
+/**
  * Reimplemented to catch the drag distance and if it is considerably small
  * initiate a toggle state flip.
  * Also ends any is-dragging states
@@ -138,6 +158,14 @@ void ToggleStateSlider::mouseUp(const juce::MouseEvent& e)
 {
 	if (e.getDistanceFromDragStart() <= 1)
 		setToggleState(!getToggleState(), juce::sendNotification);
+
+	if (m_pendingMouseDown.has_value())
+	{
+		// juce::Slider never saw the mousedown, so it must not see the mouseup either
+		m_pendingMouseDown.reset();
+		m_isDragging = false;
+		return;
+	}
 
     if (m_isDragging)
         m_isDragging = false;
@@ -155,6 +183,15 @@ void ToggleStateSlider::mouseDrag(const juce::MouseEvent& e)
     auto offset = e.getOffsetFromDragStart();
     if (std::abs(offset.getDistanceFromOrigin()) > 1)
         m_isDragging = true;
+
+    if (m_pendingMouseDown.has_value())
+    {
+        if (!m_isDragging)
+            return; // still a click
+
+        juce::Slider::mouseDown(*m_pendingMouseDown);
+        m_pendingMouseDown.reset();
+    }
 
 	juce::Slider::mouseDrag(e);
 }
