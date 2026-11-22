@@ -337,8 +337,8 @@ void WebUpdateDetector::run()
             .withIconType(juce::MessageBoxIconType::InfoIcon)
             .withTitle("New Version Available")
             .withMessage(availableUpdateInfo)
-            .withButton("Download")
-            .withButton("Ignore");
+            .withButton("Download", 1)
+            .withButton(juce::MessageBoxButtonOptions("Ignore", 0).withRole(juce::MessageBoxButtonRole::cancel));
         auto downloadUpdateWebAddress = m_downloadUpdateWebAddress;
         juce::MessageManager::callAsync([options, downloadUpdateWebAddress]() {
             juce::AlertWindow::showAsync(options, [downloadUpdateWebAddress](int buttonIndex) {
