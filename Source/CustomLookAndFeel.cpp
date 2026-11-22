@@ -119,8 +119,6 @@ void CustomLookAndFeel::setPaletteStyle(CustomLookAndFeel::PaletteStyle style)
         setColour(juce::ProgressBar::ColourIds::foregroundColourId, juce::Colours::darkgrey);
         setColour(juce::ProgressBar::ColourIds::backgroundColourId, juce::Colours::lightgrey);
 
-        setColour(CustomLookAndFeel::MeteringPeakColourId, juce::Colours::forestgreen.brighter());
-        setColour(CustomLookAndFeel::MeteringRmsColourId, juce::Colours::forestgreen);
         setColour(CustomLookAndFeel::MeteringHoldColourId, juce::Colours::grey);
 
         setColour(juce::TreeView::ColourIds::backgroundColourId, juce::Colours::lightgrey);
@@ -232,8 +230,6 @@ void CustomLookAndFeel::setPaletteStyle(CustomLookAndFeel::PaletteStyle style)
         setColour(juce::ProgressBar::ColourIds::foregroundColourId, juce::Colours::lightgrey);
         setColour(juce::ProgressBar::ColourIds::backgroundColourId, juce::Colours::darkgrey);
 
-        setColour(CustomLookAndFeel::MeteringPeakColourId, juce::Colours::forestgreen.darker());
-        setColour(CustomLookAndFeel::MeteringRmsColourId, juce::Colours::forestgreen);
         setColour(CustomLookAndFeel::MeteringHoldColourId, juce::Colours::grey);
 
         setColour(juce::TreeView::ColourIds::backgroundColourId, juce::Colours::darkgrey.darker());
@@ -246,6 +242,47 @@ void CustomLookAndFeel::setPaletteStyle(CustomLookAndFeel::PaletteStyle style)
         break;
     }
 
+    // colour roles of the shared design foundation, derived from the palette colours set above
+    setColour(CustomLookAndFeel::StateMuteColourId, juce::Colours::red);
+    setColour(CustomLookAndFeel::StateWarningColourId, juce::Colour(0xff, 0xe8, 0x00).withAlpha(0.5f));
+    setColour(CustomLookAndFeel::StateCriticalColourId, juce::Colour(0xff, 0x40, 0x02).withAlpha(0.5f));
+    setColour(CustomLookAndFeel::StateAlertColourId, juce::Colour(0xff, 0x30, 0x02).withAlpha(0.8f));
+    setColour(CustomLookAndFeel::StateErrorColourId, juce::Colours::red);
+    setColour(CustomLookAndFeel::OverlayShadowColourId, juce::Colours::black.withAlpha(0.7f));
+    setColour(CustomLookAndFeel::OverlayBorderColourId, juce::Colours::white.withAlpha(0.8f));
+    setColour(CustomLookAndFeel::SurfaceRecessedDeepColourId, findColour(juce::ResizableWindow::ColourIds::backgroundColourId).darker());
+    setColour(CustomLookAndFeel::SurfaceGapColourId, findColour(juce::LookAndFeel_V4::ColourScheme::defaultFill));
+
+    // the accent colour survives a palette change
+    setAccentColour(m_accentColour);
+}
+
+void CustomLookAndFeel::setAccentColour(const juce::Colour& accent)
+{
+    m_accentColour = accent;
+    setColour(CustomLookAndFeel::MeteringRmsColourId, accent);
+    setColour(CustomLookAndFeel::MeteringPeakColourId, PS_Light == m_paletteStyle ? accent.brighter() : accent.darker());
+}
+
+void CustomLookAndFeel::applyAccentColour(juce::LookAndFeel& laf, const juce::Colour& accent)
+{
+    auto* customLookAndFeel = dynamic_cast<CustomLookAndFeel*>(&laf);
+    if (nullptr == customLookAndFeel || customLookAndFeel->getAccentColour() == accent)
+        return;
+
+    customLookAndFeel->setAccentColour(accent);
+
+    auto& desktop = juce::Desktop::getInstance();
+    if (&desktop.getDefaultLookAndFeel() == customLookAndFeel)
+        desktop.setDefaultLookAndFeel(customLookAndFeel);
+}
+
+void CustomLookAndFeel::applyPaletteStyle(std::unique_ptr<CustomLookAndFeel>& holder, PaletteStyle style)
+{
+    const auto accent = holder ? holder->getAccentColour() : juce::Colours::forestgreen;
+    holder = std::make_unique<CustomLookAndFeel>(style);
+    holder->setAccentColour(accent);
+    juce::Desktop::getInstance().setDefaultLookAndFeel(holder.get());
 }
 
 const CustomLookAndFeel::PaletteStyle& CustomLookAndFeel::getPaletteStyle()
@@ -397,7 +434,7 @@ void CustomLookAndFeel::drawCallOutBoxBackground(juce::CallOutBox& box, juce::Gr
         cachedImage = juce::Image(juce::Image::ARGB, box.getWidth(), box.getHeight(), true);
         juce::Graphics g2(cachedImage);
 
-        juce::DropShadow(juce::Colours::black.withAlpha(0.7f), 8, juce::Point<int>(0, 2)).drawForPath(g2, path);
+        juce::DropShadow(findColour(CustomLookAndFeel::OverlayShadowColourId), 8, juce::Point<int>(0, 2)).drawForPath(g2, path);
     }
 
     g.setColour(juce::Colours::black);
@@ -406,7 +443,7 @@ void CustomLookAndFeel::drawCallOutBoxBackground(juce::CallOutBox& box, juce::Gr
     g.setColour(findColour(juce::ResizableWindow::ColourIds::backgroundColourId));
     g.fillPath(path);
 
-    g.setColour(juce::Colours::white.withAlpha(0.8f));
+    g.setColour(findColour(CustomLookAndFeel::OverlayBorderColourId));
     g.strokePath(path, juce::PathStrokeType(2.0f));
 }
 

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="thGl01" name="ThemeGallery" projectType="guiapp" useAppConfig="0"
+              jucerFormatVersion="1" version="0.1.0" bundleIdentifier="com.ChristianAhrens.ThemeGallery"
+              headerPath="../../../Source" defines="JUCE_DISPLAY_SPLASH_SCREEN=0&#10;JUCE_WEB_BROWSER=0"
+              companyName="ChristianAhrens" companyCopyright="Copyright (c) 2026 Christian Ahrens.">
+  <MAINGROUP id="thGl02" name="ThemeGallery">
+    <GROUP id="{7A1E0001-0001-4001-8001-000000000001}" name="Source">
+      <FILE id="thGl03" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="thGl04" name="ThemeGalleryComponent.cpp" compile="1" resource="0" file="Source/ThemeGalleryComponent.cpp"/>
+      <FILE id="thGl05" name="ThemeGalleryComponent.h" compile="0" resource="0" file="Source/ThemeGalleryComponent.h"/>
+    </GROUP>
+    <GROUP id="{7A1E0001-0001-4001-8001-000000000002}" name="AppBasics">
+      <FILE id="thGl06" name="CustomLookAndFeel.cpp" compile="1" resource="0" file="../Source/CustomLookAndFeel.cpp"/>
+      <FILE id="thGl07" name="CustomLookAndFeel.h" compile="0" resource="0" file="../Source/CustomLookAndFeel.h"/>
+      <FILE id="thGl08" name="ToggleStateSlider.cpp" compile="1" resource="0" file="../Source/ToggleStateSlider.cpp"/>
+      <FILE id="thGl09" name="ToggleStateSlider.h" compile="0" resource="0" file="../Source/ToggleStateSlider.h"/>
+    </GROUP>
+    <GROUP id="{7A1E0001-0001-4001-8001-000000000003}" name="Resources">
+      <FILE id="thGl10" name="settings_24dp.svg" compile="0" resource="1" file="../Resources/Images/settings_24dp.svg"/>
+      <FILE id="thGl11" name="help-24px.svg" compile="0" resource="1" file="../Resources/Images/help-24px.svg"/>
+      <FILE id="thGl12" name="power_settings_24dp.svg" compile="0" resource="1" file="../Resources/Images/power_settings_24dp.svg"/>
+      <FILE id="thGl13" name="link_off_24dp.svg" compile="0" resource="1" file="../Resources/Images/link_off_24dp.svg"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+  </MODULES>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" macOSDeploymentTarget="12.0"/>
+        <CONFIGURATION isDebug="0" name="Release" macOSDeploymentTarget="12.0"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+  </EXPORTFORMATS>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>
