@@ -196,5 +196,26 @@ void ToggleStateSlider::mouseDrag(const juce::MouseEvent& e)
 	juce::Slider::mouseDrag(e);
 }
 
+/**
+ * Reimplemented to repaint for the hover state of the lookAndFeel, juce::Slider does not repaint on its own
+ * @param	e	The mouse event for the mouseEnter
+ */
+void ToggleStateSlider::mouseEnter(const juce::MouseEvent& e)
+{
+	juce::Slider::mouseEnter(e);
+	repaint();
+}
+
+/**
+ * Reimplemented to repaint for the hover state of the lookAndFeel
+ * @param	e	The mouse event for the mouseExit
+ */
+void ToggleStateSlider::mouseExit(const juce::MouseEvent& e)
+{
+	juce::Slider::mouseExit(e);
+	repaint();
+}
+
 
 }
+

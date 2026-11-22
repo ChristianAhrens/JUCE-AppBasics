@@ -64,6 +64,8 @@ public:
 	//==============================================================================
 	void drawButtonBackground(juce::Graphics&, juce::Button&, const juce::Colour& backgroundColour,
 		bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
+	void drawDrawableButton(juce::Graphics&, juce::DrawableButton&,
+		bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
 
 	//==============================================================================
 	void drawGroupComponentOutline(juce::Graphics&, int w, int h, const juce::String& text,
@@ -74,6 +76,10 @@ public:
 		float x, float y, float w, float h,
 		bool ticked, bool isEnabled,
 		bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
+
+	//==============================================================================
+	void drawScrollbar(juce::Graphics&, juce::ScrollBar&, int x, int y, int width, int height,
+		bool isScrollbarVertical, int thumbStartPosition, int thumbSize, bool isMouseOver, bool isMouseDown) override;
 
 	//==============================================================================
 	void drawComboBox(juce::Graphics&, int width, int height, bool isButtonDown,

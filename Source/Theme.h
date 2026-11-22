@@ -104,6 +104,8 @@ inline constexpr float separator    = 0.35f;    ///< separator line between cont
 inline constexpr float grip         = 0.75f;    ///< grab pills
 inline constexpr float emptyText    = 0.45f;    ///< hint texts of empty panels
 inline constexpr float flashDim     = 0.25f;    ///< dim phase of blinking elements
+inline constexpr float hover        = 0.12f;    ///< hover overlay of the text colour (buttons, combo box, tick box, sliders, scroll bar)
+inline constexpr float pressed      = 0.18f;    ///< pressed overlay of the text colour, also the highlighted item of popup menus
 }
 
 //==============================================================================

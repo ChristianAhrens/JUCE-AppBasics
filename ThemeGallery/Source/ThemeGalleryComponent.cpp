@@ -152,7 +152,9 @@ ThemeGalleryPanel::ThemeGalleryPanel(CustomLookAndFeel::PaletteStyle style, cons
     auto* rotaryOff = own<ToggleStateSlider>(juce::Slider::Rotary, juce::Slider::NoTextBox);
     auto* linearOn = own<ToggleStateSlider>(juce::Slider::LinearVertical, juce::Slider::NoTextBox);
     auto* linearOff = own<ToggleStateSlider>(juce::Slider::LinearVertical, juce::Slider::NoTextBox);
-    for (auto* s : { rotaryOn, rotaryOff, linearOn, linearOff })
+    auto* rotaryDisabled = own<ToggleStateSlider>(juce::Slider::Rotary, juce::Slider::NoTextBox);
+    auto* linearDisabled = own<ToggleStateSlider>(juce::Slider::LinearVertical, juce::Slider::NoTextBox);
+    for (auto* s : { rotaryOn, rotaryOff, linearOn, linearOff, rotaryDisabled, linearDisabled })
     {
         s->setRange(0.0, 1.0, 0.01);
         s->setValue(0.6, juce::dontSendNotification);
@@ -160,7 +162,9 @@ ThemeGalleryPanel::ThemeGalleryPanel(CustomLookAndFeel::PaletteStyle style, cons
     }
     rotaryOff->setToggleState(false, juce::dontSendNotification);
     linearOff->setToggleState(false, juce::dontSendNotification);
-    addRow("Toggle slider", { rotaryOn, rotaryOff, linearOn, linearOff }, 70, 70);
+    rotaryDisabled->setEnabled(false);
+    linearDisabled->setEnabled(false);
+    addRow("Toggle slider", { rotaryOn, rotaryOff, linearOn, linearOff, rotaryDisabled, linearDisabled }, 70, 70);
 
     // plain slider
     auto* slider = own<juce::Slider>(juce::Slider::LinearHorizontal, juce::Slider::NoTextBox);

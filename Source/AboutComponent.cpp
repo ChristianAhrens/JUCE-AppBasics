@@ -19,7 +19,7 @@ AboutComponent::AboutComponent(const char* imageData, int imageDataSize, const j
 	addAndMakeVisible(m_appInfoLabel.get());
 
 	m_appRepoLink = std::make_unique<juce::HyperlinkButton>(juce::JUCEApplication::getInstance()->getApplicationName() + juce::String(" on GitHub"), juce::URL(repoUrl));
-	m_appRepoLink->setFont(juce::Font(juce::FontOptions(Theme::Type::dialogBody, juce::Font::plain)), false /* do not resize */);
+	m_appRepoLink->setFont(juce::Font(juce::FontOptions(Theme::Type::dialogBody, juce::Font::plain).withUnderline()), false /* do not resize */); // underlined, since the link colour is the plain text colour
 	m_appRepoLink->setJustificationType(juce::Justification::centredTop);
 	addAndMakeVisible(m_appRepoLink.get());
 }

@@ -54,8 +54,9 @@ void CustomLookAndFeel::setPaletteStyle(CustomLookAndFeel::PaletteStyle style)
         setColour(juce::PopupMenu::ColourIds::backgroundColourId, juce::Colours::lightgrey.brighter());
         setColour(juce::PopupMenu::ColourIds::textColourId, juce::Colours::black);
         setColour(juce::PopupMenu::ColourIds::headerTextColourId, juce::Colours::darkgrey);
-        setColour(juce::PopupMenu::ColourIds::highlightedBackgroundColourId, juce::Colours::black.brighter());
-        setColour(juce::PopupMenu::ColourIds::highlightedTextColourId, juce::Colours::darkgrey);
+        // the highlighted item is the pressed overlay of the text colour, the text keeps its colour
+        setColour(juce::PopupMenu::ColourIds::highlightedBackgroundColourId, juce::Colours::black.withAlpha(Theme::Alpha::pressed));
+        setColour(juce::PopupMenu::ColourIds::highlightedTextColourId, juce::Colours::black);
 
         setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey.brighter()); // this applies for DrawableButton as well
         setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::darkgrey.brighter()); // this applies for DrawableButton as well
@@ -165,8 +166,8 @@ void CustomLookAndFeel::setPaletteStyle(CustomLookAndFeel::PaletteStyle style)
         setColour(juce::PopupMenu::ColourIds::backgroundColourId, juce::Colours::darkgrey.darker());
         setColour(juce::PopupMenu::ColourIds::textColourId, juce::Colours::white);
         setColour(juce::PopupMenu::ColourIds::headerTextColourId, juce::Colours::lightgrey);
-        setColour(juce::PopupMenu::ColourIds::highlightedBackgroundColourId, juce::Colours::white.darker());
-        setColour(juce::PopupMenu::ColourIds::highlightedTextColourId, juce::Colours::lightgrey);
+        setColour(juce::PopupMenu::ColourIds::highlightedBackgroundColourId, juce::Colours::white.withAlpha(Theme::Alpha::pressed));
+        setColour(juce::PopupMenu::ColourIds::highlightedTextColourId, juce::Colours::white);
 
         setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey.darker()); // this applies for DrawableButton as well
         setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::lightgrey.darker()); // this applies for DrawableButton as well
@@ -249,7 +250,13 @@ void CustomLookAndFeel::setPaletteStyle(CustomLookAndFeel::PaletteStyle style)
     setColour(CustomLookAndFeel::StateAlertColourId, juce::Colour(0xff, 0x30, 0x02).withAlpha(0.8f));
     setColour(CustomLookAndFeel::StateErrorColourId, juce::Colours::red);
     setColour(CustomLookAndFeel::OverlayShadowColourId, juce::Colours::black.withAlpha(0.7f));
-    setColour(CustomLookAndFeel::OverlayBorderColourId, juce::Colours::white.withAlpha(0.8f));
+    setColour(CustomLookAndFeel::OverlayBorderColourId, (PS_Light == m_paletteStyle ? juce::Colours::darkgrey : juce::Colours::white).withAlpha(0.8f));
+
+    // tooltip and hyperlink follow the palette (were the dark scheme of LookAndFeel_V4 in both palettes)
+    setColour(juce::TooltipWindow::ColourIds::backgroundColourId, findColour(juce::ResizableWindow::ColourIds::backgroundColourId));
+    setColour(juce::TooltipWindow::ColourIds::textColourId, findColour(juce::Label::ColourIds::textColourId));
+    setColour(juce::TooltipWindow::ColourIds::outlineColourId, findColour(juce::TextEditor::ColourIds::outlineColourId));
+    setColour(juce::HyperlinkButton::ColourIds::textColourId, findColour(juce::Label::ColourIds::textColourId));
     setColour(CustomLookAndFeel::SurfaceRecessedDeepColourId, findColour(juce::ResizableWindow::ColourIds::backgroundColourId).darker());
     setColour(CustomLookAndFeel::SurfaceGapColourId, findColour(juce::LookAndFeel_V4::ColourScheme::defaultFill));
 
@@ -313,14 +320,47 @@ void CustomLookAndFeel::drawButtonBackground(juce::Graphics& g,
 {
     auto bounds = button.getLocalBounds().toFloat().reduced(0.5f, 0.5f);
 
-    auto baseColour = backgroundColour.withMultipliedSaturation(button.hasKeyboardFocus(true) ? 1.3f : 0.9f)
-        .withMultipliedAlpha(button.isEnabled() ? 1.0f : 0.5f);
+    auto baseColour = backgroundColour.withMultipliedAlpha(button.isEnabled() ? 1.0f : Theme::Alpha::disabled);
 
-    if (shouldDrawButtonAsDown || shouldDrawButtonAsHighlighted)
-        baseColour = baseColour.contrasting(shouldDrawButtonAsDown ? 0.2f : 0.05f);
+    if (button.isEnabled() && (shouldDrawButtonAsDown || shouldDrawButtonAsHighlighted))
+        baseColour = baseColour.contrasting(shouldDrawButtonAsDown ? Theme::Alpha::pressed : Theme::Alpha::hover);
 
     g.setColour(baseColour);
-	g.fillRoundedRectangle(bounds, 0);
+    g.fillRect(bounds);
+
+    // keyboard focus is shown as a 1 px frame in the shared focus outline role
+    if (button.isEnabled() && button.hasKeyboardFocus(true))
+    {
+        g.setColour(findColour(juce::TextEditor::ColourIds::focusedOutlineColourId));
+        g.drawRect(button.getLocalBounds(), Theme::Size::hairline);
+    }
+}
+
+void CustomLookAndFeel::drawDrawableButton(juce::Graphics& g,
+    juce::DrawableButton& button,
+    bool shouldDrawButtonAsHighlighted,
+    bool shouldDrawButtonAsDown)
+{
+    // background and caption as in LookAndFeel_V2
+    LookAndFeel_V4::drawDrawableButton(g, button, shouldDrawButtonAsHighlighted, shouldDrawButtonAsDown);
+
+    if (!button.isEnabled())
+        return;
+
+    // hover and pressed as overlay of the text colour, so that it works on transparent backgrounds
+    if (shouldDrawButtonAsDown || shouldDrawButtonAsHighlighted)
+    {
+        g.setColour(button.findColour(juce::DrawableButton::ColourIds::textColourId)
+            .withAlpha(shouldDrawButtonAsDown ? Theme::Alpha::pressed : Theme::Alpha::hover));
+        g.fillRect(button.getLocalBounds());
+    }
+
+    // keyboard focus as 1 px frame, same role as for text buttons
+    if (button.hasKeyboardFocus(true))
+    {
+        g.setColour(findColour(juce::TextEditor::ColourIds::focusedOutlineColourId));
+        g.drawRect(button.getLocalBounds(), Theme::Size::hairline);
+    }
 }
 
 void CustomLookAndFeel::drawGroupComponentOutline(juce::Graphics& g,
@@ -390,30 +430,68 @@ void CustomLookAndFeel::drawTickBox(juce::Graphics& g, juce::Component& componen
     const bool shouldDrawButtonAsHighlighted,
     const bool shouldDrawButtonAsDown)
 {
-    juce::ignoreUnused(isEnabled, shouldDrawButtonAsHighlighted, shouldDrawButtonAsDown);
-
     juce::Rectangle<float> tickBounds(x, y, w, h);
+    const auto alpha = isEnabled ? 1.0f : Theme::Alpha::disabled;
+    const auto textColour = component.findColour(juce::ToggleButton::textColourId);
 
-    g.setColour(component.findColour(juce::ToggleButton::tickDisabledColourId));
+    if (isEnabled && (shouldDrawButtonAsDown || shouldDrawButtonAsHighlighted))
+    {
+        g.setColour(textColour.withAlpha(shouldDrawButtonAsDown ? Theme::Alpha::pressed : Theme::Alpha::hover));
+        g.fillRect(tickBounds);
+    }
+
+    g.setColour(component.findColour(juce::ToggleButton::tickDisabledColourId).withMultipliedAlpha(alpha));
     g.drawRect(tickBounds, 1.0f);
 
     if (ticked)
     {
-        g.setColour(component.findColour(juce::ToggleButton::tickColourId));
+        g.setColour(component.findColour(juce::ToggleButton::tickColourId).withMultipliedAlpha(alpha));
         auto tick = getTickShape(0.75f);
         g.fillPath(tick, tick.getTransformToScaleToFit(tickBounds.reduced(4, 5).toFloat(), false));
     }
+
+    // keyboard focus as 1 px frame around the box, same role as for the buttons
+    if (isEnabled && component.hasKeyboardFocus(false))
+    {
+        g.setColour(findColour(juce::TextEditor::ColourIds::focusedOutlineColourId));
+        g.drawRect(tickBounds.expanded(2.0f), static_cast<float>(Theme::Size::hairline));
+    }
 }
 
-void CustomLookAndFeel::drawComboBox(juce::Graphics& g, int width, int height, bool,
+void CustomLookAndFeel::drawScrollbar(juce::Graphics& g, juce::ScrollBar& scrollbar, int x, int y, int width, int height,
+    bool isScrollbarVertical, int thumbStartPosition, int thumbSize, bool isMouseOver, bool isMouseDown)
+{
+    const auto thumbBounds = (isScrollbarVertical ? juce::Rectangle<int>(x, thumbStartPosition, width, thumbSize)
+        : juce::Rectangle<int>(thumbStartPosition, y, thumbSize, height)).reduced(Theme::Size::hairline).toFloat();
+
+    g.setColour(scrollbar.findColour(juce::ScrollBar::ColourIds::thumbColourId));
+    g.fillRoundedRectangle(thumbBounds, 4.0f);
+
+    // hover and pressed as overlay of the text colour, same as for the other building blocks
+    if (isMouseOver || isMouseDown)
+    {
+        g.setColour(findColour(juce::Label::ColourIds::textColourId).withAlpha(isMouseDown ? Theme::Alpha::pressed : Theme::Alpha::hover));
+        g.fillRoundedRectangle(thumbBounds, 4.0f);
+    }
+}
+
+void CustomLookAndFeel::drawComboBox(juce::Graphics& g, int width, int height, bool isButtonDown,
     int, int, int, int, juce::ComboBox& box)
 {
     juce::Rectangle<int> boxBounds(0, 0, width, height);
+    const auto alpha = box.isEnabled() ? 1.0f : Theme::Alpha::disabled;
 
-    g.setColour(box.findColour(juce::ComboBox::backgroundColourId));
+    g.setColour(box.findColour(juce::ComboBox::backgroundColourId).withMultipliedAlpha(alpha));
     g.fillRect(boxBounds.toFloat());
 
-    g.setColour(box.findColour(juce::ComboBox::outlineColourId));
+    // hover and pressed as overlay of the text colour
+    if (box.isEnabled() && (isButtonDown || box.isMouseOver(true)))
+    {
+        g.setColour(box.findColour(juce::ComboBox::textColourId).withAlpha(isButtonDown ? Theme::Alpha::pressed : Theme::Alpha::hover));
+        g.fillRect(boxBounds.toFloat());
+    }
+
+    g.setColour(box.findColour(juce::ComboBox::outlineColourId).withMultipliedAlpha(alpha));
     g.drawRect(boxBounds.toFloat().reduced(0.5f, 0.5f), 1.0f);
 
     juce::Rectangle<int> arrowZone(width - 30, 0, 20, height);
@@ -422,8 +500,15 @@ void CustomLookAndFeel::drawComboBox(juce::Graphics& g, int width, int height, b
     path.lineTo((float)arrowZone.getCentreX(), (float)arrowZone.getCentreY() + 3.0f);
     path.lineTo((float)arrowZone.getRight() - 3.0f, (float)arrowZone.getCentreY() - 2.0f);
 
-    g.setColour(box.findColour(juce::ComboBox::arrowColourId).withAlpha((box.isEnabled() ? 0.9f : 0.2f)));
+    g.setColour(box.findColour(juce::ComboBox::arrowColourId).withAlpha(box.isEnabled() ? 0.9f : Theme::Alpha::disabled));
     g.strokePath(path, juce::PathStrokeType(2.0f));
+
+    // keyboard focus as 1 px frame in the shared focus role
+    if (box.isEnabled() && box.hasKeyboardFocus(true))
+    {
+        g.setColour(box.findColour(juce::ComboBox::focusedOutlineColourId));
+        g.drawRect(boxBounds, Theme::Size::hairline);
+    }
 }
 
 void CustomLookAndFeel::drawCallOutBoxBackground(juce::CallOutBox& box, juce::Graphics& g,
@@ -447,6 +532,29 @@ void CustomLookAndFeel::drawCallOutBoxBackground(juce::CallOutBox& box, juce::Gr
     g.strokePath(path, juce::PathStrokeType(2.0f));
 }
 
+namespace
+{
+// hover, pressed and focus of a ToggleStateSlider, drawn over its frame shape (on and drag drawing is not touched)
+void drawToggleSliderStates(juce::Graphics& g, juce::Slider& slider, const juce::Path& frame, const juce::Colour& focusColour)
+{
+    if (!slider.isEnabled())
+        return;
+
+    if (slider.isMouseOverOrDragging() || slider.isMouseButtonDown())
+    {
+        g.setColour(slider.findColour(juce::Slider::ColourIds::textBoxTextColourId)
+            .withAlpha(slider.isMouseButtonDown() ? Theme::Alpha::pressed : Theme::Alpha::hover));
+        g.fillPath(frame);
+    }
+
+    if (slider.hasKeyboardFocus(true))
+    {
+        g.setColour(focusColour);
+        g.strokePath(frame, juce::PathStrokeType(static_cast<float>(Theme::Size::hairline)));
+    }
+}
+}
+
 int CustomLookAndFeel::getSliderThumbRadius(juce::Slider& slider)
 {
     return slider.isHorizontal() ? static_cast<int> ((float)slider.getHeight() * 0.6f)
@@ -462,6 +570,10 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
     auto tss = dynamic_cast<ToggleStateSlider*>(&slider);
     if (tss && !(isTwoVal || isThreeVal || slider.isBar()))
     {
+        // disabled is drawn at reduced opacity as a whole
+        if (!slider.isEnabled())
+            g.beginTransparencyLayer(Theme::Alpha::disabled);
+
         // oval surrounding frame
         juce::Path framing, framingOutline;
         if (slider.isHorizontal())
@@ -480,6 +592,7 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
         }
         g.setColour(slider.findColour(juce::Slider::thumbColourId));
         g.strokePath(framingOutline, juce::PathStrokeType(1.0f));
+        drawToggleSliderStates(g, slider, framingOutline, findColour(juce::TextEditor::ColourIds::focusedOutlineColourId));
 
         // slider itself
         auto trackWidth = slider.isHorizontal() ? (float)height * 0.25f : (float)width * 0.25f;
@@ -564,6 +677,8 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
                 juce::Justification::centred, 1);
         }
 
+        if (!slider.isEnabled())
+            g.endTransparencyLayer();
     }
     else
     {
@@ -578,6 +693,10 @@ void CustomLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wi
     auto tss = dynamic_cast<ToggleStateSlider*>(&slider);
     if (tss)
     {
+        // disabled is drawn at reduced opacity as a whole
+        if (!slider.isEnabled())
+            g.beginTransparencyLayer(Theme::Alpha::disabled);
+
         auto bounds = juce::Rectangle<int>(x, y, width, height).toFloat().reduced(2.0f);
         if (bounds.getAspectRatio() > 1.0f)
             bounds.reduce((bounds.getWidth() - bounds.getHeight()) / 2, 0.0f);
@@ -594,6 +713,7 @@ void CustomLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wi
         outerArc.addEllipse(bounds);
         g.setColour(slider.findColour(juce::Slider::thumbColourId));
         g.strokePath(outerArc, juce::PathStrokeType(1.0f));
+        drawToggleSliderStates(g, slider, outerArc, findColour(juce::TextEditor::ColourIds::focusedOutlineColourId));
 
         // Draw background track
         juce::Path backgroundArc;
@@ -667,6 +787,9 @@ void CustomLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wi
             g.setColour(slider.findColour(juce::TextButton::textColourOnId));
             g.drawFittedText(valueText, valueArea.toNearestInt(), juce::Justification::centred, 1);
         }
+
+        if (!slider.isEnabled())
+            g.endTransparencyLayer();
     }
     else
     {
