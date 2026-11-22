@@ -83,6 +83,18 @@ inline std::optional<AccentColour> findAccentByColour(const juce::Colour& colour
 }
 
 //==============================================================================
+/**
+ * The control size steps of the apps that scale their controls (Mema.Re, the parameter controls in Mema.Re and Umsci):
+ * the pixel size of a control element. The default is S. (Umsci additionally scales its scene by its own multiplier.)
+ */
+enum ControlsSize
+{
+    S = 35,     ///< Small, suited for desktop with many channels (default).
+    M = 50,     ///< Medium.
+    L = 65      ///< Large, suited for touch screens.
+};
+
+//==============================================================================
 /** Opacity tokens (values of the literals that were spread over the code). */
 namespace Alpha
 {

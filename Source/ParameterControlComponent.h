@@ -20,6 +20,8 @@
 
 #include <JuceHeader.h>
 
+#include "Theme.h"
+
 
 namespace JUCEAppBasics
 {
@@ -88,8 +90,8 @@ struct ParameterControlInfo
 class ParameterControlComponent : public juce::Component
 {
 public:
-    /** Pixel-based size that governs all control widget dimensions. */
-    enum class ControlsSize { S = 35, M = 50, L = 65 };
+    /** Pixel-based size that governs all control widget dimensions (shared with the other apps, see Theme::ControlsSize). */
+    using ControlsSize = Theme::ControlsSize;
 
     ParameterControlComponent();
     ~ParameterControlComponent() override;
@@ -129,7 +131,7 @@ private:
     std::map<int, std::unique_ptr<juce::ComboBox>>                    m_parameterValueComboBoxes;
 
     std::vector<ParameterControlInfo> m_parameters;
-    ControlsSize                      m_controlsSize = ControlsSize::M;
+    ControlsSize                      m_controlsSize = ControlsSize::S;
     juce::Rectangle<int>              m_parameterBounds;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterControlComponent)
